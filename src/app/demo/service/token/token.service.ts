@@ -4,81 +4,226 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from 'src/environements/environment.dev';
 
-@Injectable({
-  providedIn: 'root',
-})
+type ApiResponse<T = any> = { 
+  success: boolean; 
+  message: string; 
+  data?: T | null; 
+};
+
+@Injectable({ providedIn: 'root' })
 export class TokenService {
-  private apiUrl = `${environment.apiUrl}`;
+  private readonly apiUrl = environment.apiUrl;
+  
+  // Clés de stockage
+  private readonly TOKEN_KEY = 'auth_token';
+  private readonly EXPIRES_KEY = 'token_expires_at';
+  private readonly USER_KEY = 'current_user';
+  private readonly USER_ID_KEY = 'user_id';
+
+  // Observable du token
   private tokenSubject: BehaviorSubject<string | null>;
   public token$: Observable<string | null>;
 
   constructor(private http: HttpClient) {
-    const token = localStorage.getItem('access_token');
-    this.tokenSubject = new BehaviorSubject<string | null>(token);
+    // Initialisation du token depuis localStorage
+    const storedToken = this.getStoredToken();
+    this.tokenSubject = new BehaviorSubject<string | null>(storedToken);
     this.token$ = this.tokenSubject.asObservable();
+
+    // Nettoie si le token est expiré au démarrage
+    if (storedToken && this.isTokenExpired()) {
+      this.clearToken();
+    }
   }
 
   /**
-   * Store the token securely in localStorage and update the BehaviorSubject.
-   * @param token Token to store
+   * Récupère le token depuis localStorage (avec validation)
    */
-  storeToken(token: string): void {
-    localStorage.setItem('access_token', token);
+  private getStoredToken(): string | null {
+    const token = localStorage.getItem(this.TOKEN_KEY);
+    
+    // Nettoie les valeurs invalides
+    if (!token || token === 'undefined' || token === 'null' || token.trim() === '') {
+      this.clearInvalidToken();
+      return null;
+    }
+    
+    return token;
+  }
+
+  /**
+   * Nettoie un token invalide
+   */
+  private clearInvalidToken(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
+  }
+
+  /**
+   * Stocke le token avec sa date d'expiration
+   */
+  storeToken(token: string, expiresIn: number): void {
+    // Validation du token
+    if (!token || token === 'undefined' || token === 'null' || token.trim() === '') {
+      console.warn('Tentative de stockage d\'un token invalide');
+      this.clearToken();
+      return;
+    }
+
+    // Calcule la date d'expiration
+    const expiresAt = Date.now() + (expiresIn * 1000);
+
+    // Stocke le token et son expiration
+    localStorage.setItem(this.TOKEN_KEY, token);
+    localStorage.setItem(this.EXPIRES_KEY, expiresAt.toString());
+    
+    // Met à jour l'observable
     this.tokenSubject.next(token);
   }
 
   /**
-   * Remove the token from localStorage and clear the BehaviorSubject.
+   * Supprime le token et toutes les données associées
    */
   clearToken(): void {
-    localStorage.removeItem('access_token');
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.EXPIRES_KEY);
+    localStorage.removeItem(this.USER_KEY);
+    localStorage.removeItem(this.USER_ID_KEY);
+    
     this.tokenSubject.next(null);
   }
 
   /**
-   * Get the current token value from the BehaviorSubject.
-   * @returns Current token or null if not available
+   * Récupère le token actuel
    */
   getToken(): string | null {
+    // Vérifie l'expiration avant de retourner
+    if (this.isTokenExpired()) {
+      this.clearToken();
+      return null;
+    }
+    
     return this.tokenSubject.value;
   }
 
   /**
-   * Verify the token's validity with the backend.
-   * @returns Observable<boolean> indicating if the token is valid
+   * Vérifie si un token existe et est valide
    */
-  verifyToken(): Observable<boolean> {
+  hasToken(): boolean {
     const token = this.getToken();
-
-    if (!token) {
-      console.warn('No token found in localStorage.');
-      return of(false);
-    }
-
-    return this.http.get<{ valid: boolean }>(`${this.apiUrl}/verify-token`).pipe(
-      map((response) => {
-        if (response.valid) {
-          console.log('Token is valid.');
-          return true;
-        } else {
-          this.clearToken();
-          console.warn('Token is invalid or expired.');
-          return false;
-        }
-      }),
-      catchError((error) => {
-        console.error('Error verifying token:', error);
-        this.clearToken();
-        return of(false);
-      })
-    );
+    return !!token && !this.isTokenExpired();
   }
 
   /**
-   * Check if a token exists and is not null.
-   * @returns boolean
+   * Vérifie si le token est expiré
    */
-  hasToken(): boolean {
-    return !!this.getToken();
+  isTokenExpired(): boolean {
+    const expiresAt = localStorage.getItem(this.EXPIRES_KEY);
+    
+    if (!expiresAt) {
+      return true;
+    }
+    
+    const now = Date.now();
+    const expiry = parseInt(expiresAt, 10);
+    
+    // Vérifie que la valeur est un nombre valide
+    if (isNaN(expiry)) {
+      return true;
+    }
+    
+    return expiry <= now;
+  }
+
+  /**
+   * Retourne le temps restant avant expiration (en secondes)
+   */
+  getTokenTimeRemaining(): number {
+    const expiresAt = localStorage.getItem(this.EXPIRES_KEY);
+    
+    if (!expiresAt) {
+      return 0;
+    }
+    
+    const now = Date.now();
+    const expiry = parseInt(expiresAt, 10);
+    
+    if (isNaN(expiry)) {
+      return 0;
+    }
+    
+    const remaining = Math.floor((expiry - now) / 1000);
+    return remaining > 0 ? remaining : 0;
+  }
+
+  /**
+   * Retourne la date d'expiration du token
+   */
+  getTokenExpiryDate(): Date | null {
+    const expiresAt = localStorage.getItem(this.EXPIRES_KEY);
+    
+    if (!expiresAt) {
+      return null;
+    }
+    
+    const expiry = parseInt(expiresAt, 10);
+    
+    if (isNaN(expiry)) {
+      return null;
+    }
+    
+    return new Date(expiry);
+  }
+
+  /**
+   * Vérifie la validité du token côté API
+   * Endpoint : GET /api/v1/check-token-header
+   */
+  verifyToken(): Observable<boolean> {
+    if (!this.hasToken()) {
+      return of(false);
+    }
+
+    return this.http
+      .get<ApiResponse>(`${this.apiUrl}/check-token-header`)
+      .pipe(
+        map(response => {
+          if (response && response.success) {
+            return true;
+          }
+          
+          // Token invalide selon l'API
+          this.clearToken();
+          return false;
+        }),
+        catchError(error => {
+          console.error('Erreur lors de la vérification du token:', error);
+          
+          // Si 401, le token est invalide
+          if (error.status === 401) {
+            this.clearToken();
+          }
+          
+          return of(false);
+        })
+      );
+  }
+
+  /**
+   * Debug: Affiche les infos du token
+   */
+  getTokenInfo(): {
+    token: string | null;
+    hasToken: boolean;
+    isExpired: boolean;
+    timeRemaining: number;
+    expiryDate: Date | null;
+  } {
+    return {
+      token: this.getToken(),
+      hasToken: this.hasToken(),
+      isExpired: this.isTokenExpired(),
+      timeRemaining: this.getTokenTimeRemaining(),
+      expiryDate: this.getTokenExpiryDate()
+    };
   }
 }

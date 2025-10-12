@@ -17,7 +17,7 @@ export class DateFrPipe implements PipeTransform {
         // 1. date avec heure
         return date.toLocaleString('fr-FR', {
           weekday: 'long',
-          year: 'numeric',
+          year: 'numeric', 
           month: 'long',
           day: 'numeric',
           hour: '2-digit',

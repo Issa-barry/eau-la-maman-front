@@ -1,155 +1,261 @@
 import { Injectable } from '@angular/core';
-import {
-    HttpClient,
-    HttpErrorResponse,
-    HttpHeaders,
-} from '@angular/common/http';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environements/environment.dev';
 import { Router } from '@angular/router';
+import { Contact } from '../../models/contact';
 import { TokenService } from '../token/token.service';
 
-//Hedaer Option
-const httpOption = {
-    headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'GET,POST,OPTIONS,DELETE,PUT',
-    }),
-};
-
-@Injectable({
-    providedIn: 'root',
-})
-export class AuthService {
-    private apiUrl = `${environment.apiUrl}`;
-    private currentUserSubject: BehaviorSubject<any>;
-    public currentUser: Observable<any>;
-    private userId = '';
-
-    constructor(
-        public router: Router,
-        private http: HttpClient,
-        private tokenService: TokenService
-    ) {
-        const storedUser = localStorage.getItem('access_token');
-        this.currentUserSubject = new BehaviorSubject<any>(
-            storedUser ? { access_token: storedUser } : null
-        );
-        this.currentUser = this.currentUserSubject.asObservable();
-    }
-
-    public get currentUserValue(): any {
-        return this.currentUser;
-    }
-
-    private handleError(error: HttpErrorResponse) {
-        console.error('Erreur API:', error);
-        let errorMessage = 'Une erreur inconnue est survenue';
-
-        if (error.error instanceof ErrorEvent) {
-            errorMessage = `Erreur client : ${error.error.message}`; 
-
-        } else {
-            switch (error.status) {
-                case 400:
-                    errorMessage =
-                        'Requête invalide. Vérifiez vos informations.';
-                    break;
-                case 401:
-                    errorMessage =
-                        'Identifiants incorrects. Vérifiez votre email et mot de passe.';
-                    break;
-                case 403:
-                    errorMessage = 'Accès refusé. Contactez l’administrateur.';
-                    break;
-                case 500:
-                    errorMessage =
-                        'Erreur interne du serveur. Réessayez plus tard.';
-                    break;
-                case 0:
-                    errorMessage =
-                        'Impossible de se connecter au serveur. Vérifiez votre connexion internet.';
-                    break;
-                default:
-                    errorMessage = `Erreur ${error.status}: ${error.message}`;
-            }
-        }
-
-        return throwError(() => new Error(errorMessage));
-    }
-
-    login(credentials: { email: string; password: string }): Observable<any> {
-        return this.http
-            .post<any>(`${this.apiUrl}/login`, credentials, httpOption)
-            .pipe(
-                map((response) => {
-                    this.tokenService.storeToken(response.access_token);
-                    this.userId = response.user.id;
-                    this.setUserId(this.userId);
-                    localStorage.setItem('user_id', this.userId);
-                    this.currentUserSubject.next({
-                        access_token: response.access_token,
-                    });
-                    return response;
-                }),
-                // catchError(this.handleError)
-            );
-    }
- 
-    logout(): Observable<any> {
-        
-        return this.http.post<any>(`${this.apiUrl}/logout`, {}).pipe(
-            map(() => {
-                this.tokenService.clearToken();
-                this.currentUserSubject.next(null);
-                localStorage.removeItem('user_id');
-                this.router.navigate(['/auth/login']);
-            }),
-            catchError(this.handleError) 
-        );
-    }
-
-    register(user: any): Observable<any> {
-        return this.http
-            .post<any>(`${this.apiUrl}/users`, user, httpOption)
-            .pipe(
-                map((response) => {
-                    console.log('Inscription réussie :', response);
-                    return response;
-                })
-                // catchError(this.handleError('register', null))
-            );
-    }
-
-    isAuthenticated(): boolean {
-        return this.tokenService.hasToken();
-    }
-
-    getUserInfo(): any {
-        return this.currentUserValue; // Retourne l'utilisateur actuellement stocké
-    }
-
-    setUserId(id: string) {
-        this.userId = id;
-    }
-
-    getUserId() {
-        return localStorage.getItem('user_id');
-    }
-
-    verifyToken(): Observable<boolean> {
-        return this.tokenService.verifyToken().pipe(
-            map((isValid) => {
-                if (!isValid) {
-                    this.currentUserSubject.next(null);
-                    this.router.navigate(['/auth/login']);
-                }
-                return isValid;
-            })
-        );
-    }
-
+export interface ApiResponse<T = any> { 
+  success: boolean; 
+  message: string; 
+  data?: T | null; 
 }
+
+export interface LoginResponse {
+  user: Contact;
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  expires_at: string;
+}
+
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+  private apiUrl = environment.apiUrl;
+
+  private currentUserSubject = new BehaviorSubject<Contact | null>(
+    JSON.parse(localStorage.getItem('current_user') || 'null')
+  );
+  public currentUser$ = this.currentUserSubject.asObservable();
+
+  constructor(
+    private http: HttpClient, 
+    private router: Router,
+    private tokenService: TokenService
+  ) {
+    // Vérifie si le token est encore valide au démarrage
+    this.checkTokenValidity();
+  }
+
+  public get currentUserValue(): Contact | null {
+    return this.currentUserSubject.value;
+  }
+
+  /**
+   * Vérifie la validité du token au démarrage
+   */
+  private checkTokenValidity(): void {
+    if (this.tokenService.isTokenExpired()) {
+      this.clearAuthData();
+    }
+  }
+
+  /**
+   * Stocke les données d'authentification
+   */
+  private setAuthData(token: string, user: Contact, expiresIn: number): void {
+    // Utilise TokenService pour gérer le token
+    this.tokenService.storeToken(token, expiresIn);
+    
+    // Stocke l'utilisateur
+    this.currentUserSubject.next(user);
+    localStorage.setItem('current_user', JSON.stringify(user));
+    localStorage.setItem('user_id', String(user.id));
+  }
+
+  /**
+   * Nettoie toutes les données d'authentification
+   */
+  private clearAuthData(): void {
+    this.tokenService.clearToken();
+    this.currentUserSubject.next(null);
+  }
+
+  /**
+   * Gestion des erreurs HTTP
+   */
+  private handleError = (error: HttpErrorResponse) => {
+    console.error('HTTP Error:', error);
+    
+    let msg = 'Une erreur inconnue est survenue';
+    
+    if (error.status === 422) {
+      const e = error.error;
+      if (e?.data && typeof e.data === 'object') {
+        msg = Object.values(e.data).flat().join(' ');
+      } else if (e?.errors) {
+        msg = Object.values(e.errors).flat().join(' ');
+      } else if (e?.message) {
+        msg = e.message;
+      }
+    } else if (error.status === 401) {
+      msg = 'Identifiants incorrects';
+      this.clearAuthData();
+    } else if (error.status === 403) {
+      msg = error.error?.message || 'Accès refusé';
+    } else if (error.status === 419) {
+      msg = 'Session expirée';
+    } else if (error.status === 0) {
+      msg = 'Serveur injoignable';
+    } else if (error.error?.message) {
+      msg = error.error.message;
+    }
+    
+    return throwError(() => error);
+  }
+
+  /**
+   * LOGIN STATELESS
+   * Envoie credentials et reçoit un token Bearer
+   */
+  login(credentials: { email: string; password: string }): Observable<LoginResponse> {
+    return this.http
+      .post<ApiResponse<LoginResponse>>(`${this.apiUrl}/login-stateless`, credentials)
+      .pipe(
+        map(response => {
+          if (!response.data) {
+            throw new Error('Réponse invalide du serveur');
+          }
+          return response.data;
+        }),
+        tap(data => {
+          this.setAuthData(data.access_token, data.user, data.expires_in);
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * LOGOUT
+   * Révoque le token côté serveur et nettoie les données locales
+   */
+  logout(): Observable<any> {
+    return this.http
+      .post<ApiResponse>(`${this.apiUrl}/logout`, {})
+      .pipe(
+        tap(() => {
+          this.clearAuthData();
+          this.router.navigate(['/auth/login']);
+        }),
+        catchError(error => {
+          // Même en cas d'erreur serveur, nettoie localement
+          this.clearAuthData();
+          this.router.navigate(['/auth/login']);
+          return throwError(() => error);
+        })
+      );
+  }
+
+  /**
+   * Récupère les informations de l'utilisateur connecté
+   */
+  getMe(): Observable<Contact> {
+    return this.http
+      .get<ApiResponse<Contact>>(`${this.apiUrl}/users/me`)
+      .pipe(
+        map(response => {
+          if (!response.data) {
+            throw new Error('Utilisateur non trouvé');
+          }
+          return response.data;
+        }),
+        tap(user => {
+          this.currentUserSubject.next(user);
+          localStorage.setItem('current_user', JSON.stringify(user));
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * INSCRIPTION (Register)
+   */
+  register(payload: Contact): Observable<LoginResponse> {
+    return this.http
+      .post<ApiResponse<LoginResponse>>(`${this.apiUrl}/users/clients/create`, payload)
+      .pipe(
+        map(response => {
+          if (!response.data) {
+            throw new Error('Erreur lors de la création du compte');
+          }
+          return response.data;
+        }),
+        tap(data => {
+          // Si l'API retourne un token après inscription
+          if (data.access_token) {
+            this.setAuthData(data.access_token, data.user, data.expires_in);
+          } else {
+            // Sinon, juste stocker l'utilisateur
+            this.currentUserSubject.next(data.user);
+            localStorage.setItem('current_user', JSON.stringify(data.user));
+          }
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Vérifie si l'utilisateur est authentifié
+   */
+  isAuthenticated(): boolean {
+    const hasToken = this.tokenService.hasToken();
+    const hasUser = !!this.currentUserValue;
+    
+    if (!hasToken || !hasUser) {
+      return false;
+    }
+    
+    // Vérifie l'expiration via TokenService
+    if (this.tokenService.isTokenExpired()) {
+      this.clearAuthData();
+      return false;
+    }
+    
+    return true;
+  }
+
+  /**
+   * Récupère l'ID de l'utilisateur
+   */
+  getUserId(): number | null {
+    const id = this.currentUserValue?.id ?? Number(localStorage.getItem('user_id'));
+    return Number.isFinite(id) ? Number(id) : null;
+  }
+
+  /**
+   * Récupère le token d'authentification
+   */
+  getToken(): string | null {
+    return this.tokenService.getToken();
+  }
+
+  /**
+   * Vérifie si le token est expiré
+   */
+  isTokenExpired(): boolean {
+    return this.tokenService.isTokenExpired();
+  }
+
+  /**
+   * Retourne le temps restant avant expiration (en secondes)
+   */
+  getTokenTimeRemaining(): number {
+    return this.tokenService.getTokenTimeRemaining();
+  }
+
+  /**
+   * Vérifie le token côté serveur
+   */
+  verifyToken(): Observable<boolean> {
+    return this.tokenService.verifyToken();
+  }
+
+  /**
+   * Retourne les informations complètes sur le token (debug)
+   */
+  getTokenInfo() {
+    return this.tokenService.getTokenInfo();
+  }
+} 

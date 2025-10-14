@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { AgenceNewRoutingModule } from './agence-new-routing.module';
 import { AgenceNewComponent } from './agence-new.component';
-import { ContactNewRoutingModule } from '../../contact/contact-new/contact-new-routing.module';
-import { FormsModule } from '@angular/forms';
+ import { FormsModule } from '@angular/forms';
 import { ProfileCreateRoutingModule } from '../../profile/create/profilecreate-routing.module';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';

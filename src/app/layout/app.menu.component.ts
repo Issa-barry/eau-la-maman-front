@@ -58,9 +58,9 @@ export class AppMenuComponent implements OnInit {
                     //     routerLink: ['/dashboard/ventes']
                     // },
                     {
-                        label: 'Contact',
+                        label: 'Users-Contact',
                         icon: 'pi pi-fw pi-users',
-                        routerLink: ['/dashboard/contact']
+                        routerLink: ['/dashboard/user']
                     },
                     // {
                     //     label: 'Dépots',

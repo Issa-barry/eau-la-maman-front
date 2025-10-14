@@ -61,7 +61,7 @@ export class UserListeComponent implements OnInit {
             {
                 label: 'Client',
                 icon: 'pi pi-external-link',
-                url: '/dashboard/user/user-new-client',
+                url: '/dashboard/contact/contact-new-client',
             },
             {
                 label: 'Employé',

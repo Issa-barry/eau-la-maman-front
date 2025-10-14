@@ -10,13 +10,12 @@ import { RoleService } from 'src/app/demo/service/role/role.service';
 import { UserService } from 'src/app/demo/service/users/user.service';
 
 @Component({
-  selector: 'app-contact-new',
-  standalone: false,
-  templateUrl: './contact-new.component.html',
-  styleUrl: './contact-new.component.scss',
+  selector: 'app-user-new',
+  templateUrl: './user-new.component.html',
+  styleUrl: './user-new.component.scss',
   providers: [MessageService, ConfirmationService],
 })
-export class ContactNewComponent implements OnInit {
+export class UserNewComponent implements OnInit {
   countries: any[] = [];
   submitted = false;
   user: User = new User();

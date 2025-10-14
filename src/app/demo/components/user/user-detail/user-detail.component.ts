@@ -16,14 +16,14 @@ import { User } from 'src/app/demo/models/User';
 import { AgenceService } from 'src/app/demo/service/agence/agence.service';
  import { RoleService } from 'src/app/demo/service/role/role.service';
 import { UserService } from 'src/app/demo/service/users/user.service';
- 
-@Component({ 
-    selector: 'app-contact-detail',
-    templateUrl: './contact-detail.component.html',
-    styleUrl: './contact-detail.component.scss',
-    providers: [MessageService, ConfirmationService],
+
+@Component({
+  selector: 'app-user-detail',
+  templateUrl: './user-detail.component.html',
+  styleUrl: './user-detail.component.scss',
+  providers: [MessageService, ConfirmationService],
 })
-export class ContactDetailComponent implements OnInit, OnDestroy {
+export class UserDetailComponent implements OnInit, OnDestroy {
     @Input() user: User = new User();
     @Input() role: Role = new Role();
 

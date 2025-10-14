@@ -1,8 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ContactDetailRoutingModule } from './contact-detail-routing.module';
-import { FormsModule } from '@angular/forms';
+ import { FormsModule } from '@angular/forms';
 import { ProfileCreateRoutingModule } from '../../profile/create/profilecreate-routing.module';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
@@ -14,38 +13,42 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { PasswordModule } from 'primeng/password';
 import { ToastModule } from 'primeng/toast';
-import { ContactDetailComponent } from './contact-detail.component';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DividerModule } from 'primeng/divider';
 import { PanelModule } from 'primeng/panel';
 import { SkeletonModule } from 'primeng/skeleton';
 
-@NgModule({ 
-  declarations: [ContactDetailComponent],
+import { UserDetailRoutingModule } from './user-detail-routing.module';
+import { UserDetailComponent } from './user-detail.component';
+
+
+@NgModule({
+  declarations: [
+    UserDetailComponent
+  ],
   imports: [
     CommonModule,
-    ContactDetailRoutingModule,
-       FormsModule,
-        ProfileCreateRoutingModule,
-        ButtonModule,
-        RippleModule,
-        InputTextModule,
-        DropdownModule,
-        FileUploadModule,
-        InputTextareaModule, 
-        InputGroupModule,
-        InputGroupAddonModule, 
-        PasswordModule, 
-        ToastModule, 
-        ProgressSpinnerModule,
-        DialogModule,
-        ConfirmDialogModule,
-        DividerModule,
-        PanelModule,
-        SkeletonModule
+    UserDetailRoutingModule,
+    FormsModule,
+            ProfileCreateRoutingModule,
+            ButtonModule,
+            RippleModule,
+            InputTextModule,
+            DropdownModule,
+            FileUploadModule,
+            InputTextareaModule, 
+            InputGroupModule,
+            InputGroupAddonModule, 
+            PasswordModule, 
+            ToastModule, 
+            ProgressSpinnerModule,
+            DialogModule,
+            ConfirmDialogModule,
+            DividerModule,
+            PanelModule,
+            SkeletonModule
   ]
 })
-export class ContactDetailModule { }
- 
+export class UserDetailModule { }

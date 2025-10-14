@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Contact } from 'src/app/demo/models/contact';
-import { AuthService } from 'src/app/demo/service/auth/auth.service';
+import { User } from 'src/app/demo/models/User';
+ import { AuthService } from 'src/app/demo/service/auth/auth.service';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 
 @Component({
@@ -11,7 +11,7 @@ import { LayoutService } from 'src/app/layout/service/app.layout.service';
 })
 export class RegisterComponent {
     confirmed: boolean = false;
-    contact: Contact = new Contact();
+    user: User = new User();
     errorMessage: string = '';
     successMessage: string = '';
 
@@ -37,10 +37,10 @@ export class RegisterComponent {
     }
 
     onRegister(){
-        this.contact.password_confirmation = this.contact.password;
-        console.log(this.contact);
+        this.user.password_confirmation = this.user.password;
+        console.log(this.user);
         
-        this.authService.register(this.contact).subscribe({
+        this.authService.register(this.user).subscribe({
             next: (response) => {
                 this.successMessage = 'Inscription réussie ! Vous avez reçu un mail de validation.';
                 this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Inscription réussie ! Vous avez reçu un mail de validation.', life: 4000 });

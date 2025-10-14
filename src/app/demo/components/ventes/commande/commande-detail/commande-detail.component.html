@@ -27,8 +27,8 @@
 
         <p-dropdown
           *ngIf="isEditMode"
-          [options]="contacts" 
-          [(ngModel)]="commande.contact"
+          [options]="users" 
+          [(ngModel)]="commande.user"
           optionLabel="nom_complet"
           placeholder="Sélectionner un livreur"
           [filter]="true"
@@ -36,7 +36,7 @@
           [showClear]="true"
           appendTo="body"
           styleClass="w-full"
-          [ngClass]="{ 'p-invalid': hasError('contact_id') }">
+          [ngClass]="{ 'p-invalid': hasError('user_id') }">
           <ng-template let-livreur pTemplate="selectedItem">
             <div *ngIf="livreur" class="flex flex-column">
               <div class="font-medium">{{ livreur.nom_complet }}</div>
@@ -49,13 +49,13 @@
           </ng-template>
         </p-dropdown>
 
-        <div *ngIf="getError('contact_id')" class="text-red-500 text-xs mt-1">
-          {{ getError('contact_id') }}
+        <div *ngIf="getError('user_id')" class="text-red-500 text-xs mt-1">
+          {{ getError('user_id') }}
         </div>
 
         <div *ngIf="!isEditMode" class="p-2 border-1 border-round surface-border text-sm">
           <div class="font-medium text-900">
-            {{ commande.contact?.nom_complet || 'Non renseigné' }}
+            {{ commande.user?.nom_complet || 'Non renseigné' }}
           </div>
         </div>
       </div>

@@ -39,7 +39,7 @@
         </div>
         <div class="flex justify-content-between align-items-center">
           <span class="font-semibold mr-6">REFERENCE CLIENT </span>
-          <span>{{ facture.commande?.contact?.reference }}</span>
+          <span>{{ facture.commande?.user?.reference }}</span>
         </div>
       </div>
     </div>
@@ -47,8 +47,8 @@
 
   <div class="mt-5 mb-8 flex flex-column">
     <div class="mb-3 text-2xl font-medium">FACTURE DE</div>
-    <span class="mb-2">{{ facture.commande?.contact?.nom_complet }}</span>
-    <span>{{ facture.commande?.contact?.phone | phoneFormat:'GN' }}</span>
+    <span class="mb-2">{{ facture.commande?.user?.nom_complet }}</span>
+    <span>{{ facture.commande?.user?.phone | phoneFormat:'GN' }}</span>
   </div>
 
   <div class="overflow-x-auto">

@@ -4,9 +4,9 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environements/environment.dev';
 import { Router } from '@angular/router';
-import { Contact } from '../../models/contact';
-import { TokenService } from '../token/token.service';
-
+ import { TokenService } from '../token/token.service';
+import { User } from '../../models/User';
+  
 export interface ApiResponse<T = any> { 
   success: boolean; 
   message: string; 
@@ -14,7 +14,7 @@ export interface ApiResponse<T = any> {
 }
 
 export interface LoginResponse {
-  user: Contact;
+  user: User;
   access_token: string;
   token_type: string;
   expires_in: number;
@@ -25,10 +25,10 @@ export interface LoginResponse {
 export class AuthService {
   private apiUrl = environment.apiUrl;
 
-  private currentUserSubject = new BehaviorSubject<Contact | null>(
+  private currentUserubject = new BehaviorSubject<User | null>(
     JSON.parse(localStorage.getItem('current_user') || 'null')
   );
-  public currentUser$ = this.currentUserSubject.asObservable();
+  public currentUser$ = this.currentUserubject.asObservable();
 
   constructor(
     private http: HttpClient, 
@@ -39,8 +39,8 @@ export class AuthService {
     this.checkTokenValidity();
   }
 
-  public get currentUserValue(): Contact | null {
-    return this.currentUserSubject.value;
+  public get currentUserValue(): User | null {
+    return this.currentUserubject.value;
   }
 
   /**
@@ -55,12 +55,12 @@ export class AuthService {
   /**
    * Stocke les données d'authentification
    */
-  private setAuthData(token: string, user: Contact, expiresIn: number): void {
+  private setAuthData(token: string, user: User, expiresIn: number): void {
     // Utilise TokenService pour gérer le token
     this.tokenService.storeToken(token, expiresIn);
     
     // Stocke l'utilisateur
-    this.currentUserSubject.next(user);
+    this.currentUserubject.next(user);
     localStorage.setItem('current_user', JSON.stringify(user));
     localStorage.setItem('user_id', String(user.id));
   }
@@ -70,7 +70,7 @@ export class AuthService {
    */
   private clearAuthData(): void {
     this.tokenService.clearToken();
-    this.currentUserSubject.next(null);
+    this.currentUserubject.next(null);
   }
 
   /**
@@ -151,9 +151,9 @@ export class AuthService {
   /**
    * Récupère les informations de l'utilisateur connecté
    */
-  getMe(): Observable<Contact> {
+  getMe(): Observable<User> {
     return this.http
-      .get<ApiResponse<Contact>>(`${this.apiUrl}/users/me`)
+      .get<ApiResponse<User>>(`${this.apiUrl}/user/me`)
       .pipe(
         map(response => {
           if (!response.data) {
@@ -162,7 +162,7 @@ export class AuthService {
           return response.data;
         }),
         tap(user => {
-          this.currentUserSubject.next(user);
+          this.currentUserubject.next(user);
           localStorage.setItem('current_user', JSON.stringify(user));
         }),
         catchError(this.handleError)
@@ -172,9 +172,9 @@ export class AuthService {
   /**
    * INSCRIPTION (Register)
    */
-  register(payload: Contact): Observable<LoginResponse> {
+  register(payload: User): Observable<LoginResponse> {
     return this.http
-      .post<ApiResponse<LoginResponse>>(`${this.apiUrl}/users/clients/create`, payload)
+      .post<ApiResponse<LoginResponse>>(`${this.apiUrl}/user/clients/create`, payload)
       .pipe(
         map(response => {
           if (!response.data) {
@@ -188,7 +188,7 @@ export class AuthService {
             this.setAuthData(data.access_token, data.user, data.expires_in);
           } else {
             // Sinon, juste stocker l'utilisateur
-            this.currentUserSubject.next(data.user);
+            this.currentUserubject.next(data.user);
             localStorage.setItem('current_user', JSON.stringify(data.user));
           }
         }),

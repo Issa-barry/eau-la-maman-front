@@ -48,7 +48,7 @@
               <p-tableCheckbox [value]="packing"></p-tableCheckbox>
             </td>
             <td>{{ packing.reference }}</td>
-            <td>{{ packing.user?.nom_complet }}</td>
+            <!-- <td>{{ packing.user?.nom_complet }}</td> -->
             <td>{{ packing.date | date }}</td>
             <td>{{ packing.statut }}</td>
             <td>
@@ -91,7 +91,7 @@
       <p-dialog [(visible)]="showDetailDialog" header="Détails du packing" [modal]="true" [style]="{width: '700px'}">
         <div *ngIf="selectedPacking">
           <p><b>Référence :</b> {{ selectedPacking.reference }}</p>
-          <p><b>Employé :</b> {{ selectedPacking.user?.nom_complet }}</p>
+          <!-- <p><b>Employé :</b> {{ selectedPacking.user?.nom_complet }}</p> -->
           <p><b>Date :</b> {{ selectedPacking.date | date }}</p>
           <p><b>Heure début :</b> {{ selectedPacking.heure_debut }}</p>
           <p><b>Heure fin :</b> {{ selectedPacking.heure_fin }}</p>

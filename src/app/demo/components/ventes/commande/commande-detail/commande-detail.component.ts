@@ -3,12 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { UpdateCommandeDto } from 'src/app/demo/models/commande-update.dto';
 import { Commande } from 'src/app/demo/models/commande.model';
-import { Contact } from 'src/app/demo/models/contact';
-import { Produit } from 'src/app/demo/models/produit.model';
-import { ContactService } from 'src/app/demo/service/contact/contact.service';
-import { ProduitService } from 'src/app/demo/service/produit/produit.service';
+ import { Produit } from 'src/app/demo/models/produit.model';
+ import { ProduitService } from 'src/app/demo/service/produit/produit.service';
 import { CommandeService, ApiErrorShape } from 'src/app/demo/service/ventes/commande/commande.service';
 import { forkJoin } from 'rxjs';
+import { User } from 'src/app/demo/models/User';
+import { UserService } from 'src/app/demo/service/users/user.service';
 
 @Component({
   selector: 'app-commande-detail',
@@ -24,7 +24,7 @@ export class CommandeDetailComponent implements OnInit {
   apiErrors: { [key: string]: string[] } = {};
 
   produits: Produit[] = [];
-  contacts: Contact[] = [];
+  users: User[] = [];
   commande: Commande = new Commande();
   numeroCommande: string = this.activatedRoute.snapshot.params['id'];
 
@@ -40,19 +40,19 @@ export class CommandeDetailComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private commandeService: CommandeService,
     private produitService: ProduitService,
-    private contactService: ContactService,
+    private userService: UserService,
     private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    // Charge produits et contacts en parallèle, puis la commande
+    // Charge produits et users en parallèle, puis la commande
     forkJoin({
       produits: this.produitService.getProduits(),
-      contacts: this.contactService.getContacts(),
+      users: this.userService.getUser(),
     }).subscribe({
-      next: ({ produits, contacts }) => {
+      next: ({ produits, users }) => {
         this.produits = produits;
-        this.contacts = contacts;
+        this.users = users;
         this.loadCommande(); // ensuite seulement on charge la commande
       },
       error: (err: ApiErrorShape) => {
@@ -69,8 +69,8 @@ export class CommandeDetailComponent implements OnInit {
   private mapCommande(res: Commande) {
     this.commande = res;
 
-    // Contact
-    this.commande.contact = this.contacts.find((c) => c.id === res.contact?.id);
+    // User
+    this.commande.user = this.users.find((c) => c.id === res.user?.id);
 
     // Réduction
     this.reduction = parseFloat(res.reduction as any) || 0;
@@ -148,7 +148,7 @@ export class CommandeDetailComponent implements OnInit {
     this.errorMessage = '';
 
     const payload: UpdateCommandeDto = {
-      contact_id: this.commande.contact?.id!,
+      user_id: this.commande.user?.id!, 
       reduction: this.reduction,
       lignes: this.lignes.map((ligne) => ({
         produit_id: ligne.produit?.id!,

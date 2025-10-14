@@ -5,12 +5,12 @@ import { MessageService } from 'primeng/api';
 import { CommandeService } from 'src/app/demo/service/ventes/commande/commande.service';
 import { ProduitService } from 'src/app/demo/service/produit/produit.service';
 import { LivraisonService } from 'src/app/demo/service/stock/livraison/livraison.service';
-import { ContactService } from 'src/app/demo/service/contact/contact.service';
-
+ 
 import { Produit } from 'src/app/demo/models/produit.model';
-import { Contact } from 'src/app/demo/models/contact';
-import { Commande } from 'src/app/demo/models/commande.model';
+ import { Commande } from 'src/app/demo/models/commande.model';
 import { Livraison } from 'src/app/demo/models/livraison.model';
+import { User } from 'src/app/demo/models/User';
+import { UserService } from 'src/app/demo/service/users/user.service';
 
 interface UILigne {
   id?: number;                    // id de commande_ligne pour le payload multi-lignes
@@ -35,11 +35,11 @@ export class LivraisonDetailComponent implements OnInit {
   totalCommande = 0;
   commandeNumero: string = this.activatedRoute.snapshot.params['id'];
 
-  selectedLivreur: Contact | null = null;
-  selectedClient: Contact | null = null;
+  selectedLivreur: User | null = null;
+  selectedClient: User | null = null;
 
   produits: Produit[] = [];
-  contacts: Contact[] = [];
+  users: User[] = [];
 
   commande?: Commande;
   livraison: Livraison = new Livraison();
@@ -57,12 +57,12 @@ export class LivraisonDetailComponent implements OnInit {
     private commandeService: CommandeService,
     private produitService: ProduitService,
     private livraisonService: LivraisonService,
-    private contactService: ContactService,
+    private userService: UserService,
   ) {}
 
   ngOnInit(): void {
     this.loadProduits();
-    this.loadContacts();
+    this.loadUsers();
     this.loadCommande();
   }
 
@@ -93,12 +93,12 @@ export class LivraisonDetailComponent implements OnInit {
   }
 
   // ------------------ Loaders ------------------
-  loadContacts(): void {
-    this.contactService.getContacts().subscribe({
-      next: res => (this.contacts = res),
+  loadUsers(): void {
+    this.userService.getUser().subscribe({
+      next: res => (this.users = res),
       error: err => {
-        console.error('Erreur récupération contacts :', err);
-        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Impossible de charger les contacts.' });
+        console.error('Erreur récupération users :', err);
+        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Impossible de charger les users.' });
       },
     });
   }
@@ -117,7 +117,7 @@ export class LivraisonDetailComponent implements OnInit {
     this.commandeService.getCommandeByNumero(this.commandeNumero).subscribe({
       next: (commande: Commande | any) => {
         this.commande = commande;
-        this.selectedLivreur = commande?.contact ?? null;
+        this.selectedLivreur = commande?.user ?? null;
         this.totalCommande = Number(commande?.montant_total ?? 0);
 
         this.lignes = (commande?.lignes ?? []).map((l: any): UILigne => ({

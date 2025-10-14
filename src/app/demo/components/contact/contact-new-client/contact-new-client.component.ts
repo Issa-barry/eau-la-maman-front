@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Civilite } from 'src/app/demo/enums/civilite.enum';
-import { TypeClientEnum } from 'src/app/demo/enums/typeClient.enum';
+import { ContactEnum } from 'src/app/demo/enums/contact.enum';
 import { VehiculeEnum } from 'src/app/demo/enums/vehicule.enum';
-import { Contact } from 'src/app/demo/models/contact';
-import { Role } from 'src/app/demo/models/Role';
-import { ContactService } from 'src/app/demo/service/contact/contact.service';
-import { RoleService } from 'src/app/demo/service/role/role.service';
+ import { Role } from 'src/app/demo/models/Role';
+import { User } from 'src/app/demo/models/User';
+ import { RoleService } from 'src/app/demo/service/role/role.service';
+import { UserService } from 'src/app/demo/service/users/user.service';
 
 @Component({
   selector: 'app-contact-new-client',
@@ -18,7 +18,7 @@ import { RoleService } from 'src/app/demo/service/role/role.service';
 export class ContactNewClientComponent implements OnInit {
     countries: any[] = [];
     submitted: boolean = false;
-    contact: Contact = new Contact();
+    user: User = new User();
     roles: Role[] = [];
     errors: { [key: string]: string } = {};
     isGuineeSelected: boolean = false;
@@ -26,7 +26,7 @@ export class ContactNewClientComponent implements OnInit {
    
     constructor(
         private router: Router,
-        private contactService: ContactService,
+        private userService: UserService,
         private roleService: RoleService,
         private messageService: MessageService,
         private confirmationService: ConfirmationService
@@ -59,19 +59,19 @@ export class ContactNewClientComponent implements OnInit {
     }));
 
      clientOptions = [
-  { label: 'Spécifique', value: TypeClientEnum.Specifique },
-  { label: 'Véhicule',   value: TypeClientEnum.Vehicule },
-];
+        { label: 'Spécifique', value: ContactEnum.ClientSpecifique },
+        { label: 'Livreur',   value: ContactEnum.Livreur },
+        ];
 
         vehiculeOptions = Object.values(VehiculeEnum).map((vehicule) => ({
         label: vehicule,
         value: vehicule,
     }));
 
-    onTypeClientChange(val: TypeClientEnum) {
-  if (val !== TypeClientEnum.Vehicule) {
-    this.contact.type_vehicule = null;
-  }
+    onTypeClientChange(val: ContactEnum) {
+//   if (val !== ContactEnum.Vehicule) {
+//     this.user.type_vehicule = null;
+//   }
 }
 
     // iba
@@ -82,8 +82,8 @@ export class ContactNewClientComponent implements OnInit {
         this.errors = {};
 
         if (
-            !this.contact.nom_complet ||
-            !this.contact.phone  
+            !this.user.nom_complet ||
+            !this.user.phone  
          ) {
             this.messageService.add({
                 severity: 'warn',
@@ -95,29 +95,29 @@ export class ContactNewClientComponent implements OnInit {
         } 
 
         const clientPayload = {
-        nom_complet: this.contact.nom_complet,
-        phone: this.contact.phone
+        nom_complet: this.user.nom_complet,
+        phone: this.user.phone
     };
 
-         console.log(this.contact)
+         console.log(this.user)
          
-        this.contactService.createClient(clientPayload).subscribe({
+        this.userService.createClient(clientPayload).subscribe({
             next: () => {
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Succès',
-                    detail: 'Contact créé avec succès',
+                    detail: 'User créé avec succès',
                     life: 3000,
                 });
 
-                this.contact = new Contact();
+                this.user = new User();
                 this.submitted = false;
                 this.errors = {};
                  
-                // this.router.navigate(['/dashboard/contact']);
+                // this.router.navigate(['/dashboard/user']);
             },
             error: (err) => {
-                console.error('Erreur lors de la création du contact:', err);
+                console.error('Erreur lors de la création du user:', err);
 
                 if (err.error && err.error.errors) {
                     this.errors = err.error.errors;
@@ -126,7 +126,7 @@ export class ContactNewClientComponent implements OnInit {
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Erreur',
-                    detail: 'Création du contact échouée. Vérifiez les champs.',
+                    detail: 'Création du user échouée. Vérifiez les champs.',
                     life: 5000,
                 });
             },

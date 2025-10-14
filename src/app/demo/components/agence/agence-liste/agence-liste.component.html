@@ -45,8 +45,7 @@
                     'reference',
                     'nom_agence',
                     'adresse.adresse',
-                    'responsable.nom_complet',
-                    'phone',
+                     'phone',
                     'statut'
                 ]"
             >
@@ -76,8 +75,7 @@
                         <th pSortableColumn="nom_agence">Nom <p-sortIcon field="nom_agence"></p-sortIcon></th>
                         <th pSortableColumn="phone">Téléphone <p-sortIcon field="phone"></p-sortIcon></th>
                         <th pSortableColumn="adresse.adresse">Adresse <p-sortIcon field="adresse.adresse"></p-sortIcon></th>
-                        <th pSortableColumn="responsable.nom_complet">Responsable</th>
-                        <th pSortableColumn="statut">Statut <p-sortIcon field="statut"></p-sortIcon></th>
+                         <th pSortableColumn="statut">Statut <p-sortIcon field="statut"></p-sortIcon></th>
                         <th>Actions</th>
                     </tr>
                 </ng-template>
@@ -98,8 +96,7 @@
                         <td>{{ agence.nom_agence }}</td>
                         <td>{{ agence.phone }}</td>
                         <td>{{ agence.adresse.adresse }}</td>
-                        <td>{{ agence.responsable.nom_complet }}</td>
-                        <td>
+                         <td>
                             <span [ngClass]="'product-badge status-' + agence.statut.toLowerCase()">
                                 {{ agence.statut }}
                             </span>
@@ -143,8 +140,7 @@
                             [routerLink]="['/dashboard/contact/contact-detail', agence.responsable.id]"
                             class="text-primary font-medium underline"
                         >
-                            {{ agence.responsable.nom_complet }}
-                        </a>
+                         </a>
                     </p>
                     <p><strong>Référence :</strong> {{ agence.reference }}</p>
                     <p><strong>Nom :</strong> {{ agence.nom_agence }}</p>

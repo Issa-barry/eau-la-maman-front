@@ -1,6 +1,6 @@
 <div class="card">
   <p-toast></p-toast>
-  <span class="text-900 text-xl font-bold mb-4 block">Créer un contact</span>
+  <span class="text-900 text-xl font-bold mb-4 block">Créer un user</span>
   <p-progressBar mode="indeterminate" *ngIf="loading" class="w-full h-2"></p-progressBar>
 
   <div class="grid" *ngIf="!loading">
@@ -11,12 +11,12 @@
         <div class="field mb-4 col-12 md:col-6">
           <label for="role" class="font-medium text-900">Role</label>
           <p-dropdown
-            [(ngModel)]="contact.role_name"
+            [(ngModel)]="user.role_name"
             [options]="roles"
             optionLabel="name"
             optionValue="name"
             placeholder="Sélectionnez un rôle"
-            [ngClass]="{'ng-invalid ng-dirty': (submitted && !contact.role_name) || errors['role_name']}">
+            [ngClass]="{'ng-invalid ng-dirty': (submitted && !user.role_name) || errors['role_name']}">
           </p-dropdown>
           <small *ngIf="errors['role_name']">{{ errors['role_name'] }}</small>
         </div>
@@ -25,8 +25,8 @@
         <div class="field mb-4 col-12 md:col-6">
           <label for="country" class="font-medium text-900">Civilitté</label>
           <p-dropdown id="civilite" [options]="civiliteOptions" optionLabel="label" optionValue="value"
-            [(ngModel)]="contact.civilite" placeholder="Sélectionnez une civilité"
-            [ngClass]="{'ng-invalid ng-dirty': (submitted && !contact.civilite) || errors['civilite']}">
+            [(ngModel)]="user.civilite" placeholder="Sélectionnez une civilité"
+            [ngClass]="{'ng-invalid ng-dirty': (submitted && !user.civilite) || errors['civilite']}">
           </p-dropdown>
           <small *ngIf="errors['civilite']">{{ errors['civilite'] }}</small>
         </div>
@@ -34,32 +34,32 @@
         <!-- Nom complet -->
         <div class="field mb-4 col-12 md:col-12">
           <label for="nom_complet" class="font-medium text-900">Nom complet</label>
-          <input id="nom_complet" type="text" pInputText [(ngModel)]="contact.nom_complet"
-            [ngClass]="{'ng-invalid ng-dirty': (submitted && !contact.nom_complet) || errors['nom_complet']}">
+          <input id="nom_complet" type="text" pInputText [(ngModel)]="user.nom_complet"
+            [ngClass]="{'ng-invalid ng-dirty': (submitted && !user.nom_complet) || errors['nom_complet']}">
           <small *ngIf="errors['nom_complet']">{{ errors['nom_complet'] }}</small>
         </div>
 
         <!-- Email / Phone -->
         <div class="field mb-4 col-12 md:col-6">
           <label for="email" class="font-medium text-900">Email</label>
-          <input id="email" type="text" [(ngModel)]="contact.email"
-            [ngClass]="{'ng-invalid ng-dirty': (submitted && !contact.email) || errors['email']}" pInputText>
+          <input id="email" type="text" [(ngModel)]="user.email"
+            [ngClass]="{'ng-invalid ng-dirty': (submitted && !user.email) || errors['email']}" pInputText>
           <small *ngIf="errors['email']">{{ errors['email'] }}</small>
         </div>
         <div class="field mb-4 col-12 md:col-6">
           <label for="phone" class="font-medium text-900">Phone</label>
-          <input id="phone" type="text" [(ngModel)]="contact.phone"
-            [ngClass]="{'ng-invalid ng-dirty': (submitted && !contact.phone) || errors['phone']}" pInputText>
+          <input id="phone" type="text" [(ngModel)]="user.phone"
+            [ngClass]="{'ng-invalid ng-dirty': (submitted && !user.phone) || errors['phone']}" pInputText>
           <small *ngIf="errors['phone']">{{ errors['phone'] }}</small>
         </div>
 
         <!-- Pays -->
         <div class="field mb-4 col-12 md:col-12">
           <label for="country" class="font-medium text-900">Pays</label>
-          <p-dropdown [(ngModel)]="contact.adresse.pays" inputId="country"
+          <p-dropdown [(ngModel)]="user.adresse.pays" inputId="country"
             [options]="countries" optionLabel="name" optionValue="value"
             [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a Country"
-            [ngClass]="{'ng-invalid ng-dirty': (submitted && !contact.adresse.pays) || errors['adresse.pays']}"
+            [ngClass]="{'ng-invalid ng-dirty': (submitted && !user.adresse.pays) || errors['adresse.pays']}"
             (onChange)="onCountryChange($event)">
             <ng-template let-country pTemplate="item">
               <div class="flex align-items-center">
@@ -75,23 +75,23 @@
         <!-- Adresse hors Guinée -->
         <div *ngIf="!isGuineeSelected" class="field mb-4 col-12 md:col-12">
           <label for="adresse" class="font-medium text-900">Adresse</label>
-          <input id="adresse" type="text" [(ngModel)]="contact.adresse.adresse"
-            [ngClass]="{'ng-invalid ng-dirty': (submitted && !contact.adresse.adresse) || errors['adresse.adresse']}" pInputText>
+          <input id="adresse" type="text" [(ngModel)]="user.adresse.adresse"
+            [ngClass]="{'ng-invalid ng-dirty': (submitted && !user.adresse.adresse) || errors['adresse.adresse']}" pInputText>
           <small *ngIf="errors['adresse.adresse']">{{ errors['adresse.adresse'] }}</small>
         </div>
 
         <!-- Code postal hors Guinée -->
         <div *ngIf="!isGuineeSelected" class="field mb-4 col-12 md:col-6">
           <label for="city" class="font-medium text-900">Code Postal</label>
-          <input id="city" type="text" pInputText [(ngModel)]="contact.adresse.code_postal"
-            [ngClass]="{'ng-invalid ng-dirty': (submitted && !contact.adresse.code_postal) || errors['adresse.code_postal']}">
+          <input id="city" type="text" pInputText [(ngModel)]="user.adresse.code_postal"
+            [ngClass]="{'ng-invalid ng-dirty': (submitted && !user.adresse.code_postal) || errors['adresse.code_postal']}">
           <small *ngIf="errors['adresse.code_postal']">{{ errors['adresse.code_postal'] }}</small>
         </div>
 
         <!-- Quartier (Guinée) -->
         <div *ngIf="isGuineeSelected" class="field mb-4 col-12 md:col-6">
           <label for="quartier" class="font-medium text-900">Quartier</label>
-          <input id="quartier" type="text" pInputText [(ngModel)]="contact.adresse.quartier"
+          <input id="quartier" type="text" pInputText [(ngModel)]="user.adresse.quartier"
             [ngClass]="{'ng-invalid ng-dirty': submitted && errors['adresse.quartier']}">
           <small *ngIf="errors['adresse.quartier']">{{ errors['adresse.quartier'] }}</small>
         </div>
@@ -99,7 +99,7 @@
         <!-- Ville (optionnelle) -->
         <div class="field mb-4 col-12 md:col-6">
           <label for="state" class="font-medium text-900">Ville</label>
-          <input id="state" type="text" [(ngModel)]="contact.adresse.ville"
+          <input id="state" type="text" [(ngModel)]="user.adresse.ville"
             [ngClass]="{'ng-invalid ng-dirty': submitted && errors['adresse.ville']}" pInputText>
           <small *ngIf="errors['adresse.ville']">{{ errors['adresse.ville'] }}</small>
         </div>
@@ -108,9 +108,9 @@
         <div class="field mb-4 col-12 md:col-6">
           <label for="city" class="font-medium text-900">Mot de passe</label>
           <p-password id="password" required placeholder="mot de passe"
-            [(ngModel)]="contact.password" styleClass="w-full"
+            [(ngModel)]="user.password" styleClass="w-full"
             [inputStyle]="{ paddingLeft: '2.5rem' }" inputStyleClass="w-full" [toggleMask]="true"
-            [ngClass]="{'ng-invalid ng-dirty': (submitted && !contact.password) || errors['password']}">
+            [ngClass]="{'ng-invalid ng-dirty': (submitted && !user.password) || errors['password']}">
           </p-password>
           <small *ngIf="errors['password']">{{ errors['password'] }}</small>
         </div>
@@ -118,15 +118,15 @@
         <div class="field mb-4 col-12 md:col-6">
           <label for="city" class="font-medium text-900">Confirmer mot de passe</label>
           <p-password id="password_confirmation" required placeholder="Confirmer mot de passe"
-            [(ngModel)]="contact.password_confirmation" styleClass="w-full"
+            [(ngModel)]="user.password_confirmation" styleClass="w-full"
             [inputStyle]="{ paddingLeft: '2.5rem' }" inputStyleClass="w-full" [toggleMask]="true"
-            [ngClass]="{'ng-invalid ng-dirty': (submitted && !contact.password_confirmation) || errors['password']}">
+            [ngClass]="{'ng-invalid ng-dirty': (submitted && !user.password_confirmation) || errors['password']}">
           </p-password>
         </div>
 
         <div class="col-12">
           <button pButton pRipple label="Creer utilisateur" class="w-auto mt-3"
-                  (click)="saveContact()" [loading]="loading" [disabled]="loading"></button>
+                  (click)="saveUser()" [loading]="loading" [disabled]="loading"></button>
         </div>
 
       </div>

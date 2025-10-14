@@ -4,10 +4,10 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { finalize } from 'rxjs/operators';
 
 import { Civilite } from 'src/app/demo/enums/civilite.enum';
-import { Contact } from 'src/app/demo/models/contact';
 import { Role } from 'src/app/demo/models/Role';
-import { ContactService } from 'src/app/demo/service/contact/contact.service';
+import { User } from 'src/app/demo/models/User';
 import { RoleService } from 'src/app/demo/service/role/role.service';
+import { UserService } from 'src/app/demo/service/users/user.service';
 
 @Component({
   selector: 'app-contact-new',
@@ -19,7 +19,7 @@ import { RoleService } from 'src/app/demo/service/role/role.service';
 export class ContactNewComponent implements OnInit {
   countries: any[] = [];
   submitted = false;
-  contact: Contact = new Contact();
+  user: User = new User();
   roles: Role[] = [];
   errors: { [key: string]: string } = {};
   isGuineeSelected = false;
@@ -27,7 +27,7 @@ export class ContactNewComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private contactService: ContactService,
+    private userService: UserService,
     private roleService: RoleService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService
@@ -40,7 +40,7 @@ export class ContactNewComponent implements OnInit {
     ];
 
     // S'assurer que l'objet existe
-    this.contact.adresse = this.contact.adresse ?? {
+    this.user.adresse = this.user.adresse ?? {
       pays: '',
       adresse: '',
       complement_adresse: '',
@@ -51,7 +51,7 @@ export class ContactNewComponent implements OnInit {
     };
 
     // Pré-sélection par défaut
-    this.contact.adresse.pays = this.countries[0].value; // 'GUINEE-CONAKRY'
+    this.user.adresse.pays = this.countries[0].value; // 'GUINEE-CONAKRY'
     this.isGuineeSelected = true;
 
     this.getAllRoles();
@@ -80,30 +80,30 @@ export class ContactNewComponent implements OnInit {
 
     if (selectedCountry && selectedCountry === 'GUINEE-CONAKRY') {
       this.isGuineeSelected = true;
-      this.contact.adresse.code_postal = '00224';
+      this.user.adresse.code_postal = '00224';
     } else {
       this.isGuineeSelected = false;
-      this.contact.adresse.ville = '';
-      this.contact.adresse.quartier = '';
-      this.contact.adresse.code_postal = '';
+      this.user.adresse.ville = '';
+      this.user.adresse.quartier = '';
+      this.user.adresse.code_postal = '';
     }
   }
 
-  saveContact() {
+  saveUser() {
     this.submitted = true;
     this.errors = {};
 
     const isGuinee = this.isGuineeSelected;
 
     if (
-      !this.contact.role_name ||
-      !this.contact.civilite ||
-      !this.contact.nom_complet ||
-      !this.contact.email ||
-      !this.contact.phone ||
-      !this.contact.password ||
-      !this.contact.password_confirmation ||
-      !this.contact.adresse?.pays
+      !this.user.role_name ||
+      !this.user.civilite ||
+      !this.user.nom_complet ||
+      !this.user.email ||
+      !this.user.phone ||
+      !this.user.password ||
+      !this.user.password_confirmation ||
+      !this.user.adresse?.pays
     ) {
       this.messageService.add({
         severity: 'warn',
@@ -115,39 +115,39 @@ export class ContactNewComponent implements OnInit {
     }
 
     // Normalisation simple
-    this.contact.adresse.pays = String(this.contact.adresse.pays);
-    if (!isGuinee && this.contact.adresse.code_postal) {
-      this.contact.adresse.code_postal = String(this.contact.adresse.code_postal);
+    this.user.adresse.pays = String(this.user.adresse.pays);
+    if (!isGuinee && this.user.adresse.code_postal) {
+      this.user.adresse.code_postal = String(this.user.adresse.code_postal);
     }
 
     this.loading = true; // démarre le spinner du bouton
 
-    this.contactService.createEmploye(this.contact)
+    this.userService.createEmploye(this.user)
       .pipe(finalize(() => this.loading = false)) // stoppe toujours le spinner
       .subscribe({
         next: () => {
           this.messageService.add({
             severity: 'success',
             summary: 'Succès',
-            detail: 'Contact créé avec succès',
+            detail: 'User créé avec succès',
             life: 3000,
           });
 
-          this.contact = new Contact();
+          this.user = new User();
           this.submitted = false;
           this.errors = {};
 
-          this.router.navigate(['/dashboard/contact']);
+          this.router.navigate(['/dashboard/user']);
         },
         error: (err) => {
-          console.error('Erreur lors de la création du contact:', err);
+          console.error('Erreur lors de la création du user:', err);
           if (err.error && err.error.errors) {
             this.errors = err.error.errors;
           }
           this.messageService.add({
             severity: 'error',
             summary: 'Erreur',
-            detail: 'Création du contact échouée. Vérifiez les champs.',
+            detail: 'Création du user échouée. Vérifiez les champs.',
             life: 5000,
           });
         },

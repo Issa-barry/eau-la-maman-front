@@ -1,6 +1,6 @@
 import { Commande } from "./commande.model";
-import { Contact } from "./contact";
-import { LivraisonLigne } from "./livraison-ligne.model";
+ import { LivraisonLigne } from "./livraison-ligne.model";
+import { User } from "./User";
 
 export class Livraison {
   id?: number;
@@ -10,7 +10,7 @@ export class Livraison {
   reference?: string;
 
   commande?: Commande;
-  livreur?: Contact;
+  livreur?: User;
   lignes: LivraisonLigne[] = [];
 
   constructor() {

@@ -1,61 +1,30 @@
-import { Civilite } from "../enums/civilite.enum";
-import { TypeClientEnum } from "../enums/typeClient.enum";
-import { VehiculeEnum } from "../enums/vehicule.enum";
-import { Adresse } from "./adresse";
-import { Role } from "./Role";
+import { ContactEnum } from "../enums/contact.enum";
 
-  
- export class Contact {
-    id?: number;
-    reference?:string;
-    civilite?:Civilite;
-    nom_complet: string;
-    phone: string;
-    email:string;
-    date_naissance?:string;
-    password:string;
-    password_confirmation:string;
-    role_id?:number;
-    roles?: Role;
-    agence_id?:number;
-    statut: string;
-    role?: any;
-    role_name:string;
-    
-    adresse: Adresse; 
-    
-      /** Nouveaux champs alignés backend */
-  type_client?: TypeClientEnum;                 // 'specifique' | 'vehicule'
-  type_vehicule?: VehiculeEnum | null; 
+// src/app/demo/models/contact.model.ts
+export class Contact {
+  id?: number;
+  reference?: string;
 
-    constructor()
-    {
-        this.role ="";
-        this.role_name ="";
-        this.nom_complet = "";
-        this.civilite=Civilite.Autre;
-        this.date_naissance="1999-01-01";
-        this.password="";
-        this.password_confirmation="";
-        this.phone = "";
-        this.email = "";
-        this.statut="attente";
-        this.adresse = new Adresse();
-        this.roles= new Role();
-        this.type_client = TypeClientEnum.Specifique;
-        this.type_vehicule = null;
-    }
+  // === Champs alignés backend ===
+  nom: string | null;
+  prenom: string | null;
+  phone: string;
+  ville: string | null;
+  quartier: string | null;
+  type: ContactEnum;           // 'client_specifique' | 'livreur' | 'proprietaire' | 'packing'
+  vehicule_id?: number | null;          // stocké uniquement si livreur
 
-    
-  
+  // lecture seule éventuelle
+  created_at?: string;
+  updated_at?: string;
 
-  /** Helpers pratiques pour l’UI */
-  get isVehicule(): boolean {
-    return this.type_client === TypeClientEnum.Vehicule;
+  constructor() {
+    this.nom = null;
+    this.prenom = null;
+    this.phone = '';
+    this.ville = null;
+    this.quartier = null;
+    this.type = ContactEnum.ClientSpecifique;
+    this.vehicule_id = null;
   }
-
-//   setVehicule(type?: VehiculeEnum | null) {
-//     this.type_client = type ? TypeClientEnum.Vehicule : TypeClientEnum.Specifique;
-//     this.type_vehicule = type ?? null;
-//   }
-}  
+}

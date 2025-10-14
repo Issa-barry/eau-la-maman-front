@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { LayoutService } from './service/app.layout.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../demo/service/auth/auth.service';
-import { ContactService } from '../demo/service/contact/contact.service';
-import { Contact } from '../demo/models/contact';
-import { ConfirmationService, MessageService } from 'primeng/api';
+ import { ConfirmationService, MessageService } from 'primeng/api';
 import { finalize, Observable } from 'rxjs';
+import { UserService } from '../demo/service/users/user.service';
+import { User } from '../demo/models/User';
 
 @Component({
     selector: 'app-profilemenu',
@@ -13,9 +13,9 @@ import { finalize, Observable } from 'rxjs';
     providers: [MessageService],
 })
 export class AppProfileSidebarComponent implements OnInit {
- me$!: Observable<Contact | null>;   // profil connecté (observable)
-  contacts: Contact[] = [];
-  contact: Contact = new Contact();
+ me$!: Observable<User | null>;   // profil connecté (observable)
+  users: User[] = [];
+  user: User = new User();
   errorMessage: string | null = null;
   loggingOut = false; 
  
@@ -23,7 +23,7 @@ export class AppProfileSidebarComponent implements OnInit {
         public router: Router, 
         private authService: AuthService,
         public layoutService: LayoutService,
-        private contactService: ContactService,
+        private userService: UserService,
         private messageService: MessageService,
     ) { }
 
@@ -67,18 +67,18 @@ export class AppProfileSidebarComponent implements OnInit {
         }
       });
   }
-  getContactById(){
-    this.contactService.getContactById(1).subscribe({
+  getUserById(){
+    this.userService.getUserById(1).subscribe({
       next:(res) => {
-        this.contact = res
+        this.user = res
       },
-      error:(err) => {console.error("Erreur lor de la recuperation du contact", err)}
+      error:(err) => {console.error("Erreur lor de la recuperation du user", err)}
     })
   }
 
 
   ngOnInit() {
-    this.getContactById();
+    this.getUserById();
     this.lodUserAuth();
     }
 

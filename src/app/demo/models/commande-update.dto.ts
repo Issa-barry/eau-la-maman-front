@@ -1,5 +1,5 @@
 export interface UpdateCommandeDto {
-  contact_id: number;
+  user_id: number;
   reduction: number;
   lignes: {
     produit_id: number;
@@ -7,3 +7,4 @@ export interface UpdateCommandeDto {
     prix_vente: number;
   }[];
 }
+ 

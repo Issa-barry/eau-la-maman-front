@@ -3,12 +3,12 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { Router } from '@angular/router';
 
-import { Contact } from '../../../models/contact';
-import { Role } from '../../../models/Role';
-import { ContactService } from '../../../service/contact/contact.service';
-import { RoleService } from '../../../service/role/role.service';
+ import { Role } from '../../../models/Role';
+ import { RoleService } from '../../../service/role/role.service';
 import { Statut } from 'src/app/demo/enums/statut.enum';
 import { MenuItem } from 'primeng/api';
+import { User } from 'src/app/demo/models/User';
+import { UserService } from 'src/app/demo/service/users/user.service';
 
 @Component({
     selector: 'app-contact-liste',
@@ -17,24 +17,24 @@ import { MenuItem } from 'primeng/api';
     providers: [MessageService, ConfirmationService],
 })
 export class ContactListeComponent implements OnInit {
-    contacts: Contact[] = [];
-    contact: Contact = new Contact();
+    users: User[] = [];
+    user: User = new User();
     roles: Role[] = [];
     optionPays = [
         { label: 'GUINEE-CONAKRY', value: 'Guinée-Conakry' },
         { label: 'FRANCE', value: 'France' },
     ];
 
-    contactDialog = false;
-    deleteContactDialog = false;
-    deleteContactsDialog = false;
+    userDialog = false;
+    deleteUserDialog = false;
+    deleteUsersDialog = false;
     submitted = false;
 
     loading = false;
     skeletonRows = Array.from({ length: 5 }, () => ({}));
     rowsPerPageOptions = [5, 10, 20];
 
-    selectedContacts: Contact[] = [];
+    selectedUsers: User[] = [];
 
     isValidPhone = true;
     isValidCodePostal = true;
@@ -46,7 +46,7 @@ export class ContactListeComponent implements OnInit {
     cardMenu: MenuItem[] = [];
 
     constructor(
-        private contactService: ContactService,
+        private userService: UserService,
         private roleService: RoleService,
         private router: Router,
         private messageService: MessageService,
@@ -54,19 +54,19 @@ export class ContactListeComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.getAllContacts();
+        this.getAllUsers();
         this.getAllRoles();
 
         this.items = [
             {
                 label: 'Client',
                 icon: 'pi pi-external-link',
-                url: '/dashboard/contact/contact-new-client',
+                url: '/dashboard/user/user-new-client',
             },
             {
                 label: 'Employé',
                 icon: 'pi pi-external-link',
-                routerLink: ['/dashboard/contact/contact-new'],
+                routerLink: ['/dashboard/user/user-new'],
             },
         ];
         this.cardMenu = [
@@ -85,16 +85,16 @@ export class ContactListeComponent implements OnInit {
         ];
     }
 
-    getAllContacts(): void {
+    getAllUsers(): void {
         this.loading = true;
-        this.contactService.getContacts().subscribe({
+        this.userService.getUser().subscribe({
             next: (res) => {
-                this.contacts = res;
+                this.users = res;
                 this.loading = false;
             },
             error: (err) => {
                 console.error(
-                    'Erreur lors de la récupération des contacts:',
+                    'Erreur lors de la récupération des users:',
                     err
                 );
                 this.loading = false;
@@ -111,52 +111,52 @@ export class ContactListeComponent implements OnInit {
 
     validatePhone(): void {
         const regex = /^(?:\+|00)?(\d{1,3})[-.\s]?\d{10,}$/;
-        this.isValidPhone = regex.test(this.contact.phone || '');
+        this.isValidPhone = regex.test(this.user.phone || '');
     }
 
     validateCodePostal(): void {
-        const cp = this.contact.adresse?.code_postal?.toString() || '';
+        const cp = this.user.adresse?.code_postal?.toString() || '';
         this.isValidCodePostal = /^\d{5}$/.test(cp);
     }
 
     validatePays(): void {
-        this.isValidPays = !!this.contact.adresse?.pays;
-        if (this.contact.adresse?.pays === 'GUINEE-CONAKRY') {
-            this.contact.adresse.code_postal = '00000';
+        this.isValidPays = !!this.user.adresse?.pays;
+        if (this.user.adresse?.pays === 'GUINEE-CONAKRY') {
+            this.user.adresse.code_postal = '00000';
             this.isCodePostalDisabled = true;
         } else {
             this.isCodePostalDisabled = false;
         }
     }
 
-    saveContact(): void {
+    saveUser(): void {
         this.submitted = true;
         this.validatePays();
         this.validateCodePostal();
         this.validatePhone();
 
-        this.contact.role = String(
-            this.contact.role?.name || this.contact.role
+        this.user.role = String(
+            this.user.role?.name || this.user.role
         );
-        this.contact.adresse.code_postal = String(
-            this.contact.adresse.code_postal
+        this.user.adresse.code_postal = String(
+            this.user.adresse.code_postal
         );
 
         const serviceCall =
-            this.contact.id && this.contact.password
-                ? this.contactService.updateContact(
-                      this.contact.id,
-                      this.contact
+            this.user.id && this.user.password
+                ? this.userService.updateUser(
+                      this.user.id,
+                      this.user
                   )
-                : this.contactService.createContact(this.contact);
+                : this.userService.createUser(this.user);
 
         serviceCall.subscribe({
             next: () => {
-                this.getAllContacts();
+                this.getAllUsers();
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Succès',
-                    detail: 'Contact enregistré avec succès',
+                    detail: 'User enregistré avec succès',
                     life: 3000,
                 });
             },
@@ -171,77 +171,77 @@ export class ContactListeComponent implements OnInit {
             },
         });
 
-        this.contactDialog = false;
+        this.userDialog = false;
     }
 
-    editContact(contact: Contact): void {
-        this.contact = Object.assign(new Contact(), contact);
-        this.contactDialog = true;
+    editUser(user: User): void {
+        this.user = Object.assign(new User(), user);
+        this.userDialog = true;
     }
 
-    deleteContact(contact: Contact): void {
-        this.contact = Object.assign(new Contact(), contact);
-        this.deleteContactDialog = true;
+    deleteUser(user: User): void {
+        this.user = Object.assign(new User(), user);
+        this.deleteUserDialog = true;
     }
 
     confirmDelete(): void {
-        this.deleteContactDialog = false;
-        if (!this.contact.id) {
+        this.deleteUserDialog = false;
+        if (!this.user.id) {
             this.messageService.add({
                 severity: 'error',
                 summary: 'Erreur',
-                detail: 'ID du contact non défini',
+                detail: 'ID du user non défini',
                 life: 3000,
             });
             return;
         }
 
-        this.contactService.deleteContact(this.contact.id).subscribe({
+        this.userService.deleteUser(this.user.id).subscribe({
             next: () => {
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Succès',
-                    detail: 'Contact supprimé avec succès',
+                    detail: 'User supprimé avec succès',
                     life: 3000,
                 });
-                this.getAllContacts();
+                this.getAllUsers();
             },
             error: (err) => {
                 console.error('Erreur suppression:', err);
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Erreur',
-                    detail: 'Échec de la suppression du contact',
+                    detail: 'Échec de la suppression du user',
                     life: 3000,
                 });
             },
         });
     }
 
-    deleteSelectedContacts(): void {
-        this.deleteContactsDialog = true;
+    deleteSelectedUsers(): void {
+        this.deleteUsersDialog = true;
     }
 
     confirmDeleteSelected(): void {
-        this.deleteContactsDialog = false;
+        this.deleteUsersDialog = false;
         // Implémentez la logique réelle si vous avez un service côté backend
-        this.selectedContacts = [];
+        this.selectedUsers = [];
         this.messageService.add({
             severity: 'success',
             summary: 'Suppression multiple',
-            detail: 'Contacts supprimés',
+            detail: 'Users supprimés',
             life: 3000,
         });
     }
 
     openNew(): void {
-        this.contact = new Contact();
+        this.user = new User();
         this.submitted = false;
-        this.contactDialog = true;
+        this.userDialog = true;
     }
 
     hideDialog(): void {
-        this.contactDialog = false;
+        this.userDialog = false;
         this.submitted = false;
     }
 
@@ -252,33 +252,33 @@ export class ContactListeComponent implements OnInit {
         );
     }
 
-    onGotToNewContact(): void {
-        this.router.navigate(['/dashboard/contact/contact-new']);
+    onGotToNewUser(): void {
+        this.router.navigate(['/dashboard/user/user-new']);
     }
 
-    onGotToContactDetail(contact: Contact): void {
-        this.router.navigate(['/dashboard/contact/contact-detail', contact.id]);
+    onGotToUserDetail(user: User): void {
+        this.router.navigate(['/dashboard/user/user-detail', user.id]);
     }
     showMessage(severity: string, summary: string, detail: string) {
         this.messageService.add({ severity, summary, detail, life: 3000 });
     }
 
-    private updateStatutContact(
-        contact: Contact,
+    private updateStatutUser(
+        user: User,
         statut: Statut,
         severity: string,
         action: string
     ) {
-        if (!contact.id) return;
+        if (!user.id) return;
 
-        this.contactService.updateStatut(contact.id, statut).subscribe({
+        this.userService.updateStatut(user.id, statut).subscribe({
             next: (updated) => {
                 this.showMessage(
                     severity,
                     'Statut modifié',
-                    `Contact "${updated.nom_complet}" ${action}.`
+                    `User "${updated.nom_complet}" ${action}.`
                 );
-                this.getAllContacts();
+                this.getAllUsers();
             },
             error: (err) => {
                 this.showMessage(
@@ -291,17 +291,17 @@ export class ContactListeComponent implements OnInit {
     }
 
     // Statuts avec Enum
-    validerContact(contact: Contact) {
-        this.updateStatutContact(contact, Statut.ACTIVE, 'success', 'validée');
+    validerUser(user: User) {
+        this.updateStatutUser(user, Statut.ACTIVE, 'success', 'validée');
     }
 
-    bloquerContact(contact: Contact) {
-        this.updateStatutContact(contact, Statut.BLOQUE, 'warn', 'bloquée');
+    bloquerUser(user: User) {
+        this.updateStatutUser(user, Statut.BLOQUE, 'warn', 'bloquée');
     }
 
-    debloquerContact(contact: Contact) {
-        this.updateStatutContact(
-            contact,
+    debloquerUser(user: User) {
+        this.updateStatutUser(
+            user,
             Statut.ACTIVE,
             'success',
             'débloquée'

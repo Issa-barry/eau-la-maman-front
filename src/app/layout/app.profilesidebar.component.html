@@ -2,7 +2,7 @@
 <p-sidebar [(visible)]="visible" position="right" [transitionOptions]="'.3s cubic-bezier(0, 0, 0.2, 1)'" styleClass="layout-profile-sidebar w-full sm:w-25rem">
     <div class="flex flex-column mx-auto md:mx-0">
         <!-- <span class="mb-2 font-semibold">Bienvenue</span>
-        <span class="text-color-secondary font-medium mb-5">{{ contact.nom_complet }}</span> -->
+        <span class="text-color-secondary font-medium mb-5">{{ user.nom_complet }}</span> -->
 
         <ul class="list-none m-0 p-0">
             <li>
@@ -12,7 +12,7 @@
                     </span>
                     <div class="ml-3">
                         <span class="font-semibold">Infos</span>
-                        <p class="text-color-secondary mb-2">Reference : {{ contact.reference }}</p>
+                        <p class="text-color-secondary mb-2">Reference : {{ user.reference }}</p>
                          <!-- <p class="text-color-secondary mb-2">{{ (me$ | async)?.nom_complet || ((me$ | async)?.prenom + ' ' + (me$ | async)?.nom) }}</p> -->
                         <p class="text-color-secondary mb-2">  {{ (me$ | async)?.phone | phoneFormat:'FR' }}</p>
                         <p class="text-color-secondary m-0">{{ (me$ | async)?.email }}</p> 

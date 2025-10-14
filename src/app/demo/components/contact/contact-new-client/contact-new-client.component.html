@@ -1,6 +1,6 @@
 <div class="card">
     <p-toast></p-toast>
-    <span class="text-900 text-xl font-bold mb-4 block">Nouveau client</span>
+    <span class="text-900 text-xl font-bold mb-4 block">Nouveau client/Livreur</span>
     <p-progressBar mode="indeterminate" *ngIf="loading" class="w-full h-2"></p-progressBar>
 
     <div class="grid" *ngIf="!loading">
@@ -10,27 +10,33 @@
                  <div class="field mb-4 col-6 md:col-6">
                     <label for="country" class="font-medium text-900" >Type de client</label> 
                     <p-dropdown id="vehicule" [options]="clientOptions" optionLabel="label" optionValue="value"
-                         [(ngModel)]="contact.type_client" placeholder="Sélectionnez un type de client" [ngClass]="{'ng-invalid ng-dirty' : submitted && !contact.type_client || errors['type_client']}">
+                         [(ngModel)]="user.type_client" placeholder="Sélectionnez un type de client" [ngClass]="{'ng-invalid ng-dirty' : submitted && !user.type_client || errors['type_client']}">
                     </p-dropdown>
                     <small *ngIf="errors['type_client']">{{ errors['type_client'] }}</small>
                 </div>
-
-                 <div class="field mb-4 col-6 md:col-6" *ngIf="contact.isVehicule">
+ 
+                 <!-- <div class="field mb-4 col-6 md:col-6" *ngIf="user.isVehicule">
                     <label for="country" class="font-medium text-900" >Type de Vehicule</label> 
                     <p-dropdown id="type_vehicule" [options]="vehiculeOptions" optionLabel="label" optionValue="value"
-                         [(ngModel)]="contact.type_vehicule" placeholder="Sélectionnez un type de véhicule" [ngClass]="{'ng-invalid ng-dirty' : submitted && !contact.type_vehicule || errors['type_vehicule']}">
+                         [(ngModel)]="user.type_vehicule" placeholder="Sélectionnez un type de véhicule" [ngClass]="{'ng-invalid ng-dirty' : submitted && !user.type_vehicule || errors['type_vehicule']}">
                     </p-dropdown>
                     <small *ngIf="errors['vehicule']">{{ errors['vehicule'] }}</small>
-                </div>
+                </div> -->
                  <div class="field mb-4 col-12 md:col-6">
                     <label for="phone" class="font-medium text-900">Phone</label>
-                    <input id="phone" type="text" placeholder="Exemple : 666 17 70 06" [(ngModel)]="contact.phone" [ngClass]="{'ng-invalid ng-dirty' : submitted && !contact.phone || errors['phone']}" pInputText>
+                    <input id="phone" type="text" placeholder="Exemple : 666 17 70 06" [(ngModel)]="user.phone" [ngClass]="{'ng-invalid ng-dirty' : submitted && !user.phone || errors['phone']}" pInputText>
                     <small *ngIf="errors['phone']">{{ errors['phone'] }}</small>
                 </div> 
 
                 <div class="field mb-4 col-12 md:col-6">
                     <label for="nom_complet" class="font-medium text-900">Nom complet</label>
-                    <input id="nom_complet" type="text" placeholder="Exemple : Issa BARRY" pInputText [(ngModel)]="contact.nom_complet" [ngClass]="{'ng-invalid ng-dirty' : submitted && !contact.nom_complet || errors['nom_complet']}">
+                    <input id="nom_complet" type="text" placeholder="Exemple : Issa BARRY" pInputText [(ngModel)]="user.nom_complet" [ngClass]="{'ng-invalid ng-dirty' : submitted && !user.nom_complet || errors['nom_complet']}">
+                     <small *ngIf="errors['nom_complet']">{{ errors['nom_complet'] }}</small>
+                </div> 
+
+                <div class="field mb-4 col-12 md:col-6">
+                    <label for="nom_complet" class="font-medium text-900">Nom complet</label>
+                    <input id="nom_complet" type="text" placeholder="Exemple : Issa BARRY" pInputText [(ngModel)]="user.nom_complet" [ngClass]="{'ng-invalid ng-dirty' : submitted && !user.nom_complet || errors['nom_complet']}">
                      <small *ngIf="errors['nom_complet']">{{ errors['nom_complet'] }}</small>
                 </div> 
                 
@@ -38,7 +44,7 @@
                 <!-- Champ adresse (visible seulement si le pays n'est pas Guinée) -->
                 <div *ngIf="!isGuineeSelected" class="field mb-4 col-6 md:col-6">
                     <label for="adresse" class="font-medium text-900">Quartier</label>
-                    <input id="adresse" type="text" placeholder="Exemple : Cosa" [(ngModel)]="contact.adresse.adresse" [ngClass]="{'ng-invalid ng-dirty' : submitted &&  errors['adresse.adresse']}" pInputText >
+                    <input id="adresse" type="text" placeholder="Exemple : Cosa" [(ngModel)]="user.adresse.adresse" [ngClass]="{'ng-invalid ng-dirty' : submitted &&  errors['adresse.adresse']}" pInputText >
                     <small *ngIf="errors['adresse.adresse']">{{ errors['adresse.adresse'] }}</small>
                 </div>
 
@@ -46,7 +52,7 @@
 
                 <div class="field mb-4 col-12 md:col-6">
                     <label for="state" class="font-medium text-900" >Ville</label>
-                    <input id="state" type="text" placeholder="Exemple : Conakry" [(ngModel)]="contact.adresse.ville" [ngClass]="{'ng-invalid ng-dirty' : submitted &&  errors['adresse.ville']}"  pInputText>
+                    <input id="state" type="text" placeholder="Exemple : Conakry" [(ngModel)]="user.adresse.ville" [ngClass]="{'ng-invalid ng-dirty' : submitted &&  errors['adresse.ville']}"  pInputText>
                     <small *ngIf="errors['adresse.ville']">{{ errors['adresse.ville'] }}</small>
                 </div> 
 

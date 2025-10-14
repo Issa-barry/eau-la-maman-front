@@ -1,5 +1,5 @@
 import { CommandeLigne } from './commande-ligne.model';
-import { Contact } from './contact';
+import { User } from './User';
 import { Livraison } from './livraison.model';
 
 export type CommandeStatut =
@@ -16,8 +16,8 @@ export class Commande {
   numero: string;
   count: number;
 
-  contact_id: number;
-  contact?: Contact;
+  user_id: number;
+  user?: User;
 
   lignes?: CommandeLigne[];
   livraisons?: Livraison[];
@@ -40,7 +40,7 @@ export class Commande {
   constructor() {
     this.numero = '';
     this.count = 0;
-    this.contact_id = 0;
+    this.user_id = 0;
     this.lignes = [];
     this.livraisons = [];
     this.qte_total = 0;

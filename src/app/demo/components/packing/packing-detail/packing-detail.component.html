@@ -5,7 +5,7 @@
 
       <div *ngIf="packing">
         <p><b>Référence :</b> {{ packing.reference }}</p>
-        <p><b>Employé :</b> {{ packing.user?.nom_complet }}</p>
+        <!-- <p><b>Employé :</b> {{ packing.user?.nom_complet }}</p> -->
         <p><b>Date :</b> {{ packing.date | date }}</p>
         <p><b>Heure début :</b> {{ packing.heure_debut }}</p>
         <p><b>Heure fin :</b> {{ packing.heure_fin }}</p>
@@ -16,7 +16,7 @@
             <tr>
               <th>Produit</th>
               <th>Quantité utilisée</th>
-            </tr>
+            </tr> 
           </ng-template>
           <ng-template pTemplate="body" let-ligne>
             <tr>

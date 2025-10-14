@@ -3,9 +3,9 @@
 
 <div class="card">
   <div class="flex flex-column sm:flex-row sm:align-items-center sm:justify-content-between py-5">
-    <span class="text-900 text-xl font-bold mb-4 block">Informations du contact client</span>
+    <span class="text-900 text-xl font-bold mb-4 block">Informations du user client</span>
     <div class="flex flex-wrap gap-2">
-      <ng-container *ngIf="!loadingContact; else skeletonActions">
+      <ng-container *ngIf="!loadingUser; else skeletonActions">
         <button pButton icon="pi pi-pencil" label="Modifier" class="p-button-outlined p-button-primary" (click)="toggleEditMode()" *ngIf="!isEditing"></button>
         <button pButton icon="pi pi-check" label="Enregistrer" class="p-button-success" (click)="saveClient()" *ngIf="isEditing"></button>
         <button pButton icon="pi pi-times" label="Annuler" class="p-button-secondary" (click)="toggleEditMode()" *ngIf="isEditing"></button>
@@ -23,9 +23,9 @@
     <!-- Civilité -->
     <div class="field col-6 md:col-6">
       <label class="font-medium">Civilité</label>
-      <p-skeleton *ngIf="loadingContact" width="100%" height="2.5rem"></p-skeleton>
-      <p-dropdown *ngIf="!loadingContact" [(ngModel)]="contact.civilite" [options]="civiliteOptions" optionLabel="label" optionValue="value" [disabled]="!isEditing"
-        [ngClass]="{ 'ng-invalid ng-dirty': (submitted && !contact.civilite) || errors['civilite'] }">
+      <p-skeleton *ngIf="loadingUser" width="100%" height="2.5rem"></p-skeleton>
+      <p-dropdown *ngIf="!loadingUser" [(ngModel)]="user.civilite" [options]="civiliteOptions" optionLabel="label" optionValue="value" [disabled]="!isEditing"
+        [ngClass]="{ 'ng-invalid ng-dirty': (submitted && !user.civilite) || errors['civilite'] }">
       </p-dropdown>
       <small *ngIf="errors['civilite']" class="text-red-500">{{ errors["civilite"] }}</small>
     </div>
@@ -33,35 +33,35 @@
     <!-- Téléphone -->
     <div class="field col-6 md:col-6">
       <label class="font-medium">Téléphone</label>
-      <p-skeleton *ngIf="loadingContact" width="100%" height="2.5rem"></p-skeleton>
-      <input *ngIf="!loadingContact" pInputText [(ngModel)]="contact.phone" [disabled]="!isEditing"
-        [ngClass]="{ 'ng-invalid ng-dirty': (submitted && !contact.phone) || errors['phone'] }" />
+      <p-skeleton *ngIf="loadingUser" width="100%" height="2.5rem"></p-skeleton>
+      <input *ngIf="!loadingUser" pInputText [(ngModel)]="user.phone" [disabled]="!isEditing"
+        [ngClass]="{ 'ng-invalid ng-dirty': (submitted && !user.phone) || errors['phone'] }" />
       <small *ngIf="errors['phone']" class="text-red-500">{{ errors["phone"] }}</small>
     </div>
 
     <!-- Nom complet -->
     <div class="field col-12">
       <label class="font-medium">Nom complet</label>
-      <p-skeleton *ngIf="loadingContact" width="100%" height="2.5rem"></p-skeleton>
-      <input *ngIf="!loadingContact" pInputText [(ngModel)]="contact.nom_complet" [disabled]="!isEditing"
-        [ngClass]="{ 'ng-invalid ng-dirty': (submitted && !contact.nom_complet) || errors['nom_complet'] }" />
+      <p-skeleton *ngIf="loadingUser" width="100%" height="2.5rem"></p-skeleton>
+      <input *ngIf="!loadingUser" pInputText [(ngModel)]="user.nom_complet" [disabled]="!isEditing"
+        [ngClass]="{ 'ng-invalid ng-dirty': (submitted && !user.nom_complet) || errors['nom_complet'] }" />
       <small *ngIf="errors['nom_complet']" class="text-red-500">{{ errors["nom_complet"] }}</small>
     </div>
 
     <!-- Adresse complète -->
     <div class="field col-6">
       <label class="font-medium">Quartier</label>
-      <p-skeleton *ngIf="loadingContact" width="100%" height="2.5rem"></p-skeleton>
-      <input *ngIf="!loadingContact" pInputText [(ngModel)]="contact.adresse.adresse" [disabled]="!isEditing"
-        [ngClass]="{ 'ng-invalid ng-dirty': (submitted && !contact.adresse.adresse) || errors['adresse.adresse'] }" />
+      <p-skeleton *ngIf="loadingUser" width="100%" height="2.5rem"></p-skeleton>
+      <input *ngIf="!loadingUser" pInputText [(ngModel)]="user.adresse.adresse" [disabled]="!isEditing"
+        [ngClass]="{ 'ng-invalid ng-dirty': (submitted && !user.adresse.adresse) || errors['adresse.adresse'] }" />
       <small *ngIf="errors['adresse.adresse']" class="text-red-500">{{ errors["adresse.adresse"] }}</small>
     </div>
 
     <div class="field col-6 md:col-6">
       <label class="font-medium">Ville</label>
-      <p-skeleton *ngIf="loadingContact" width="100%" height="2.5rem"></p-skeleton>
-      <input *ngIf="!loadingContact" pInputText [(ngModel)]="contact.adresse.ville" [disabled]="!isEditing"
-        [ngClass]="{ 'ng-invalid ng-dirty': (submitted && !contact.adresse.ville) || errors['adresse.ville'] }" />
+      <p-skeleton *ngIf="loadingUser" width="100%" height="2.5rem"></p-skeleton>
+      <input *ngIf="!loadingUser" pInputText [(ngModel)]="user.adresse.ville" [disabled]="!isEditing"
+        [ngClass]="{ 'ng-invalid ng-dirty': (submitted && !user.adresse.ville) || errors['adresse.ville'] }" />
       <small *ngIf="errors['adresse.ville']" class="text-red-500">{{ errors["adresse.ville"] }}</small>
     </div>
   </div>

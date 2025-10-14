@@ -2,16 +2,16 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { PermissionService } from '../../service/permission/permission.service';
 import { AuthService } from '../../service/auth/auth.service';
-import { ContactService } from '../../service/contact/contact.service';
-import { Observable, of } from 'rxjs';
+ import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { Contact } from '../../models/contact';
-import { MessageService } from 'primeng/api';
+ import { MessageService } from 'primeng/api';
+import { UserService } from '../../service/users/user.service';
+import { User } from '../../models/User';
 
 export const permissionGuard: CanActivateFn = (route, state): Observable<boolean> => {
   const permissionService = inject(PermissionService);
   const authService = inject(AuthService);
-  const contactService = inject(ContactService);
+  const userService = inject(UserService);
   const router = inject(Router);
   const messageService = inject(MessageService);
 
@@ -23,18 +23,18 @@ export const permissionGuard: CanActivateFn = (route, state): Observable<boolean
     return of(false);
   }
 
-  return contactService.getContactById(userId).pipe(
-    switchMap((contact: Contact | null) => {
-      if (!contact) {
-        console.error('Contact not found. Redirecting to login.');
+  return userService.getUserById(userId).pipe(
+    switchMap((user: User | null) => {
+      if (!user) {
+        console.error('User not found. Redirecting to login.');
         // router.navigate(['/']);
         return of(false);
       }
 
-      const roleId = contact.role_id;
+      const roleId = user.role_id;
       
       if (!roleId) {
-        console.error('Role ID is missing for the contact. Redirecting to login.');
+        console.error('Role ID is missing for the user. Redirecting to login.');
         // router.navigate(['/']);
         return of(false);
       }
@@ -63,7 +63,7 @@ export const permissionGuard: CanActivateFn = (route, state): Observable<boolean
       );
     }),
     catchError((error) => {
-      console.error('Error while retrieving user contact:', error);
+      console.error('Error while retrieving user user:', error);
       // router.navigate(['/auth/login']);
       return of(false);
     })

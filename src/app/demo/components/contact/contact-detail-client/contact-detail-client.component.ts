@@ -6,12 +6,12 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 
 import { Civilite } from 'src/app/demo/enums/civilite.enum';
-import { Contact } from 'src/app/demo/models/contact';
-import { Role } from 'src/app/demo/models/Role';
+ import { Role } from 'src/app/demo/models/Role';
+import { User } from 'src/app/demo/models/User';
 
-import { ContactService } from 'src/app/demo/service/contact/contact.service';
 import { RoleService } from 'src/app/demo/service/role/role.service';
-
+import { UserService } from 'src/app/demo/service/users/user.service';
+ 
 @Component({ 
   selector: 'app-contact-detail-client',
   templateUrl: './contact-detail-client.component.html',
@@ -19,7 +19,7 @@ import { RoleService } from 'src/app/demo/service/role/role.service';
   providers: [MessageService, ConfirmationService],
 })
 export class ContactDetailClientComponent implements OnInit, OnDestroy {
-  @Input() contact: Contact = new Contact();
+  @Input() user: User = new User();
   @Input() role: Role = new Role();
 
   roles: Role[] = [];
@@ -31,7 +31,7 @@ export class ContactDetailClientComponent implements OnInit, OnDestroy {
   isGuineeSelected = false;
 
   loading = false;
-  loadingContact = false;
+  loadingUser = false;
 
   errorMessage: string | null = null;
   errors: { [key: string]: string } = {};
@@ -48,7 +48,7 @@ export class ContactDetailClientComponent implements OnInit, OnDestroy {
   readonly civiliteOptions = Object.values(Civilite).map(c => ({ label: c, value: c }));
 
   constructor(
-    private contactService: ContactService,
+    private userervice: UserService,
     private roleService: RoleService,
     private messageService: MessageService,
     private activatedRoute: ActivatedRoute
@@ -56,7 +56,7 @@ export class ContactDetailClientComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getAllRoles();
-    this.loadContact();
+    this.loadUser();
   }
 
   ngOnDestroy(): void {
@@ -73,36 +73,36 @@ export class ContactDetailClientComponent implements OnInit, OnDestroy {
 
   getRoleById(id: number): void {
     const sub = this.roleService.getRoleById(id).subscribe({
-      next: role => this.contact.role = this.roles.find(r => r.id === role.id) ?? role,
+      next: role => this.user.role = this.roles.find(r => r.id === role.id) ?? role,
       error: err => console.error('Erreur récupération rôle :', err)
     });
     this.subscriptions.add(sub);
   }
 
-  loadContact(): void {
-    this.loadingContact = true;
-    const sub = this.contactService.getContactById(this.id).subscribe({
+  loadUser(): void {
+    this.loadingUser = true;
+    const sub = this.userervice.getUserById(this.id).subscribe({
       next: resp => {
-        this.contact = resp;
+        this.user = resp;
         this.initAdresse();
-        if (this.contact.role_id) this.getRoleById(this.contact.role_id);
+        if (this.user.role_id) this.getRoleById(this.user.role_id);
       },
-      error: err => console.error('Erreur récupération contact :', err),
-      complete: () => this.loadingContact = false
+      error: err => console.error('Erreur récupération user :', err),
+      complete: () => this.loadingUser = false
     });
     this.subscriptions.add(sub);
   }
 
   private initAdresse(): void {
-    if (!this.contact.adresse) {
-      this.contact.adresse = {
+    if (!this.user.adresse) {
+      this.user.adresse = {
         pays: '', ville: '', code_postal: '', adresse: '',
         quartier: '', complement_adresse: '', region: ''
       };
     }
-    const pays = this.contact.adresse.pays?.trim().toLowerCase();
+    const pays = this.user.adresse.pays?.trim().toLowerCase();
     this.isGuineeSelected = pays === this.GUINEE.toLowerCase();
-    Object.assign(this.adresseCache, this.contact.adresse);
+    Object.assign(this.adresseCache, this.user.adresse);
   }
 
   toggleEditMode(): void {
@@ -118,14 +118,14 @@ export class ContactDetailClientComponent implements OnInit, OnDestroy {
   }
 
   private setAddressData(pays: string, code_postal: string, adresse: string): void {
-    Object.assign(this.contact.adresse, { pays, code_postal, adresse });
+    Object.assign(this.user.adresse, { pays, code_postal, adresse });
   }
 
   private restorePreviousAddress(pays: string): void {
     if (this.adresseCache.pays === 'France') {
-      Object.assign(this.contact.adresse, this.adresseCache);
+      Object.assign(this.user.adresse, this.adresseCache);
     } else {
-      this.contact.adresse = {
+      this.user.adresse = {
         pays, ville: '', adresse: '', code_postal: '',
         quartier: '', complement_adresse: '', region: ''
       };
@@ -136,27 +136,27 @@ export class ContactDetailClientComponent implements OnInit, OnDestroy {
     this.submitted = true;
     this.errors = {};
 
-    if (!this.contact.nom_complet || !this.contact.phone) {
+    if (!this.user.nom_complet || !this.user.phone) {
       return this.showWarn('Veuillez remplir tous les champs obligatoires.');
     }
 
     const payload = {
-      nom_complet: this.contact.nom_complet,
-      phone: this.contact.phone
+      nom_complet: this.user.nom_complet,
+      phone: this.user.phone
     };
 
-    this.contactService.createClient(payload).subscribe({
+    this.userervice.createClient(payload).subscribe({
       next: () => {
-        this.showSuccess('Contact créé avec succès');
-        this.contact = new Contact();
+        this.showSuccess('User créé avec succès');
+        this.user = new User();
         this.submitted = false;
         this.errors = {};
-        this.loadContact();
+        this.loadUser();
       },
       error: (err) => {
-        console.error('Erreur lors de la création du contact:', err);
+        console.error('Erreur lors de la création du user:', err);
         if (err.error?.errors) this.errors = err.error.errors;
-        this.showError('Création du contact échouée. Vérifiez les champs.');
+        this.showError('Création du user échouée. Vérifiez les champs.');
       }
     });
   }

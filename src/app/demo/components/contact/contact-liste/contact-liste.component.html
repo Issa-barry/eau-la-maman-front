@@ -22,7 +22,7 @@
 
             <p-table
                 #dt
-                [value]="loading ? skeletonRows : contacts"
+                [value]="loading ? skeletonRows : users"
                 responsiveLayout="scroll"
                 [rows]="10"
                 [globalFilterFields]="[
@@ -38,8 +38,8 @@
                 [paginator]="true"
                 [rowsPerPageOptions]="[10, 20, 30]"
                 [showCurrentPageReport]="true"
-                currentPageReportTemplate="Liste de {first} / {last} des {totalRecords} contacts"
-                [(selection)]="selectedContacts"
+                currentPageReportTemplate="Liste de {first} / {last} des {totalRecords} users"
+                [(selection)]="selectedUsers"
                 selectionMode="multiple"
                 [rowHover]="true"
                 dataKey="id"
@@ -48,7 +48,7 @@
                     <div
                         class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
                     >
-                        <h5 class="m-0">Liste des contacts</h5>
+                        <h5 class="m-0">Liste des users</h5>
                         <span class="block mt-2 md:mt-0 p-input-icon-left">
                             <i class="pi pi-search"></i>
                             <input
@@ -91,7 +91,7 @@
                     </tr>
                 </ng-template>
 
-                <ng-template pTemplate="body" let-contact>
+                <ng-template pTemplate="body" let-user>
                     <tr *ngIf="loading">
                         <td><p-skeleton width="6rem" /></td>
                         <td><p-skeleton width="10rem" /></td>
@@ -110,15 +110,15 @@
                     <tr *ngIf="!loading">
                         <td>
                             <p-tableCheckbox
-                                [value]="contact"
+                                [value]="user"
                             ></p-tableCheckbox>
                         </td>
-                        <td>{{ contact.reference }}</td>
-                        <td>{{ contact.nom_complet }}</td>
-                        <td>{{ contact.phone }}</td>
-                        <td>{{ contact.adresse?.ville }}</td>
-                        <td>{{ contact.adresse?.pays }}</td>
-                        <td>{{ contact.statut }}</td>
+                        <td>{{ user.reference }}</td>
+                        <td>{{ user.nom_complet }}</td>
+                        <td>{{ user.phone }}</td>
+                        <td>{{ user.adresse?.ville }}</td>
+                        <td>{{ user.adresse?.pays }}</td>
+                        <td>{{ user.statut }}</td>
                         <td>
                             <div class="flex gap-2">
                                 <button
@@ -126,34 +126,34 @@
                                     pRipple
                                     icon="pi pi-eye"
                                     class="p-button-rounded p-button-success"
-                                    (click)="onGotToContactDetail(contact)"
+                                    (click)="onGotToUserDetail(user)"
                                 ></button>
                                 <button
-                                    *ngIf="contact.statut === 'attente'"
+                                    *ngIf="user.statut === 'attente'"
                                     pButton
                                     pRipple
                                     icon="pi pi-check"
                                     class="p-button-rounded p-button-info"
-                                    (click)="validerContact(contact)"
+                                    (click)="validerUser(user)"
                                     title="Valider"
                                 ></button>
                                 <button
-                                    *ngIf="contact.statut === 'active'"
+                                    *ngIf="user.statut === 'active'"
                                     pButton
                                     pRipple
                                     icon="pi pi-lock-open"
                                     class="p-button-rounded p-button-warning"
-                                    (click)="bloquerContact(contact)"
+                                    (click)="bloquerUser(user)"
                                     title="Bloquer"
                                 ></button>
 
                                 <button
-                                    *ngIf="contact.statut === 'bloque'"
+                                    *ngIf="user.statut === 'bloque'"
                                     pButton
                                     pRipple
                                     icon="pi pi-lock"
                                     class="p-button-rounded p-button-danger"
-                                    (click)="debloquerContact(contact)"
+                                    (click)="debloquerUser(user)"
                                     title="Débloquer"
                                 ></button>
 
@@ -162,7 +162,7 @@
                                     pRipple
                                     icon="pi pi-trash"
                                     class="p-button-rounded p-button-danger"
-                                    (click)="deleteContact(contact)"
+                                    (click)="deleteUser(user)"
                                 ></button>
                             </div>
                         </td>

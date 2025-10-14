@@ -31,6 +31,8 @@ const routes: Routes = [
             { path: 'stock', loadChildren: () => import('./demo/components/stock/stock.module').then(m => m.StockModule) },
             { path: 'ventes', loadChildren: () => import('./demo/components/ventes/ventes.module').then(m => m.VentesModule) },
             { path: 'packing', loadChildren: () => import('./demo/components/packing/packing.module').then(m => m.PackingModule) },
+            { path: 'user', loadChildren: () => import('./demo/components/user/user.module').then(m => m.UserModule) },
+
 
 
         ]
@@ -39,7 +41,6 @@ const routes: Routes = [
     { path: 'auth', data: { breadcrumb: 'Auth' }, loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },
     { path: 'landing', loadChildren: () => import('./demo/components/landing/landing.module').then(m => m.LandingModule) },
     { path: 'notfound', loadChildren: () => import('./demo/components/notfound/notfound.module').then(m => m.NotfoundModule) },
-    { path: 'user', loadChildren: () => import('./demo/components/user/user/user.module').then(m => m.UserModule) },
     { path: '**', redirectTo: '/notfound' }
 ];
 

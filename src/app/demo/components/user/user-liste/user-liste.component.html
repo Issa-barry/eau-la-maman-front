@@ -1,0 +1,174 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+
+            <p-toolbar styleClass="mb-4">
+                <div class="p-toolbar-group-right">
+                    <p-splitButton label="Nouveau" icon="pi pi-check" [model]="items"></p-splitButton>
+                </div>
+
+                <ng-template pTemplate="right">
+                    <button
+                        pButton
+                        pRipple 
+                        label="Export"
+                        icon="pi pi-upload"
+                        class="p-button-help"
+                        (click)="dt.exportCSV()"
+                    ></button>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table
+                #dt
+                [value]="loading ? skeletonRows : users"
+                responsiveLayout="scroll"
+                [rows]="10"
+                [globalFilterFields]="[
+                    'nom_complet',
+                    'adresse.ville',
+                    'adresse.pays',
+                    'adresse.quartier',
+                    'adresse.code_postal',
+                    'phone',
+                    'statut',
+                    'reference'
+                ]"
+                [paginator]="true"
+                [rowsPerPageOptions]="[10, 20, 30]"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Liste de {first} / {last} des {totalRecords} users"
+                [(selection)]="selectedUsers"
+                selectionMode="multiple"
+                [rowHover]="true"
+                dataKey="id"
+            >
+                <ng-template pTemplate="caption">
+                    <div
+                        class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
+                    >
+                        <h5 class="m-0">Liste des users</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input
+                                pInputText
+                                type="text"
+                                (input)="onGlobalFilter(dt, $event)"
+                                placeholder="Rechercher..."
+                                class="w-full sm:w-auto"
+                            />
+                        </span>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pSortableColumn="reference">
+                            Reference
+                            <p-sortIcon field="reference"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="nom_complet">
+                            Nom <p-sortIcon field="nom_complet"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="phone">
+                            Téléphone <p-sortIcon field="phone"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="adresse.ville">
+                            Ville
+                            <p-sortIcon field="adresse.ville"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="adresse.pays">
+                            Pays <p-sortIcon field="adresse.pays"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="statut">
+                            Statut <p-sortIcon field="statut"></p-sortIcon>
+                        </th>
+                        <th>Actions</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-user>
+                    <tr *ngIf="loading">
+                        <td><p-skeleton width="6rem" /></td>
+                        <td><p-skeleton width="10rem" /></td>
+                        <td><p-skeleton width="8rem" /></td>
+                        <td><p-skeleton width="12rem" /></td>
+                        <td><p-skeleton width="10rem" /></td>
+                        <td><p-skeleton width="6rem" /></td>
+                        <td>
+                            <p-skeleton
+                                width="5rem"
+                                height="2rem"
+                                borderRadius="1rem"
+                            />
+                        </td>
+                    </tr>
+                    <tr *ngIf="!loading">
+                        <td>
+                            <p-tableCheckbox
+                                [value]="user"
+                            ></p-tableCheckbox>
+                        </td>
+                        <td>{{ user.reference }}</td>
+                        <td>{{ user.nom_complet }}</td>
+                        <td>{{ user.phone }}</td>
+                        <td>{{ user.adresse?.ville }}</td>
+                        <td>{{ user.adresse?.pays }}</td>
+                        <td>{{ user.statut }}</td>
+                        <td>
+                            <div class="flex gap-2">
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-eye"
+                                    class="p-button-rounded p-button-success"
+                                    (click)="onGotToUserDetail(user)"
+                                ></button>
+                                <button
+                                    *ngIf="user.statut === 'attente'"
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-check"
+                                    class="p-button-rounded p-button-info"
+                                    (click)="validerUser(user)"
+                                    title="Valider"
+                                ></button>
+                                <button
+                                    *ngIf="user.statut === 'active'"
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-lock-open"
+                                    class="p-button-rounded p-button-warning"
+                                    (click)="bloquerUser(user)"
+                                    title="Bloquer"
+                                ></button>
+
+                                <button
+                                    *ngIf="user.statut === 'bloque'"
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-lock"
+                                    class="p-button-rounded p-button-danger"
+                                    (click)="debloquerUser(user)"
+                                    title="Débloquer"
+                                ></button>
+
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-trash"
+                                    class="p-button-rounded p-button-danger"
+                                    (click)="deleteUser(user)"
+                                ></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>

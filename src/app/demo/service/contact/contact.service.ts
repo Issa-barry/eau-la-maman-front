@@ -21,7 +21,7 @@ const httpOption = {
     providedIn: 'root',
 })
 export class ContactService {
-    private apiUrl = `${environment.apiUrl}/users`;
+    private apiUrl = `${environment.apiUrl}/contacts`;
 
     constructor(private http: HttpClient) {}
 
@@ -96,7 +96,7 @@ export class ContactService {
      createClient(contact: any): Observable<Contact> {
     return this.http
         .post<{ success: boolean; data: Contact }>(
-            `${environment.apiUrl}/clients/create`,
+            `${this.apiUrl}/create`,
             contact,
             httpOption
         )

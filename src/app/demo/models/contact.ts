@@ -27,4 +27,4 @@ export class Contact {
     this.type = ContactEnum.ClientSpecifique;
     this.vehicule_id = null;
   }
-}
+} 

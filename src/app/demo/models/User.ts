@@ -1,7 +1,7 @@
 import { Civilite } from "../enums/civilite.enum";
 import { ContactEnum } from "../enums/contact.enum";
- import { VehiculeEnum } from "../enums/vehicule.enum";
-import { Adresse } from "./adresse";
+import { VehiculeTypeEnum } from "../enums/vehicule-type.enum";
+ import { Adresse } from "./adresse";
 import { Role } from "./Role";
 
   
@@ -26,7 +26,7 @@ import { Role } from "./Role";
     
       /** Nouveaux champs alignés backend */
   type_client?: ContactEnum;                 // 'specifique' | 'vehicule'
-  type_vehicule?: VehiculeEnum | null; 
+  type_vehicule?: VehiculeTypeEnum | null; 
 
     constructor()
     {

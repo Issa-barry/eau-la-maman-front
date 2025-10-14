@@ -1,65 +1,102 @@
 <div class="card">
-    <p-toast></p-toast>
-    <span class="text-900 text-xl font-bold mb-4 block">Nouveau client/Livreur</span>
-    <p-progressBar mode="indeterminate" *ngIf="loading" class="w-full h-2"></p-progressBar>
+  <!-- tu peux garder p-toast pour les succès globaux -->
+  <p-toast></p-toast>
 
-    <div class="grid" *ngIf="!loading">
-         
-        <div class="col-12 lg:col-10">
-            <div class="grid formgrid p-fluid">
-                 <div class="field mb-4 col-6 md:col-6">
-                    <label for="country" class="font-medium text-900" >Type de client</label> 
-                    <p-dropdown id="vehicule" [options]="clientOptions" optionLabel="label" optionValue="value"
-                         [(ngModel)]="user.type_client" placeholder="Sélectionnez un type de client" [ngClass]="{'ng-invalid ng-dirty' : submitted && !user.type_client || errors['type_client']}">
-                    </p-dropdown>
-                    <small *ngIf="errors['type_client']">{{ errors['type_client'] }}</small>
-                </div>
- 
-                 <!-- <div class="field mb-4 col-6 md:col-6" *ngIf="user.isVehicule">
-                    <label for="country" class="font-medium text-900" >Type de Vehicule</label> 
-                    <p-dropdown id="type_vehicule" [options]="vehiculeOptions" optionLabel="label" optionValue="value"
-                         [(ngModel)]="user.type_vehicule" placeholder="Sélectionnez un type de véhicule" [ngClass]="{'ng-invalid ng-dirty' : submitted && !user.type_vehicule || errors['type_vehicule']}">
-                    </p-dropdown>
-                    <small *ngIf="errors['vehicule']">{{ errors['vehicule'] }}</small>
-                </div> -->
-                 <div class="field mb-4 col-12 md:col-6">
-                    <label for="phone" class="font-medium text-900">Phone</label>
-                    <input id="phone" type="text" placeholder="Exemple : 666 17 70 06" [(ngModel)]="user.phone" [ngClass]="{'ng-invalid ng-dirty' : submitted && !user.phone || errors['phone']}" pInputText>
-                    <small *ngIf="errors['phone']">{{ errors['phone'] }}</small>
-                </div> 
+  <span class="text-900 text-xl font-bold mb-4 block">Nouveau client/Packing</span>
+  <p-progressBar mode="indeterminate" *ngIf="loading" class="w-full h-2"></p-progressBar>
 
-                <div class="field mb-4 col-12 md:col-6">
-                    <label for="nom_complet" class="font-medium text-900">Nom complet</label>
-                    <input id="nom_complet" type="text" placeholder="Exemple : Issa BARRY" pInputText [(ngModel)]="user.nom_complet" [ngClass]="{'ng-invalid ng-dirty' : submitted && !user.nom_complet || errors['nom_complet']}">
-                     <small *ngIf="errors['nom_complet']">{{ errors['nom_complet'] }}</small>
-                </div> 
-
-                <div class="field mb-4 col-12 md:col-6">
-                    <label for="nom_complet" class="font-medium text-900">Nom complet</label>
-                    <input id="nom_complet" type="text" placeholder="Exemple : Issa BARRY" pInputText [(ngModel)]="user.nom_complet" [ngClass]="{'ng-invalid ng-dirty' : submitted && !user.nom_complet || errors['nom_complet']}">
-                     <small *ngIf="errors['nom_complet']">{{ errors['nom_complet'] }}</small>
-                </div> 
-                
-             
-                <!-- Champ adresse (visible seulement si le pays n'est pas Guinée) -->
-                <div *ngIf="!isGuineeSelected" class="field mb-4 col-6 md:col-6">
-                    <label for="adresse" class="font-medium text-900">Quartier</label>
-                    <input id="adresse" type="text" placeholder="Exemple : Cosa" [(ngModel)]="user.adresse.adresse" [ngClass]="{'ng-invalid ng-dirty' : submitted &&  errors['adresse.adresse']}" pInputText >
-                    <small *ngIf="errors['adresse.adresse']">{{ errors['adresse.adresse'] }}</small>
-                </div>
-
-               
-
-                <div class="field mb-4 col-12 md:col-6">
-                    <label for="state" class="font-medium text-900" >Ville</label>
-                    <input id="state" type="text" placeholder="Exemple : Conakry" [(ngModel)]="user.adresse.ville" [ngClass]="{'ng-invalid ng-dirty' : submitted &&  errors['adresse.ville']}"  pInputText>
-                    <small *ngIf="errors['adresse.ville']">{{ errors['adresse.ville'] }}</small>
-                </div> 
-
-                <div class="col-12">
-                    <button pButton pRipple label="Ajouter le client" class="w-auto mt-3" (click)="saveClient()"></button>
-                </div>
-            </div>
+  <div class="grid" *ngIf="!loading">
+    <div class="col-12 lg:col-10">
+      <div class="grid formgrid p-fluid">
+        <!-- TYPE -->
+        <div class="field mb-4 col-6 md:col-6">
+          <label for="type" class="font-medium text-900">Type</label>
+          <p-dropdown
+            id="type"
+            [options]="clientOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Sélectionnez un type de client"
+            [(ngModel)]="contact.type"
+            [ngClass]="{'p-invalid': hasError('type')}"
+          ></p-dropdown>
+          <small class="p-error" *ngIf="hasError('type')">{{ getError('type', 'Le type est obligatoire.') }}</small>
         </div>
+
+        <!-- PHONE -->
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="phone" class="font-medium text-900">Phone</label>
+          <input
+            id="phone"
+            type="text"
+            pInputText
+            placeholder="Exemple : 666 17 70 06"
+            [(ngModel)]="contact.phone"
+            [ngClass]="{'p-invalid': hasError('phone')}"
+          />
+          <small class="p-error" *ngIf="hasError('phone')">{{ getError('phone', 'Le téléphone est obligatoire.') }}</small>
+        </div>
+
+        <!-- PRENOM -->
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="prenom" class="font-medium text-900">Prénom</label>
+          <input
+            id="prenom"
+            type="text"
+            pInputText
+            placeholder="Exemple : Issa"
+            [(ngModel)]="contact.prenom"
+            [ngClass]="{'p-invalid': hasError('prenom')}"
+          />
+          <small class="p-error" *ngIf="hasError('prenom')">{{ getError('prenom', 'Le prénom est obligatoire.') }}</small>
+        </div>
+
+        <!-- NOM -->
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="nom" class="font-medium text-900">Nom</label>
+          <input
+            id="nom"
+            type="text"
+            pInputText
+            placeholder="Exemple : BARRY"
+            [(ngModel)]="contact.nom"
+            [ngClass]="{'p-invalid': hasError('nom')}"
+          />
+          <small class="p-error" *ngIf="hasError('nom')">{{ getError('nom', 'Le nom est obligatoire.') }}</small>
+        </div>
+
+        <!-- QUARTIER (ex si obligatoire selon pays) -->
+        <div class="field mb-4 col-6 md:col-6" *ngIf="!isGuineeSelected">
+          <label for="quartier" class="font-medium text-900">Quartier</label>
+          <input
+            id="quartier"
+            type="text"
+            pInputText
+            placeholder="Exemple : Cosa"
+            [(ngModel)]="contact.quartier"
+            [ngClass]="{'p-invalid': hasError('quartier')}"
+          />
+          <small class="p-error" *ngIf="hasError('quartier')">{{ getError('quartier') }}</small>
+        </div>
+
+        <!-- VILLE -->
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="ville" class="font-medium text-900">Ville</label>
+          <input
+            id="ville"
+            type="text"
+            pInputText
+            placeholder="Exemple : Conakry"
+            [(ngModel)]="contact.ville"
+            [ngClass]="{'p-invalid': hasError('ville')}"
+          />
+          <small class="p-error" *ngIf="hasError('ville')">{{ getError('ville') }}</small>
+        </div>
+
+        <div class="col-12">
+          <button pButton pRipple label="Créer" class="w-auto mt-3" (click)="saveClient()"></button>
+        </div>
+      </div>
     </div>
+  </div>
 </div>

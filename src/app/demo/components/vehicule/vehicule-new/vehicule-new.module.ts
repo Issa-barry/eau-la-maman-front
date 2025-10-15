@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RippleModule } from 'primeng/ripple';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -13,6 +13,7 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { VehiculeNewRoutingModule } from './vehicule-new-routing.module';
 import { VehiculeNewComponent } from './vehicule-new.component';
 import { DividerModule } from 'primeng/divider';
+import { ToastModule } from 'primeng/toast';
 
 
 @NgModule({
@@ -31,7 +32,9 @@ import { DividerModule } from 'primeng/divider';
     InputTextareaModule,
     InputGroupModule,
     InputGroupAddonModule,
-    DividerModule
+    DividerModule,
+    ReactiveFormsModule,
+    ToastModule
   ]
 })
 export class VehiculeNewModule { }

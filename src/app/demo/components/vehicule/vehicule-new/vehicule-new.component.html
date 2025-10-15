@@ -1,123 +1,145 @@
-<div class="card">
-    <span class="text-900 text-xl font-bold mb-4 block">Ajouter un Vehicule</span>
-<!-- vehicule -->
-    <div class="grid">
-        <div class="col-12 lg:col-2">
-            <div class="text-900 font-medium text-xl mb-3">Véhicule</div>
-            <p class="m-0 p-0 text-600 line-height-3 mr-3">Veillez saisir les informations du Véhicule</p>
-        </div>
-        <div class="col-12 lg:col-10">
-            <div class="grid formgrid p-fluid">
-                <div class="field mb-4 col-12 md:col-6">
-                    <label for="country" class="font-medium text-900">Imatriculation</label>
-                    <p-dropdown inputId="country" [options]="countries" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a Country">
-                        <ng-template let-country pTemplate="item">
-                            <div class="flex align-items-center">
-                                <img src="assets/demo/images/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + country.code.toLowerCase()" style="width:18px"/>
-                                <div>{{country.name}}</div>
-                            </div>
-                        </ng-template>
-                    </p-dropdown>
-                </div>
-                  <div class="field mb-4 col-12 md:col-6">
-                    <label for="country" class="font-medium text-900">Type de vehicule</label>
-                    <p-dropdown inputId="country" [options]="countries" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a Country">
-                        <ng-template let-country pTemplate="item">
-                            <div class="flex align-items-center">
-                                <img src="assets/demo/images/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + country.code.toLowerCase()" style="width:18px"/>
-                                <div>{{country.name}}</div>
-                            </div>
-                        </ng-template>
-                    </p-dropdown>
-                </div> 
-                <div class="field mb-4 col-12">
-                    <label for="nom" class="font-medium text-900">Nom du vehicule</label>
-                    <input id="nom" type="text" pInputText>
-                </div>
-                
-                <div class="field mb-4 col-12 md:col-6">
-                    <label for="city" class="font-medium text-900">City</label>
-                    <input id="city" type="text" pInputText>
-                </div>
-                <div class="field mb-4 col-12 md:col-6">
-                    <label for="state" class="font-medium text-900">State</label>
-                    <input id="state" type="text" pInputText>
-                </div> 
-                
-                <div class="field mb-4 col-12">
-                    <label for="avatar" class="font-medium text-900">Photo du vehicule</label>
-                    <p-fileUpload mode="basic" name="avatar" url="./upload.php" accept="image/*" [maxFileSize]="1000000" styleClass="p-button-outlined p-button-plain" chooseLabel="Upload Image"></p-fileUpload>
-                </div> 
-                 
-            </div>
-        </div>
+<div class="card" [formGroup]="form">
+  <p-toast></p-toast>
+
+  <span class="text-900 text-xl font-bold mb-4 block">Ajouter un Véhicule</span>
+
+  <!-- Véhicule -->
+  <div class="grid">
+    <div class="col-12 lg:col-2">
+      <div class="text-900 font-medium text-xl mb-3">Véhicule</div>
+      <p class="m-0 p-0 text-600 line-height-3 mr-3">
+        Veuillez saisir les informations du véhicule
+      </p>
     </div>
 
-    <p-divider></p-divider>
+    <div class="col-12 lg:col-10">
+      <div class="grid formgrid p-fluid">
 
-<!-- proprietaire -->
-    <div class="grid">
-        <div class="col-12 lg:col-2">
-            <div class="text-900 font-medium text-xl mb-3">Proprietaire</div>
-            <p class="m-0 p-0 text-600 line-height-3 mr-3">Veillez saisir les informations du Proprietaire</p>
-        </div>
-        <div class="col-12 lg:col-10">
-            <div class="grid formgrid p-fluid"> 
-                
-                <div class="field mb-4 col-12 md:col-6">
-                    <label for="nom_proprietaire" class="font-medium text-900">Nom du proprietaire</label>
-                    <input id="nom_proprietaire" type="text" pInputText>
-                </div>
-                <div class="field mb-4 col-12 md:col-6">
-                    <label for="prenom_proprietaire" class="font-medium text-900">Prenom du proprietaire</label>
-                    <input id="prenom_proprietaire" type="text" pInputText>
-                </div>
-                <div class="field mb-4 col-12">
-                    <label for="phone_proprietaire" class="font-medium text-900">Phone du proprietaire</label>
-                    <p-inputGroup>
-                        <p-inputGroupAddon>
-                           <span class="pi pi-phone"></span>
-                        </p-inputGroupAddon>
-                        <input id="phone_proprietaire" type="text" pInputText>      
-                    </p-inputGroup>
-                </div>
-            </div>
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="immatriculation" class="font-medium text-900">Immatriculation</label>
+          <input id="immatriculation" type="text" pInputText formControlName="immatriculation" />
+          <small class="p-error" *ngIf="hasError('immatriculation','required')">Requis</small>
+          <small class="p-error" *ngIf="apiErrors['immatriculation']">{{ apiErrors['immatriculation'] }}</small>
         </div>
 
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="type" class="font-medium text-900">Type de véhicule</label>
+          <p-dropdown inputId="type" [options]="types" optionLabel="label" optionValue="value"
+                      placeholder="Choisir" formControlName="type" [showClear]="true">
+          </p-dropdown>
+          <small class="p-error" *ngIf="hasError('type','required')">Requis</small>
+          <small class="p-error" *ngIf="apiErrors['type']">{{ apiErrors['type'] }}</small>
+        </div>
+
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="nom" class="font-medium text-900">Nom du véhicule (optionnel)</label>
+          <input id="nom" type="text" pInputText formControlName="nom" />
+          <small class="p-error" *ngIf="apiErrors['nom']">{{ apiErrors['nom'] }}</small>
+        </div>
+
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="statut" class="font-medium text-900">Statut</label>
+          <p-dropdown inputId="statut" [options]="statuts" optionLabel="label" optionValue="value"
+                      placeholder="Choisir un statut" formControlName="statut">
+          </p-dropdown>
+          <small class="p-error" *ngIf="apiErrors['statut']">{{ apiErrors['statut'] }}</small>
+        </div>
+
+        <!-- Photo: optionnel, à brancher plus tard -->
+        <!--
+        <div class="field mb-4 col-12">
+          <label for="avatar" class="font-medium text-900">Photo du véhicule</label>
+          <p-fileUpload mode="basic" name="avatar" url="./upload.php" accept="image/*"
+                        [maxFileSize]="1000000" styleClass="p-button-outlined p-button-plain"
+                        chooseLabel="Uploader une image"></p-fileUpload>
+        </div>
+        -->
+
+      </div>
     </div>
-    <p-divider></p-divider>
+  </div>
 
-<!-- Livrereur -->
-    <div class="grid">
-        <div class="col-12 lg:col-2">
-            <div class="text-900 font-medium text-xl mb-3">Livrereur</div>
-            <p class="m-0 p-0 text-600 line-height-3 mr-3">Veillez saisir les informations du Livrereur</p>
-        </div>
-        <div class="col-12 lg:col-10">
-            <div class="grid formgrid p-fluid"> 
-                
-                <div class="field mb-4 col-12 md:col-6">
-                    <label for="nom_livreur" class="font-medium text-900">Nom du livreur</label>
-                    <input id="nom_livreur" type="text" pInputText>
-                </div>
-                <div class="field mb-4 col-12 md:col-6">
-                    <label for="prenom_livreur" class="font-medium text-900">Prenom du livreur</label>
-                    <input id="prenom_livreur" type="text" pInputText>
-                </div>
-                <div class="field mb-4 col-12">
-                    <label for="phone_livreur" class="font-medium text-900">Phone du livreur</label>
-                    <p-inputGroup>
-                        <p-inputGroupAddon>
-                           <span class="pi pi-phone"></span>
-                        </p-inputGroupAddon>
-                        <input id="phone_livreur" type="phone" pInputText>      
-                    </p-inputGroup>
-                </div>
-                <div class="col-12">
-                    <button pButton pRipple label="Create User" class="w-auto mt-3"></button>
-                </div>
-            </div>
-        </div>
+  <p-divider></p-divider>
 
+  <!-- Propriétaire -->
+  <div class="grid">
+    <div class="col-12 lg:col-2">
+      <div class="text-900 font-medium text-xl mb-3">Propriétaire</div>
+      <p class="m-0 p-0 text-600 line-height-3 mr-3">
+        Veuillez saisir les informations du propriétaire
+      </p>
     </div>
+
+    <div class="col-12 lg:col-10">
+      <div class="grid formgrid p-fluid">
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="nom_proprietaire" class="font-medium text-900">Nom</label>
+          <input id="nom_proprietaire" type="text" pInputText formControlName="nom_proprietaire" />
+          <small class="p-error" *ngIf="hasError('nom_proprietaire','required')">Requis</small>
+          <small class="p-error" *ngIf="apiErrors['nom_proprietaire']">{{ apiErrors['nom_proprietaire'] }}</small>
+        </div>
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="prenom_proprietaire" class="font-medium text-900">Prénom</label>
+          <input id="prenom_proprietaire" type="text" pInputText formControlName="prenom_proprietaire" />
+          <small class="p-error" *ngIf="hasError('prenom_proprietaire','required')">Requis</small>
+          <small class="p-error" *ngIf="apiErrors['prenom_proprietaire']">{{ apiErrors['prenom_proprietaire'] }}</small>
+        </div>
+        <div class="field mb-4 col-12">
+          <label for="phone_proprietaire" class="font-medium text-900">Téléphone</label>
+          <p-inputGroup>
+            <p-inputGroupAddon><span class="pi pi-phone"></span></p-inputGroupAddon>
+            <input id="phone_proprietaire" type="text" pInputText formControlName="phone_proprietaire" />
+          </p-inputGroup>
+          <small class="p-error" *ngIf="hasError('phone_proprietaire','required')">Requis</small>
+          <small class="p-error" *ngIf="apiErrors['phone_proprietaire']">{{ apiErrors['phone_proprietaire'] }}</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p-divider></p-divider>
+
+  <!-- Livreur -->
+  <div class="grid">
+    <div class="col-12 lg:col-2">
+      <div class="text-900 font-medium text-xl mb-3">Livreur</div>
+      <p class="m-0 p-0 text-600 line-height-3 mr-3">
+        Veuillez saisir les informations du livreur
+      </p>
+    </div>
+
+    <div class="col-12 lg:col-10">
+      <div class="grid formgrid p-fluid">
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="nom_livreur" class="font-medium text-900">Nom</label>
+          <input id="nom_livreur" type="text" pInputText formControlName="nom_livreur" />
+          <small class="p-error" *ngIf="hasError('nom_livreur','required')">Requis</small>
+          <small class="p-error" *ngIf="apiErrors['nom_livreur']">{{ apiErrors['nom_livreur'] }}</small>
+        </div>
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="prenom_livreur" class="font-medium text-900">Prénom</label>
+          <input id="prenom_livreur" type="text" pInputText formControlName="prenom_livreur" />
+          <small class="p-error" *ngIf="hasError('prenom_livreur','required')">Requis</small>
+          <small class="p-error" *ngIf="apiErrors['prenom_livreur']">{{ apiErrors['prenom_livreur'] }}</small>
+        </div>
+        <div class="field mb-4 col-12">
+          <label for="phone_livreur" class="font-medium text-900">Téléphone</label>
+          <p-inputGroup>
+            <p-inputGroupAddon><span class="pi pi-phone"></span></p-inputGroupAddon>
+            <input id="phone_livreur" type="text" pInputText formControlName="phone_livreur" />
+          </p-inputGroup>
+          <small class="p-error" *ngIf="hasError('phone_livreur','required')">Requis</small>
+          <small class="p-error" *ngIf="apiErrors['phone_livreur']">{{ apiErrors['phone_livreur'] }}</small>
+        </div>
+
+        <div class="col-12">
+          <button pButton pRipple label="Créer le véhicule"
+                  class="w-auto mt-3"
+                  [disabled]="form.invalid || loading"
+                  (click)="submit()">
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

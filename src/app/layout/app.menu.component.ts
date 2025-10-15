@@ -62,11 +62,11 @@ export class AppMenuComponent implements OnInit {
                         icon: 'pi pi-fw pi-users',
                         routerLink: ['/dashboard/user']
                     },
-                    // {
-                    //     label: 'Dépots',
-                    //     icon: 'pi pi-fw pi-map-marker',
-                    //     routerLink: ['/dashboard/agence']
-                    // }
+                    {
+                        label: 'Véhicules',
+                        icon: 'pi pi-fw pi-truck',
+                        routerLink: ['/dashboard/vehicule']
+                    }
                 ]
             },
             {

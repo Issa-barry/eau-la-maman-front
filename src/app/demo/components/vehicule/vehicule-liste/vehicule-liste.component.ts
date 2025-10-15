@@ -9,21 +9,32 @@ import { Statut } from 'src/app/demo/enums/statut.enum';
 import { MenuItem } from 'primeng/api';
 import { User } from 'src/app/demo/models/User';
 import { UserService } from 'src/app/demo/service/users/user.service';
+import { VehiculeService } from 'src/app/demo/service/vehicule/vehicule.service';
+import { Vehicule } from 'src/app/demo/models/vehicule.model';
 
 @Component({
-  selector: 'app-user-liste',
-  templateUrl: './user-liste.component.html',
-  styleUrl: './user-liste.component.scss',
-  providers: [MessageService, ConfirmationService],
+  selector: 'app-vehicule-liste',
+  templateUrl: './vehicule-liste.component.html',
+  styleUrl: './vehicule-liste.component.scss',
+    providers: [MessageService, ConfirmationService],
+  
 })
-export class UserListeComponent implements OnInit {
+export class VehiculeListeComponent  implements OnInit {
     users: User[] = [];
     user: User = new User();
+
+    vehicules: Vehicule[] = [];
+    vehicule: Vehicule = new Vehicule();
+
     roles: Role[] = [];
     optionPays = [
         { label: 'GUINEE-CONAKRY', value: 'Guinée-Conakry' },
         { label: 'FRANCE', value: 'France' },
     ];
+
+    vehiculeDialog = false;
+    deleteVehiculeDialog = false;
+    deleteVehiculesDialog = false;
 
     userDialog = false;
     deleteUserDialog = false;
@@ -36,6 +47,8 @@ export class UserListeComponent implements OnInit {
 
     selectedUsers: User[] = [];
 
+    selectedVehicules: Vehicule[] = [];
+
     isValidPhone = true;
     isValidCodePostal = true;
     isCodePostalDisabled = false;
@@ -47,6 +60,7 @@ export class UserListeComponent implements OnInit {
 
     constructor(
         private userService: UserService,
+        private vehiculeService: VehiculeService,
         private roleService: RoleService,
         private router: Router,
         private messageService: MessageService,
@@ -56,6 +70,7 @@ export class UserListeComponent implements OnInit {
     ngOnInit(): void {
         this.getAllUsers();
         this.getAllRoles();
+        this.getAllVehicules();
 
         this.items = [
             {
@@ -84,6 +99,43 @@ export class UserListeComponent implements OnInit {
             },
         ];
     }
+// Veicule
+
+//variable de pafination
+totalRecords = 0;
+rows = 10;           // rows par page
+currentPage = 1;
+
+
+getAllVehicules(page: number = 1): void {
+  this.loading = true;
+  this.vehiculeService.getAll({ per_page: this.rows, page }).subscribe({
+    next: (res) => {
+      this.vehicules    = res.data;      // ✅ tableau
+      this.totalRecords = res.total;
+      this.rows         = res.per_page;
+      this.currentPage  = res.current_page;
+      this.loading = false;
+      console.log('Véhicules chargés:', res);
+    },
+    error: (err) => {
+      console.error('Erreur lors de la récupération des vehicules:', err);
+      this.loading = false;
+    },
+  });
+}
+
+onPage(event: any) {
+  const page = event.first / event.rows + 1;
+  this.rows = event.rows;
+  this.getAllVehicules(page);
+}
+
+
+
+
+
+    // Users
 
     getAllUsers(): void {
         this.loading = true;

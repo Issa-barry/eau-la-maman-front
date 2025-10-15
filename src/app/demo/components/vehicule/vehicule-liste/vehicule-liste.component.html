@@ -22,7 +22,7 @@
 
             <p-table 
                 #dt
-                [value]="loading ? skeletonRows : users"
+                [value]="loading ? skeletonRows : vehicules"
                 responsiveLayout="scroll"
                 [rows]="10"
                 [globalFilterFields]="[
@@ -38,8 +38,8 @@
                 [paginator]="true"
                 [rowsPerPageOptions]="[10, 20, 30]"
                 [showCurrentPageReport]="true"
-                currentPageReportTemplate="Liste de {first} / {last} des {totalRecords} users"
-                [(selection)]="selectedUsers"
+                currentPageReportTemplate="Liste de {first} / {last} des {totalRecords} véhicules"
+                [(selection)]="selectedVehicules"
                 selectionMode="multiple"
                 [rowHover]="true"
                 dataKey="id"
@@ -48,7 +48,7 @@
                     <div
                         class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
                     >
-                        <h5 class="m-0">Liste des users</h5>
+                        <h5 class="m-0">Liste des véhicules</h5>
                         <span class="block mt-2 md:mt-0 p-input-icon-left">
                             <i class="pi pi-search"></i>
                             <input
@@ -67,23 +67,19 @@
                         <th style="width: 3rem">
                             <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                         </th>
-                        <th pSortableColumn="reference">
-                            Reference
-                            <p-sortIcon field="reference"></p-sortIcon>
+                        <th pSortableColumn="immatriculation">
+                            Immatriculation
+                            <p-sortIcon field="immatriculation"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="nom_complet">
-                            Nom <p-sortIcon field="nom_complet"></p-sortIcon>
+                        <th pSortableColumn="nom">
+                            Nom <p-sortIcon field="nom"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="phone">
-                            Téléphone <p-sortIcon field="phone"></p-sortIcon>
+                        <th pSortableColumn="nom_livreur">
+                            Livreur <p-sortIcon field="nom_livreur"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="adresse.ville">
-                            Ville
-                            <p-sortIcon field="adresse.ville"></p-sortIcon>
-                        </th>
-                        <th pSortableColumn="adresse.pays">
-                            Pays <p-sortIcon field="adresse.pays"></p-sortIcon>
-                        </th>
+                        <th pSortableColumn="phone_livreur">
+                            Phone du livreur <p-sortIcon field="phone_livreur"></p-sortIcon>
+                        </th> 
                         <th pSortableColumn="statut">
                             Statut <p-sortIcon field="statut"></p-sortIcon>
                         </th>
@@ -91,15 +87,14 @@
                     </tr>
                 </ng-template>
 
-                <ng-template pTemplate="body" let-user>
+                <ng-template pTemplate="body" let-vehicule>
                     <tr *ngIf="loading">
                         <td><p-skeleton width="6rem" /></td>
                         <td><p-skeleton width="10rem" /></td>
                         <td><p-skeleton width="8rem" /></td>
                         <td><p-skeleton width="12rem" /></td>
                         <td><p-skeleton width="10rem" /></td>
-                        <td><p-skeleton width="6rem" /></td>
-                        <td>
+                         <td>
                             <p-skeleton
                                 width="5rem"
                                 height="2rem"
@@ -110,15 +105,14 @@
                     <tr *ngIf="!loading">
                         <td>
                             <p-tableCheckbox
-                                [value]="user"
+                                [value]="vehicule"
                             ></p-tableCheckbox>
                         </td>
-                        <td>{{ user.reference }}</td>
-                        <td>{{ user.nom_complet }}</td>
-                        <td>{{ user.phone }}</td>
-                        <td>{{ user.adresse?.ville }}</td>
-                        <td>{{ user.adresse?.pays }}</td>
-                        <td>{{ user.statut }}</td>
+                        <td>{{ vehicule.immatriculation }}</td>
+                        <td>{{ vehicule.nom }}</td>
+                        <td>{{ vehicule.nom_complet_livreur }}</td>
+                        <td>{{ vehicule.phone_livreur }}</td>
+                        <td>{{ vehicule.statut }}</td>
                         <td>
                             <div class="flex gap-2">
                                 <button

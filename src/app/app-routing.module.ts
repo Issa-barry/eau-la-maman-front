@@ -32,7 +32,7 @@ const routes: Routes = [
             { path: 'ventes', loadChildren: () => import('./demo/components/ventes/ventes.module').then(m => m.VentesModule) },
             { path: 'packing', loadChildren: () => import('./demo/components/packing/packing.module').then(m => m.PackingModule) },
             { path: 'user', loadChildren: () => import('./demo/components/user/user.module').then(m => m.UserModule) },
-
+            { path: 'vehicule', loadChildren: () => import('./demo/components/vehicule/vehicule.module').then(m => m.VehiculeModule) },
 
 
         ]

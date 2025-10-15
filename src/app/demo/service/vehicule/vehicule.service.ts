@@ -111,6 +111,19 @@ getAll(opts?: {
       .pipe(map((res) => res.data as Vehicule), catchError(this.handleError));
   }
 
+  updateStatutVehicule(id: number, statut: 'active' | 'attente' | 'bloque' | 'archive'): Observable<Vehicule> {
+        return this.http
+          .patch<{ success: boolean; data: Vehicule }>(
+            `${this.apiUrl}/${id}/statutUpdate`,
+            { statut },
+            httpOption
+          )
+          .pipe(
+            map((res) => res.data),
+            catchError(this.handleError)
+          );
+      }
+
   /** DELETE /vehicules/:id */
   delete(id: number): Observable<void> {
     return this.http

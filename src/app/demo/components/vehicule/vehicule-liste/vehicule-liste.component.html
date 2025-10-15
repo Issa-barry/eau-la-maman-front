@@ -5,7 +5,14 @@
 
             <p-toolbar styleClass="mb-4">
                 <div class="p-toolbar-group-right">
-                    <p-splitButton label="Nouveau" icon="pi pi-check" [model]="items"></p-splitButton>
+                     <button 
+                        pButton
+                        pRipple  
+                        label="Nouveau"
+                        icon="pi pi-plus"
+                        class="p-button-primary ml-2"
+                        [routerLink]="['/dashboard/vehicule/vehicule-new']" routerLinkActive="router-link-active" 
+                    ></button>
                 </div>
 
                 <ng-template pTemplate="right">
@@ -94,6 +101,7 @@
                         <td><p-skeleton width="8rem" /></td>
                         <td><p-skeleton width="12rem" /></td>
                         <td><p-skeleton width="10rem" /></td>
+                        <td><p-skeleton width="10rem" /></td>
                          <td>
                             <p-skeleton
                                 width="5rem"
@@ -120,34 +128,34 @@
                                     pRipple
                                     icon="pi pi-eye"
                                     class="p-button-rounded p-button-success"
-                                    (click)="onGotToUserDetail(user)"
+                                    (click)="onGotToVehiculeDetail(vehicule)"
                                 ></button>
                                 <button
-                                    *ngIf="user.statut === 'attente'"
+                                    *ngIf="vehicule.statut === 'attente'"
                                     pButton
                                     pRipple
                                     icon="pi pi-check"
                                     class="p-button-rounded p-button-info"
-                                    (click)="validerUser(user)"
+                                    (click)="validerVehicule(vehicule)"
                                     title="Valider"
                                 ></button>
                                 <button
-                                    *ngIf="user.statut === 'active'"
+                                    *ngIf="vehicule.statut === 'active'"
                                     pButton
                                     pRipple
                                     icon="pi pi-lock-open"
                                     class="p-button-rounded p-button-warning"
-                                    (click)="bloquerUser(user)"
+                                    (click)="bloquerVehicule(vehicule)"
                                     title="Bloquer"
                                 ></button>
 
                                 <button
-                                    *ngIf="user.statut === 'bloque'"
+                                    *ngIf="vehicule.statut === 'bloque'"
                                     pButton
                                     pRipple
                                     icon="pi pi-lock"
                                     class="p-button-rounded p-button-danger"
-                                    (click)="debloquerUser(user)"
+                                    (click)="debloquerVehicule(vehicule)"
                                     title="Débloquer"
                                 ></button>
 

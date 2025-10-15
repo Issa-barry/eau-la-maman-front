@@ -1,0 +1,123 @@
+<div class="card">
+    <span class="text-900 text-xl font-bold mb-4 block">Ajouter un Vehicule</span>
+<!-- vehicule -->
+    <div class="grid">
+        <div class="col-12 lg:col-2">
+            <div class="text-900 font-medium text-xl mb-3">Véhicule</div>
+            <p class="m-0 p-0 text-600 line-height-3 mr-3">Veillez saisir les informations du Véhicule</p>
+        </div>
+        <div class="col-12 lg:col-10">
+            <div class="grid formgrid p-fluid">
+                <div class="field mb-4 col-12 md:col-6">
+                    <label for="country" class="font-medium text-900">Imatriculation</label>
+                    <p-dropdown inputId="country" [options]="countries" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a Country">
+                        <ng-template let-country pTemplate="item">
+                            <div class="flex align-items-center">
+                                <img src="assets/demo/images/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + country.code.toLowerCase()" style="width:18px"/>
+                                <div>{{country.name}}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+                  <div class="field mb-4 col-12 md:col-6">
+                    <label for="country" class="font-medium text-900">Type de vehicule</label>
+                    <p-dropdown inputId="country" [options]="countries" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a Country">
+                        <ng-template let-country pTemplate="item">
+                            <div class="flex align-items-center">
+                                <img src="assets/demo/images/flag/flag_placeholder.png" [class]="'mr-2 flag flag-' + country.code.toLowerCase()" style="width:18px"/>
+                                <div>{{country.name}}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div> 
+                <div class="field mb-4 col-12">
+                    <label for="nom" class="font-medium text-900">Nom du vehicule</label>
+                    <input id="nom" type="text" pInputText>
+                </div>
+                
+                <div class="field mb-4 col-12 md:col-6">
+                    <label for="city" class="font-medium text-900">City</label>
+                    <input id="city" type="text" pInputText>
+                </div>
+                <div class="field mb-4 col-12 md:col-6">
+                    <label for="state" class="font-medium text-900">State</label>
+                    <input id="state" type="text" pInputText>
+                </div> 
+                
+                <div class="field mb-4 col-12">
+                    <label for="avatar" class="font-medium text-900">Photo du vehicule</label>
+                    <p-fileUpload mode="basic" name="avatar" url="./upload.php" accept="image/*" [maxFileSize]="1000000" styleClass="p-button-outlined p-button-plain" chooseLabel="Upload Image"></p-fileUpload>
+                </div> 
+                 
+            </div>
+        </div>
+    </div>
+
+    <p-divider></p-divider>
+
+<!-- proprietaire -->
+    <div class="grid">
+        <div class="col-12 lg:col-2">
+            <div class="text-900 font-medium text-xl mb-3">Proprietaire</div>
+            <p class="m-0 p-0 text-600 line-height-3 mr-3">Veillez saisir les informations du Proprietaire</p>
+        </div>
+        <div class="col-12 lg:col-10">
+            <div class="grid formgrid p-fluid"> 
+                
+                <div class="field mb-4 col-12 md:col-6">
+                    <label for="nom_proprietaire" class="font-medium text-900">Nom du proprietaire</label>
+                    <input id="nom_proprietaire" type="text" pInputText>
+                </div>
+                <div class="field mb-4 col-12 md:col-6">
+                    <label for="prenom_proprietaire" class="font-medium text-900">Prenom du proprietaire</label>
+                    <input id="prenom_proprietaire" type="text" pInputText>
+                </div>
+                <div class="field mb-4 col-12">
+                    <label for="phone_proprietaire" class="font-medium text-900">Phone du proprietaire</label>
+                    <p-inputGroup>
+                        <p-inputGroupAddon>
+                           <span class="pi pi-phone"></span>
+                        </p-inputGroupAddon>
+                        <input id="phone_proprietaire" type="text" pInputText>      
+                    </p-inputGroup>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <p-divider></p-divider>
+
+<!-- Livrereur -->
+    <div class="grid">
+        <div class="col-12 lg:col-2">
+            <div class="text-900 font-medium text-xl mb-3">Livrereur</div>
+            <p class="m-0 p-0 text-600 line-height-3 mr-3">Veillez saisir les informations du Livrereur</p>
+        </div>
+        <div class="col-12 lg:col-10">
+            <div class="grid formgrid p-fluid"> 
+                
+                <div class="field mb-4 col-12 md:col-6">
+                    <label for="nom_livreur" class="font-medium text-900">Nom du livreur</label>
+                    <input id="nom_livreur" type="text" pInputText>
+                </div>
+                <div class="field mb-4 col-12 md:col-6">
+                    <label for="prenom_livreur" class="font-medium text-900">Prenom du livreur</label>
+                    <input id="prenom_livreur" type="text" pInputText>
+                </div>
+                <div class="field mb-4 col-12">
+                    <label for="phone_livreur" class="font-medium text-900">Phone du livreur</label>
+                    <p-inputGroup>
+                        <p-inputGroupAddon>
+                           <span class="pi pi-phone"></span>
+                        </p-inputGroupAddon>
+                        <input id="phone_livreur" type="phone" pInputText>      
+                    </p-inputGroup>
+                </div>
+                <div class="col-12">
+                    <button pButton pRipple label="Create User" class="w-auto mt-3"></button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

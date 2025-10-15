@@ -8,11 +8,13 @@ export class Vehicule {
   nom_proprietaire: string | null;
   prenom_proprietaire: string | null;
   phone_proprietaire: string | null;
+  statut: string | null;
   created_at?: string;
   updated_at?: string;
 
   constructor() {
     this.type = null;
+    this.statut = '';
     this.immatriculation = '';
     this.nom_proprietaire = null;
     this.prenom_proprietaire = null;

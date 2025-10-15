@@ -270,30 +270,31 @@ onPage(event: any) {
         });
     }
 
-    deleteSelectedUsers(): void {
-        this.deleteUsersDialog = true;
+    deleteSelectedVehicules(): void {
+        this.deleteVehiculesDialog = true;
     }
 
+     
     confirmDeleteSelected(): void {
-        this.deleteUsersDialog = false;
+        this.deleteVehiculesDialog = false;
         // Implémentez la logique réelle si vous avez un service côté backend
-        this.selectedUsers = [];
+        this.selectedVehicules = [];
         this.messageService.add({
             severity: 'success',
             summary: 'Suppression multiple',
-            detail: 'Users supprimés',
+            detail: 'Véhicules supprimés',
             life: 3000,
         });
     }
 
     openNew(): void {
-        this.user = new User();
+        this.vehicule = new Vehicule();
         this.submitted = false;
-        this.userDialog = true;
+        this.vehiculeDialog = true;
     }
 
     hideDialog(): void {
-        this.userDialog = false;
+        this.vehiculeDialog = false;
         this.submitted = false;
     }
 
@@ -304,33 +305,30 @@ onPage(event: any) {
         );
     }
 
-    onGotToNewUser(): void {
-        this.router.navigate(['/dashboard/user/user-new']);
-    }
-
-    onGotToUserDetail(user: User): void {
-        this.router.navigate(['/dashboard/user/user-detail', user.id]);
+    onGotToVehiculeDetail(vehicule: Vehicule): void {
+        this.router.navigate(['/dashboard/vehicule/vehicule-detail', vehicule.id]);
     }
     showMessage(severity: string, summary: string, detail: string) {
         this.messageService.add({ severity, summary, detail, life: 3000 });
     }
 
-    private updateStatutUser(
-        user: User,
+    private updateStatutVehicule(
+        vehicule: Vehicule,
         statut: Statut,
         severity: string,
         action: string
     ) {
-        if (!user.id) return;
+        if (!vehicule.id) return;
 
-        this.userService.updateStatut(user.id, statut).subscribe({
+        this.vehiculeService.updateStatutVehicule(vehicule.id, statut).subscribe({
             next: (updated) => {
                 this.showMessage(
                     severity,
                     'Statut modifié',
-                    `User "${updated.nom_complet}" ${action}.`
+                    // `Véhicule "${updated.nom}" ${action}.`
+                    `Véhicule ${action}.`
                 );
-                this.getAllUsers();
+                this.getAllVehicules();
             },
             error: (err) => {
                 this.showMessage(
@@ -343,17 +341,17 @@ onPage(event: any) {
     }
 
     // Statuts avec Enum
-    validerUser(user: User) {
-        this.updateStatutUser(user, Statut.ACTIVE, 'success', 'validée');
+    validerVehicule(vehicule: Vehicule) {
+        this.updateStatutVehicule(vehicule, Statut.ACTIVE, 'success', 'validée');
     }
 
-    bloquerUser(user: User) {
-        this.updateStatutUser(user, Statut.BLOQUE, 'warn', 'bloquée');
+    bloquerVehicule(vehicule: Vehicule) {
+        this.updateStatutVehicule(vehicule, Statut.BLOQUE, 'warn', 'bloquée');
     }
 
-    debloquerUser(user: User) {
-        this.updateStatutUser(
-            user,
+    debloquerVehicule(vehicule: Vehicule) {
+        this.updateStatutVehicule(
+            vehicule,
             Statut.ACTIVE,
             'success',
             'débloquée'

@@ -16,7 +16,7 @@
       </ng-template>
     </div>
   </div>
- 
+  
   <p-progressBar *ngIf="loading" mode="indeterminate" class="mb-4"></p-progressBar>
 
   <div class="grid formgrid p-fluid" *ngIf="!loading">
@@ -24,7 +24,12 @@
     <div class="field col-6 md:col-6">
       <label class="font-medium">Civilité</label>
       <p-skeleton *ngIf="loadingUser" width="100%" height="2.5rem"></p-skeleton>
-      <p-dropdown *ngIf="!loadingUser" [(ngModel)]="user.civilite" [options]="civiliteOptions" optionLabel="label" optionValue="value" [disabled]="!isEditing"
+      <p-dropdown *ngIf="!loadingUser" 
+               [(ngModel)]="user.civilite"
+                 [options]="civiliteOptions" 
+                  optionLabel="label" 
+                  optionValue="value" 
+                  [disabled]="!isEditing"
         [ngClass]="{ 'ng-invalid ng-dirty': (submitted && !user.civilite) || errors['civilite'] }">
       </p-dropdown>
       <small *ngIf="errors['civilite']" class="text-red-500">{{ errors["civilite"] }}</small>

@@ -13,29 +13,29 @@ import { DividerModule } from 'primeng/divider';
 import { ToastModule } from 'primeng/toast';
 
 
-import { VehiculeNewRoutingModule } from './vehicule-new-routing.module';
-import { VehiculeNewComponent } from './vehicule-new.component';
+import { VehiculeDetailRoutingModule } from './vehicule-detail-routing.module';
+import { VehiculeDetailComponent } from './vehicule-detail.component';
 
 
 @NgModule({
   declarations: [
-    VehiculeNewComponent
+    VehiculeDetailComponent
   ],
   imports: [
     CommonModule,
-    VehiculeNewRoutingModule,
+    VehiculeDetailRoutingModule,
     FormsModule,
-    ButtonModule,
-    RippleModule,
-    InputTextModule,
-    DropdownModule,
-    FileUploadModule,
-    InputTextareaModule,
-    InputGroupModule,
-    InputGroupAddonModule,
-    DividerModule,
-    ReactiveFormsModule,
-    ToastModule
+        ButtonModule,
+        RippleModule,
+        InputTextModule,
+        DropdownModule,
+        FileUploadModule,
+        InputTextareaModule,
+        InputGroupModule,
+        InputGroupAddonModule,
+        DividerModule,
+        ReactiveFormsModule,
+        ToastModule
   ]
 })
-export class VehiculeNewModule { }
+export class VehiculeDetailModule { }

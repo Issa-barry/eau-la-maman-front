@@ -82,6 +82,7 @@ meta: { total: number; per_page: number; current_page: number; last_page: number
       this.commandes = res.items ?? [];
       this.meta = res.meta ?? this.meta; // garde une meta valide
       this.loading = false;
+      // console.log(this.commandes);
     },
     error: (err) => {
       console.error('Erreur lors du chargement des commandes :', err);

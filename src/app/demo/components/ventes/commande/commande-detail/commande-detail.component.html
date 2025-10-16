@@ -12,8 +12,7 @@
                [value]="(commande.statut ?? '') | titlecase"
                [severity]="isDelivered ? 'success' : 'warning'"
                class="status-tag text-0 mt-2 md:mt-0 ml-0 md:ml-2 px-2 py-1"
-               [style]="{ fontSize: '1.115rem', letterSpacing: '0.1rem' }"
-               >
+               [style]="{ fontSize: '1.115rem', letterSpacing: '0.1rem' }">
         </p-tag>
       </div>
 
@@ -21,50 +20,57 @@
     </div>
 
     <div class="col-12 lg:col-10 h-full px-4 py-4 md:px-6">
-      <!-- Livreur -->
-      <div class="field mb-4">
-        <label class="text-800 text-m block font-normal mb-2">Livreur</label>
 
+      <!-- Véhicule / Livreur -->
+      <div class="field mb-4">
+        <label class="text-800 text-m block font-normal mb-2">Véhicule</label>
+
+        <!-- Mode édition -->
         <p-dropdown
           *ngIf="isEditMode"
-          [options]="users" 
-          [(ngModel)]="commande.user"
-          optionLabel="nom_complet"
-          placeholder="Sélectionner un livreur"
+          [options]="vehicules"
+          [(ngModel)]="commande.vehicule"
+          optionLabel="immatriculation"
+          placeholder="Sélectionner un véhicule"
           [filter]="true"
-          filterBy="nom_complet telephone"
+          filterBy="immatriculation type"
           [showClear]="true"
           appendTo="body"
           styleClass="w-full"
-          [ngClass]="{ 'p-invalid': hasError('user_id') }">
-          <ng-template let-livreur pTemplate="selectedItem">
-            <div *ngIf="livreur" class="flex flex-column">
-              <div class="font-medium">{{ livreur.nom_complet }}</div>
+          [ngClass]="{ 'p-invalid': hasError('vehicule_id') }">
+          
+          <ng-template let-v pTemplate="selectedItem">
+            <div *ngIf="v" class="flex flex-column">
+              <div class="font-medium">{{ v.immatriculation }} ({{ v.type }})</div>
             </div>
           </ng-template>
-          <ng-template let-livreur pTemplate="item">
+
+          <ng-template let-v pTemplate="item">
             <div class="flex flex-column">
-              <div class="font-medium">{{ livreur.nom_complet }}</div>
+              <div class="font-medium">{{ v.immatriculation }} ({{ v.type }})</div>
             </div>
           </ng-template>
         </p-dropdown>
 
-        <div *ngIf="getError('user_id')" class="text-red-500 text-xs mt-1">
-          {{ getError('user_id') }}
+        <!-- Erreur validation -->
+        <div *ngIf="getError('vehicule_id')" class="text-red-500 text-xs mt-1">
+          {{ getError('vehicule_id') }}
         </div>
 
+        <!-- Mode lecture seule -->
         <div *ngIf="!isEditMode" class="p-2 border-1 border-round surface-border text-sm">
           <div class="font-medium text-900">
-            {{ commande.user?.nom_complet || 'Non renseigné' }}
+            {{ commande.vehicule?.immatriculation || 'Non renseigné' }}
           </div>
         </div>
       </div>
 
       <!-- Lignes de commande -->
-      <!-- Version mobile : cartes (visible < md) -->
+      <!-- Version mobile -->
       <div class="md:hidden">
         <div *ngFor="let ligne of lignes; let i = index; trackBy: trackByLigne"
              class="surface-card border-1 surface-border border-round p-3 mb-3">
+          
           <!-- Produit -->
           <div class="mb-2">
             <div class="font-semibold mb-1">Produit</div>
@@ -134,7 +140,7 @@
         </div>
       </div>
 
-      <!-- Version desktop : tableau (visible >= md) -->
+      <!-- Version desktop -->
       <div class="hidden md:block overflow-auto">
         <table class="w-full text-sm text-left">
           <thead class="text-xs text-gray-700">
@@ -159,9 +165,7 @@
                   styleClass="w-full"
                   [ngClass]="{ 'p-invalid': hasError('produit_id', i) }">
                 </p-dropdown>
-                <div *ngIf="!isEditMode">
-                  {{ ligne.produit?.nom || 'N/A' }}
-                </div>
+                <div *ngIf="!isEditMode">{{ ligne.produit?.nom || 'N/A' }}</div>
                 <div *ngIf="getError('produit_id', i)" class="text-red-500 text-xs mt-1">
                   {{ getError('produit_id', i) }}
                 </div>
@@ -230,7 +234,7 @@
                 label="Enregistrer" icon="pi pi-fw pi-check"
                 (click)="saveCommande()"></button>
 
-                <!-- Modifier -->
+        <!-- Modifier -->
         <button *ngIf="!isEditMode"
                 [disabled]="isDelivered"
                 pButton pRipple
@@ -238,29 +242,30 @@
                 label="Modifier" icon="pi pi-pencil"
                 (click)="editProduct()"></button>
 
-        <!-- Valider la commande : visible seulement si statut = brouillon -->
-<button *ngIf="!isEditMode && isDraft"
-        pButton pRipple
-        class="p-button-primary mt-3 lg:mt-0 w-full lg:w-auto mr-0 lg:mr-3"
-        label="Valider la commande" icon="pi pi-check"
-        (click)="validerCommandeDetail()">
-</button>
-<!-- Détail livraison -->
-<button *ngIf="!isEditMode && isLivraisonAccessible"
-        pButton pRipple
-        class="p-button-success mt-3 lg:mt-0 w-full lg:w-auto mr-0 lg:mr-3"
-        label="Détail livraison" icon="pi pi-truck"
-        (click)="onGoToLivraisonDetail()">
-</button>
+        <!-- Valider commande -->
+        <button *ngIf="!isEditMode && isDraft"
+                pButton pRipple
+                class="p-button-primary mt-3 lg:mt-0 w-full lg:w-auto mr-0 lg:mr-3"
+                label="Valider la commande"
+                icon="pi pi-check"
+                (click)="validerCommandeDetail()">
+        </button>
 
-
-        
+        <!-- Détail livraison -->
+        <button *ngIf="!isEditMode && isLivraisonAccessible"
+                pButton pRipple
+                class="p-button-success mt-3 lg:mt-0 w-full lg:w-auto mr-0 lg:mr-3"
+                label="Détail livraison"
+                icon="pi pi-truck"
+                (click)="onGoToLivraisonDetail()">
+        </button>
 
         <!-- Supprimer -->
         <button *ngIf="!isEditMode"
                 pButton pRipple
                 class="p-button-danger w-full lg:w-auto"
-                label="Supprimer" icon="pi pi-trash"
+                label="Supprimer"
+                icon="pi pi-trash"
                 (click)="confirmDelete()"></button>
       </div>
     </div>

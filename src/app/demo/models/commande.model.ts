@@ -1,6 +1,7 @@
 import { CommandeLigne } from './commande-ligne.model';
 import { User } from './User';
 import { Livraison } from './livraison.model';
+import { Vehicule } from './vehicule.model';
 
 export type CommandeStatut =
   | 'brouillon'
@@ -18,6 +19,8 @@ export class Commande {
 
   user_id: number;
   user?: User;
+
+  vehicule?: Vehicule
 
   lignes?: CommandeLigne[];
   livraisons?: Livraison[];

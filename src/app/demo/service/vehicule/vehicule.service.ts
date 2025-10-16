@@ -130,4 +130,22 @@ getAll(opts?: {
       .delete<ApiResponse<null>>(`${this.apiUrl}/${id}`, httpOption)
       .pipe(map(() => void 0), catchError(this.handleError));
   }
+
+  searchByImmatriculation(
+    term: string,
+    per_page: number = 10,
+    page: number = 1
+  ): Observable<Vehicule[]> {
+    let params = new HttpParams()
+      .set('immatriculation', term) // ⚠ si ton back attend 'q' ou autre, change ici
+      .set('per_page', String(per_page))
+      .set('page', String(page));
+
+    return this.http
+      .get<ApiResponse<Paginated<Vehicule>>>(`${this.apiUrl}/all`, { params })
+      .pipe(
+        map((res) => (res.data?.data ?? []) as Vehicule[]), // on renvoie seulement le tableau
+        catchError(this.handleError)
+      );
+  }
 }

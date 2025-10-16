@@ -80,12 +80,10 @@
             <th style="width: 15rem;">Actions</th>
           </tr> -->
             <tr>
-                        <th style="width: 3rem">
-                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                        </th>
+                       
                         <th pSortableColumn="numero">N° Commande <p-sortIcon field="numero"></p-sortIcon></th>
-                        <th pSortableColumn="contact?.nom_complet">Client <p-sortIcon field="contact?.nom_complet"></p-sortIcon></th>
-                        <th>Total</th>
+                        <th pSortableColumn="contact?.nom_complet">Véhicule <p-sortIcon field="contact?.nom_complet"></p-sortIcon></th>
+                        <th pSortableColumn="montant_total">Total <p-sortIcon field="montant_total"></p-sortIcon></th>
                         <th pSortableColumn="qte_total">Qté total <p-sortIcon field="qte_total"></p-sortIcon></th>
                         <th pSortableColumn="qte_livree">Livrée <p-sortIcon field="qte_livree"></p-sortIcon></th>
                         <th pSortableColumn="statut">Statut <p-sortIcon field="statut"></p-sortIcon></th>
@@ -113,13 +111,10 @@
           </tr>
 
           <!-- Variante réelle quand les données sont là -->
-          <tr *ngIf="!loading" >
-            <td >
-              <p-tableCheckbox [value]="commande" [ariaLabel]="'Sélectionner la commande ' + commande.numero"></p-tableCheckbox>
-            </td>
+          <tr *ngIf="!loading" > 
 
             <td class="white-space-nowrap" (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.numero }}</td>
-            <td (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.contact?.nom_complet || '—' }}</td>
+            <td (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.vehicule.nom || '—' }}</td>
 
             <td class="white-space-nowrap" (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.montant_total | number:'1.0-0' }} GNF</td>
             <td class="white-space-nowrap"(click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.qte_total }}</td>

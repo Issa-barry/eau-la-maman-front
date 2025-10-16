@@ -90,13 +90,15 @@ export class VehiculeDetailComponent implements OnInit{
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
-    }
+    } else if (!this.vehicule.id) return;
+
     this.loading = true;
 
     const payload = this.form.getRawValue();
-    this.vehiculeService.create(payload as any).subscribe({
+    this.vehiculeService.update(this.id, payload as any).subscribe({
       next: (vehicule) => {
         this.loading = false;
+        this.loadVehicule();
         this.toast.add({
           severity: 'success',
           summary: 'Créé',

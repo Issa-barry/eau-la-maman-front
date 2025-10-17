@@ -56,9 +56,20 @@ export class AppMenuComponent implements OnInit {
                     //     label: 'Achats',
                     //     icon: 'pi pi-fw pi-map-marker',
                     //     routerLink: ['/dashboard/ventes']
-                    // },
+                    // }, 
+                ]
+            },
+             {
+                label: 'UTILISATEURS',
+                icon: 'pi pi-fw pi-star-fill',
+                items: [
                     {
-                        label: 'Users-Contact',
+                        label: 'Contact',
+                        icon: 'pi pi-fw pi-users',
+                        routerLink: ['/dashboard/contact']
+                    },
+                    {
+                        label: 'Employes',
                         icon: 'pi pi-fw pi-users',
                         routerLink: ['/dashboard/user']
                     },
@@ -67,30 +78,31 @@ export class AppMenuComponent implements OnInit {
                         icon: 'pi pi-fw pi-truck',
                         routerLink: ['/dashboard/vehicule']
                     }
+                   
                 ]
             },
-            {
-                label: 'AUTRE',
-                icon: 'pi pi-cog',
-                items: [
-                    {
-                        label: 'Paramètre',
-                        icon: 'pi pi-fw pi-cog',
-                        items: [
-                            {
-                                label: 'Générale',
-                                icon: 'pi pi-fw pi-globe',
-                                routerLink: ['/dashboard/parametre']
-                            },
-                            {
-                                label: 'Role & Permission',
-                                icon: 'pi pi-fw pi-lock-open',
-                                routerLink: ['/dashboard/parametre/role-liste']
-                            }
-                        ]
-                    }
-                ]
-            }
+            // {
+            //     label: 'AUTRE',
+            //     icon: 'pi pi-cog',
+            //     items: [
+            //         {
+            //             label: 'Paramètre',
+            //             icon: 'pi pi-fw pi-cog',
+            //             items: [
+            //                 {
+            //                     label: 'Générale',
+            //                     icon: 'pi pi-fw pi-globe',
+            //                     routerLink: ['/dashboard/parametre']
+            //                 },
+            //                 {
+            //                     label: 'Role & Permission',
+            //                     icon: 'pi pi-fw pi-lock-open',
+            //                     routerLink: ['/dashboard/parametre/role-liste']
+            //                 }
+            //             ]
+            //         }
+            //     ]
+            // }
         ];
     }
 }

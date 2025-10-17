@@ -39,11 +39,11 @@ export class PackingNewComponent implements OnInit {
       error: (err) => (this.errorMessage = err.message)
     });
 
-    this.contactService.getContacts().subscribe({
-      next: (data) => (this.contacts = data),
-      error: (err) => (this.errorMessage = err.message),
-      complete: () => (this.loading = false)
-    });
+    // this.contactService.getContacts().subscribe({
+    //   next: (data) => (this.contacts = data),
+    //   error: (err) => (this.errorMessage = err.message),
+    //   complete: () => (this.loading = false)
+    // });
   }
 
   addLigne(): void {

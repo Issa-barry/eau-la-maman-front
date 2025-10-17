@@ -16,18 +16,18 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ToastModule } from 'primeng/toast';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
-import { ContactNewClientRoutingModule } from './contact-new-client-routing.module';
-import { ContactNewClientComponent } from './contact-new-client.component';
+import { ContactNewRoutingModule } from './contact-new-routing.module';
+import { ContactNewComponent } from './contact-new.component';
 
 
 @NgModule({
   declarations: [
-    ContactNewClientComponent
+    ContactNewComponent
   ],
   imports: [
     CommonModule,
-    ContactNewClientRoutingModule,
-    FormsModule,
+    ContactNewRoutingModule,
+     FormsModule,
     ProfileCreateRoutingModule,
     ButtonModule,
     RippleModule,
@@ -42,4 +42,4 @@ import { ContactNewClientComponent } from './contact-new-client.component';
     ProgressSpinnerModule,
   ]
 })
-export class ContactNewClientModule { }
+export class ContactNewModule { }

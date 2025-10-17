@@ -1,199 +1,152 @@
-import {
-    HttpClient,
-    HttpHeaders,
-    HttpErrorResponse,
-} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environements/environment.dev';
 import { catchError, map, Observable, throwError } from 'rxjs';
+import { environment } from 'src/environements/environment.dev';
 import { Contact } from '../../models/contact';
 
+export interface ApiResponse<T = any> {
+  success: boolean;
+  message?: string;
+  data?: T | null;
+}
+
+export interface Paginated<T> {
+  data: T[];
+  current_page: number;
+  per_page: number;
+  total: number;
+  last_page: number;
+}
+
 const httpOption = {
-    headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'GET,POST,OPTIONS,DELETE,PUT',
-    }),
+  headers: new HttpHeaders({
+    'Content-Type': 'application/json',
+  }),
 };
 
-@Injectable({
-    providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class ContactService {
-    private apiUrl = `${environment.apiUrl}/contacts`;
+  private apiUrl = `${environment.apiUrl}/contacts`;
 
-    constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {}
 
-    private log(log: string) {
-        console.info(log);
+  /** Normalisation d’erreurs (même logique que tes autres services) */
+  private handleError(error: HttpErrorResponse) {
+    console.error('Erreur API:', error);
+    let msg = 'Une erreur inconnue est survenue';
+
+    if (error.error instanceof ErrorEvent) {
+      msg = `Erreur client : ${error.error.message}`;
+    } else if (error.status === 422) {
+      const e = error.error || {};
+      if (e?.errors && typeof e.errors === 'object') {
+        msg = Object.keys(e.errors).map(k => (e.errors[k] as string[]).join(' ')).join(' ');
+      } else {
+        msg = e?.message || 'Données invalides.';
+      }
+    } else if (error.status === 0) {
+      msg = 'Impossible de se connecter au serveur';
+    } else {
+      msg = error.error?.message || `Erreur serveur ${error.status}: ${error.message}`;
     }
 
-    /**
-     * Nouvelle gestion des erreurs améliorée
-     */
-    private handleError(error: HttpErrorResponse) {
-        console.error('Erreur API:', error);
+    return throwError(() => new Error(msg));
+  }
 
-        let errorMessage = 'Une erreur inconnue est survenue';
-
-        if (error.error instanceof ErrorEvent) {
-            // 👉 Erreur côté client (ex: problème réseau)
-            errorMessage = `Erreur client : ${error.error.message}`;
-        } else {
-            // 👉 Erreur côté serveur
-            if (error.status === 422) {
-                if (error.error && error.error.errors) {
-                    // 🔍 Vérifie si `errors` est un objet et récupère tous les messages
-                    if (typeof error.error.errors === 'object') {
-                        errorMessage = Object.keys(error.error.errors)
-                            .map((key) => error.error.errors[key].join(' '))
-                            .join(' ');
-                    } else {
-                        errorMessage = JSON.stringify(error.error.errors); 
-                    }
-                } else if (error.error.message) {
-                    errorMessage = error.error.message; //  Si l'API renvoie juste un message
-                }
-            } else if (error.status === 0) {
-                errorMessage = 'Impossible de se connecter au serveur';
-            } else {
-                errorMessage = `Erreur serveur ${error.status}: ${error.message}`;
-            }
-        }
-
-        return throwError(() => new Error(errorMessage));
+  /** 🔧 Normalise *tous* les formats de pagination possibles (nu OU encapsulé) */
+  private toPaginated<T>(raw: any): Paginated<T> {
+    // cas 1: encapsulé: { success, data: { data: T[], current_page, ... } }
+    if (raw?.data?.data && Array.isArray(raw.data.data)) {
+      const p = raw.data;
+      return {
+        data: p.data as T[],
+        current_page: Number(p.current_page ?? 1),
+        per_page: Number(p.per_page ?? p.data?.length ?? 10),
+        total: Number(p.total ?? p.data?.length ?? 0),
+        last_page: Number(p.last_page ?? 1),
+      };
     }
-
-    getContacts(): Observable<Contact[]> {
-        return this.http
-            .get<{ success: boolean; data: Contact[] }>(`${this.apiUrl}/all`)
-            .pipe(
-                map((response) => response.data),
-                catchError(this.handleError)
-            );
+    // cas 2: paginator nu (Laravel): { data: T[], current_page, ... }
+    if (raw?.data && Array.isArray(raw.data) && raw.current_page !== undefined) {
+      return {
+        data: raw.data as T[],
+        current_page: Number(raw.current_page ?? 1),
+        per_page: Number(raw.per_page ?? raw.data?.length ?? 10),
+        total: Number(raw.total ?? raw.data?.length ?? 0),
+        last_page: Number(raw.last_page ?? 1),
+      };
     }
-
-    getContactById(id: number): Observable<Contact> {
-        return this.http
-            .get<{ success: boolean; data: Contact }>(
-                `${this.apiUrl}/getById/${id}`
-            )
-            .pipe(
-                map((response) => response.data),
-                catchError(this.handleError)
-            );
+    // cas 3: liste simple
+    if (Array.isArray(raw?.data)) {
+      return { data: raw.data as T[], current_page: 1, per_page: raw.data.length, total: raw.data.length, last_page: 1 };
     }
-
-    createContact(contact: Contact): Observable<Contact> {
-        return this.http.post<Contact>(
-            `${this.apiUrl}/create`,
-            contact,
-            httpOption
-        );
+    if (Array.isArray(raw)) {
+      return { data: raw as T[], current_page: 1, per_page: raw.length, total: raw.length, last_page: 1 };
     }
+    // fallback
+    return { data: [], current_page: 1, per_page: 10, total: 0, last_page: 1 };
+  }
 
-     createClient(contact: any): Observable<Contact> {
+  /**
+   * GET /contacts/all (paginé)
+   * Supporte page/per_page + recherche simple (optionnel)
+   */
+  getAll(opts?: { page?: number; per_page?: number; search?: string }): Observable<Paginated<Contact>> {
+    let params = new HttpParams();
+    if (opts?.page)     params = params.set('page', String(opts.page));
+    if (opts?.per_page) params = params.set('per_page', String(opts.per_page));
+    if (opts?.search)   params = params.set('search', opts.search);
+
     return this.http
-        .post<{ success: boolean; data: Contact }>(
-            `${this.apiUrl}/create`,
-            contact,
-            httpOption
-        )
-        .pipe( 
-            map((res) => res.data),
-            catchError(this.handleError)
-        );
-}
+      .get<any>(`${this.apiUrl}/all`, { params })
+      .pipe(map(res => this.toPaginated<Contact>(res)), catchError(this.handleError));
+  }
 
-     createEmploye(contact: any): Observable<Contact> {
+  /** GET /contacts/getById/:id */
+  getContactById(id: number): Observable<Contact> {
     return this.http
-        .post<{ success: boolean; data: Contact }>(
-            `${environment.apiUrl}/users/employes/create`,
-            contact,
-            httpOption
-        )
-        .pipe( 
-            map((res) => res.data),
-            catchError(this.handleError)
-        );
-}
+      .get<ApiResponse<Contact> | any>(`${this.apiUrl}/getById/${id}`)
+      .pipe(
+        map(res => (res?.data ?? res) as Contact),
+        catchError(this.handleError)
+      );
+  }
 
-    updateClient(id: number, contact: Contact): Observable<Contact> {
-        return this.http
-            .put<Contact>(
-                `${this.apiUrl}/clients/updateById/${id}`,
-                contact,
-                httpOption
-            )
-            .pipe(catchError(this.handleError));
-    }
-  
-    updateContact(id: number, contact: Contact): Observable<Contact> {
-        return this.http
-            .put<Contact>(
-                `${this.apiUrl}/updateById/${id}`,
-                contact,
-                httpOption
-            )
-            .pipe(catchError(this.handleError));
-    }
+ 
 
-   
+  /** POST /contacts/create */
+  create(contact: Contact): Observable<Contact> {
+    return this.http
+      .post<ApiResponse<Contact>>(`${this.apiUrl}/create`, contact, httpOption)
+      .pipe(map(res => (res.data as Contact)), catchError(this.handleError));
+  }
 
+  /** PUT /contacts/updateById/:id */
+  updateContact(id: number, contact: Contact): Observable<Contact> {
+    return this.http
+      .put<ApiResponse<Contact>>(`${this.apiUrl}/updateById/${id}`, contact, httpOption)
+      .pipe(map(res => (res.data as Contact)), catchError(this.handleError));
+  }
 
-    deleteContact(id: number): Observable<void> {
-        return this.http
-            .delete<void>(`${this.apiUrl}/delateById/${id}`, httpOption)
-            .pipe(catchError(this.handleError));
-    }
+  /** PATCH /contacts/:id/statutUpdate */
+  updateStatut(id: number, statut: 'active' | 'attente' | 'bloque' | 'archive'): Observable<Contact> {
+    return this.http
+      .patch<ApiResponse<Contact>>(`${this.apiUrl}/${id}/statutUpdate`, { statut }, httpOption)
+      .pipe(map(res => (res.data as Contact)), catchError(this.handleError));
+  }
 
-    affecterAgenceById(userId: number, agenceId: number): Observable<Contact> {
-        return this.http
-            .post<{ success: boolean; data: Contact }>(
-                `${this.apiUrl}/affecter-agence/${userId}`,
-                { agence_id: agenceId }, // Données envoyées à l'API
-                httpOption
-            )
-            .pipe(
-                map((response) => {
-                    if (!response.success) {
-                        throw new Error("Échec de l'affectation de l'agence");
-                    }
-                    return response.data;
-                }),
-                catchError(this.handleError)
-            );
-    } 
+  /** DELETE /contacts/delateById/:id (⚠️ orthographe côté back ?) */
+  deleteContact(id: number): Observable<void> {
+    return this.http
+      .delete<ApiResponse<null>>(`${this.apiUrl}/delateById/${id}`, httpOption)
+      .pipe(map(() => void 0), catchError(this.handleError));
+  }
 
-    affecterAgenceByReference(userId: number, reference: string): Observable<Contact> {
-      return this.http.post<Contact>(`${this.apiUrl}/affecterByReference/${userId}`, { reference }, httpOption)
-          .pipe(
-              catchError(this.handleError)
-          );
-  } 
-  
-    desaffecterAgence(contactId: number): Observable<Contact> {
-        return this.http
-            .delete<{ success: boolean; data: Contact }>(
-                `${this.apiUrl}/desaffecter-agence/${contactId}`
-            )
-            .pipe(
-                map((response) => response.data),
-                catchError(this.handleError)
-            );
-    }
-
-      updateStatut(id: number, statut: 'active' | 'attente' | 'bloque' | 'archive'): Observable<Contact> {
-      return this.http
-        .patch<{ success: boolean; data: Contact }>(
-          `${this.apiUrl}/${id}/statutUpdate`,
-          { statut },
-          httpOption
-        )
-        .pipe(
-          map((res) => res.data),
-          catchError(this.handleError)
-        );
-    }
+  /** Recherche simple par nom/téléphone/référence (si ton back l’accepte) */
+  search(term: string, page = 1, per_page = 10): Observable<Paginated<Contact>> {
+    let params = new HttpParams().set('search', term).set('page', page).set('per_page', per_page);
+    return this.http
+      .get<any>(`${this.apiUrl}/all`, { params })
+      .pipe(map(res => this.toPaginated<Contact>(res)), catchError(this.handleError));
+  }
 }

@@ -39,17 +39,17 @@ export class PackingEditComponent implements OnInit {
       error: (err) => (this.errorMessage = err.message),
     });
 
-    this.contactService.getContacts().subscribe({
-      next: (data) => {
-        this.contacts = data;
-      },
-      error: (err) => {
-        this.errorMessage = err.message;
-        this.loading = false;
-        console.log(err);
+    // this.contactService.getContacts().subscribe({
+    //   next: (data) => {
+    //     this.contacts = data;
+    //   },
+    //   error: (err) => {
+    //     this.errorMessage = err.message;
+    //     this.loading = false;
+    //     console.log(err);
         
-      }
-    });
+    //   }
+    // });
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {

@@ -9,6 +9,8 @@ import { Statut } from 'src/app/demo/enums/statut.enum';
 import { MenuItem } from 'primeng/api';
 import { User } from 'src/app/demo/models/User';
 import { UserService } from 'src/app/demo/service/users/user.service';
+import { Contact } from 'src/app/demo/models/contact';
+import { ContactService } from 'src/app/demo/service/contact/contact.service';
 
 @Component({
     selector: 'app-contact-liste',
@@ -19,22 +21,26 @@ import { UserService } from 'src/app/demo/service/users/user.service';
 export class ContactListeComponent implements OnInit {
     users: User[] = [];
     user: User = new User();
+
+     contacts: Contact[] = [];
+     contact: Contact = new Contact();
+    meta = { current_page: 1, per_page: 10, total: 0, last_page: 1 };
+
     roles: Role[] = [];
     optionPays = [
         { label: 'GUINEE-CONAKRY', value: 'Guinée-Conakry' },
         { label: 'FRANCE', value: 'France' },
     ];
 
-    userDialog = false;
-    deleteUserDialog = false;
-    deleteUsersDialog = false;
+    contactDialog = false;
+    deleteContactDialog = false;
     submitted = false;
-
     loading = false;
     skeletonRows = Array.from({ length: 5 }, () => ({}));
     rowsPerPageOptions = [5, 10, 20];
 
-    selectedUsers: User[] = [];
+    // selectedUsers: User[] = [];
+    selectedContacts: Contact[] = [];
 
     isValidPhone = true;
     isValidCodePostal = true;
@@ -47,6 +53,7 @@ export class ContactListeComponent implements OnInit {
 
     constructor(
         private userService: UserService,
+        private contactService: ContactService,
         private roleService: RoleService,
         private router: Router,
         private messageService: MessageService,
@@ -54,8 +61,7 @@ export class ContactListeComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.getAllUsers();
-        this.getAllRoles();
+         this.getAllContacts();
 
         this.items = [
             {
@@ -85,30 +91,37 @@ export class ContactListeComponent implements OnInit {
         ];
     }
 
-    getAllUsers(): void {
-        this.loading = true;
-        this.userService.getUser().subscribe({
-            next: (res) => {
-                this.users = res;
-                this.loading = false;
-            },
-            error: (err) => {
-                console.error(
-                    'Erreur lors de la récupération des users:',
-                    err
-                );
-                this.loading = false;
-            },
-        });
-    }
+ getAllContacts(): void {
+  this.loading = true;
+  this.contactService.getAll({ page: this.meta.current_page, per_page: this.meta.per_page }).subscribe({
+    next: (p) => {
+      this.contacts = p.data ?? [];
+      this.meta = {
+        current_page: p.current_page,
+        per_page: p.per_page,
+        total: p.total,
+        last_page: p.last_page,
+      };
+      this.loading = false;
+      console.log(this.contacts);
+      
+    },
+    error: () => {
+      this.contacts = [];
+      this.loading = false;
+    },
+  });
+}
 
-    getAllRoles(): void {
-        this.roleService.getRoles().subscribe({
-            next: (res) => (this.roles = res),
-            error: (err) => console.error('Erreur chargement rôles:', err),
-        });
-    }
-
+onPageChange(e: any) {
+  // PrimeNG paginator 0-based
+  const page = typeof e.page === 'number' ? e.page + 1 : Math.floor((e.first ?? 0) / (e.rows ?? this.meta.per_page)) + 1;
+  this.meta.current_page = page;
+  this.meta.per_page = e.rows ?? this.meta.per_page;
+  this.getAllContacts();
+}
+ 
+  
     validatePhone(): void {
         const regex = /^(?:\+|00)?(\d{1,3})[-.\s]?\d{10,}$/;
         this.isValidPhone = regex.test(this.user.phone || '');
@@ -152,7 +165,7 @@ export class ContactListeComponent implements OnInit {
 
         serviceCall.subscribe({
             next: () => {
-                this.getAllUsers();
+                this.getAllContacts();
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Succès',
@@ -171,21 +184,21 @@ export class ContactListeComponent implements OnInit {
             },
         });
 
-        this.userDialog = false;
+        this.contactDialog = false;
     }
 
     editUser(user: User): void {
         this.user = Object.assign(new User(), user);
-        this.userDialog = true;
+        this.contactDialog = true;
     }
 
-    deleteUser(user: User): void {
+    deleteContact(user: User): void {
         this.user = Object.assign(new User(), user);
-        this.deleteUserDialog = true;
+        this.deleteContactDialog = true;
     }
 
     confirmDelete(): void {
-        this.deleteUserDialog = false;
+        this.deleteContactDialog = false;
         if (!this.user.id) {
             this.messageService.add({
                 severity: 'error',
@@ -204,7 +217,7 @@ export class ContactListeComponent implements OnInit {
                     detail: 'User supprimé avec succès',
                     life: 3000,
                 });
-                this.getAllUsers();
+                this.getAllContacts();
             },
             error: (err) => {
                 console.error('Erreur suppression:', err);
@@ -218,14 +231,10 @@ export class ContactListeComponent implements OnInit {
         });
     }
 
-    deleteSelectedUsers(): void {
-        this.deleteUsersDialog = true;
-    }
-
     confirmDeleteSelected(): void {
-        this.deleteUsersDialog = false;
+        this.deleteContactDialog = false;
         // Implémentez la logique réelle si vous avez un service côté backend
-        this.selectedUsers = [];
+        this.selectedContacts = [];
         this.messageService.add({
             severity: 'success',
             summary: 'Suppression multiple',
@@ -237,11 +246,11 @@ export class ContactListeComponent implements OnInit {
     openNew(): void {
         this.user = new User();
         this.submitted = false;
-        this.userDialog = true;
+        this.contactDialog = true;
     }
 
     hideDialog(): void {
-        this.userDialog = false;
+        this.contactDialog = false;
         this.submitted = false;
     }
 
@@ -256,8 +265,8 @@ export class ContactListeComponent implements OnInit {
         this.router.navigate(['/dashboard/user/user-new']);
     }
 
-    onGotToUserDetail(user: User): void {
-        this.router.navigate(['/dashboard/user/user-detail', user.id]);
+    onGotToContactDetail(contact: Contact): void {
+        this.router.navigate(['/dashboard/contact/contact-detail', contact.id]);
     }
     showMessage(severity: string, summary: string, detail: string) {
         this.messageService.add({ severity, summary, detail, life: 3000 });
@@ -278,7 +287,7 @@ export class ContactListeComponent implements OnInit {
                     'Statut modifié',
                     `User "${updated.nom_complet}" ${action}.`
                 );
-                this.getAllUsers();
+                this.getAllContacts();
             },
             error: (err) => {
                 this.showMessage(
@@ -291,15 +300,15 @@ export class ContactListeComponent implements OnInit {
     }
 
     // Statuts avec Enum
-    validerUser(user: User) {
+    validerContact(user: User) {
         this.updateStatutUser(user, Statut.ACTIVE, 'success', 'validée');
     }
 
-    bloquerUser(user: User) {
+    bloquerContact(user: User) {
         this.updateStatutUser(user, Statut.BLOQUE, 'warn', 'bloquée');
     }
 
-    debloquerUser(user: User) {
+    debloquerContact(user: User) {
         this.updateStatutUser(
             user,
             Statut.ACTIVE,
@@ -307,4 +316,9 @@ export class ContactListeComponent implements OnInit {
             'débloquée'
         );
     }
+    
+    deleteSelectedContacts(): void {
+        this.deleteContactDialog = true;
+    }
+
 }

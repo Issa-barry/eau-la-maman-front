@@ -10,12 +10,12 @@ import { ContactService } from 'src/app/demo/service/contact/contact.service';
 import { RoleService } from 'src/app/demo/service/role/role.service';
 
 @Component({
-  selector: 'app-contact-new-client',
-  templateUrl: './contact-new-client.component.html',
-  styleUrl: './contact-new-client.component.scss',
+  selector: 'app-contact-new',
+  templateUrl: './contact-new.component.html',
+  styleUrl: './contact-new.component.scss',
   providers: [MessageService, ConfirmationService],
 })
-export class ContactNewClientComponent implements OnInit {
+export class ContactNewComponent  implements OnInit {
   countries: any[] = [];
   submitted = false;
   contact: Contact = new Contact();
@@ -111,7 +111,7 @@ export class ContactNewClientComponent implements OnInit {
     };
 
     this.loading = true;
-    this.contactService.createClient(payload).subscribe({
+    this.contactService.create(payload).subscribe({
       next: () => {
         this.loading = false;
 

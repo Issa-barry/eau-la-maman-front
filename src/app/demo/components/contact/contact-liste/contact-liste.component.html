@@ -5,7 +5,7 @@
 
             <p-toolbar styleClass="mb-4">
                 <div class="p-toolbar-group-right">
-                    <p-splitButton label="Nouveau" icon="pi pi-check" [model]="items"></p-splitButton>
+                    <p-splitButton label="Nouveau" icon="pi pi-check" [model]="items" [routerLink]="['/dashboard/contact/contact-new']" routerLinkActive="router-link-active" ></p-splitButton>
                 </div>
 
                 <ng-template pTemplate="right">
@@ -19,27 +19,25 @@
                     ></button>
                 </ng-template>
             </p-toolbar>
-
+ 
             <p-table
                 #dt
-                [value]="loading ? skeletonRows : users"
+                [value]="loading ? skeletonRows : contacts"
                 responsiveLayout="scroll"
                 [rows]="10"
                 [globalFilterFields]="[
                     'nom_complet',
-                    'adresse.ville',
-                    'adresse.pays',
-                    'adresse.quartier',
-                    'adresse.code_postal',
+                    'ville',
+                    'quartier',
                     'phone',
-                    'statut',
+                    'type',
                     'reference'
                 ]"
                 [paginator]="true"
                 [rowsPerPageOptions]="[10, 20, 30]"
                 [showCurrentPageReport]="true"
-                currentPageReportTemplate="Liste de {first} / {last} des {totalRecords} users"
-                [(selection)]="selectedUsers"
+                currentPageReportTemplate="Liste de {first} / {last} des {totalRecords} contacts"
+                [(selection)]="selectedContacts"
                 selectionMode="multiple"
                 [rowHover]="true"
                 dataKey="id"
@@ -48,7 +46,7 @@
                     <div
                         class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
                     >
-                        <h5 class="m-0">Liste des users</h5>
+                        <h5 class="m-0">Liste des contacts</h5>
                         <span class="block mt-2 md:mt-0 p-input-icon-left">
                             <i class="pi pi-search"></i>
                             <input
@@ -82,16 +80,16 @@
                             <p-sortIcon field="adresse.ville"></p-sortIcon>
                         </th>
                         <th pSortableColumn="adresse.pays">
-                            Pays <p-sortIcon field="adresse.pays"></p-sortIcon>
+                            Quartier <p-sortIcon field="adresse.pays"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="statut">
-                            Statut <p-sortIcon field="statut"></p-sortIcon>
+                        <th pSortableColumn="type">
+                            Type <p-sortIcon field="type"></p-sortIcon>
                         </th>
                         <th>Actions</th>
                     </tr>
                 </ng-template>
 
-                <ng-template pTemplate="body" let-user>
+                <ng-template pTemplate="body" let-contact>
                     <tr *ngIf="loading">
                         <td><p-skeleton width="6rem" /></td>
                         <td><p-skeleton width="10rem" /></td>
@@ -110,15 +108,15 @@
                     <tr *ngIf="!loading">
                         <td>
                             <p-tableCheckbox
-                                [value]="user"
+                                [value]="contact"
                             ></p-tableCheckbox>
                         </td>
-                        <td>{{ user.reference }}</td>
-                        <td>{{ user.nom_complet }}</td>
-                        <td>{{ user.phone }}</td>
-                        <td>{{ user.adresse?.ville }}</td>
-                        <td>{{ user.adresse?.pays }}</td>
-                        <td>{{ user.statut }}</td>
+                        <td>{{ contact.reference }}</td>
+                        <td>{{ contact.nom_complet }}</td>
+                        <td>{{ contact.phone }}</td>
+                        <td>{{ contact.ville }}</td>
+                        <td>{{ contact.quartier }}</td>
+                        <td>{{ contact.type }}</td>
                         <td>
                             <div class="flex gap-2">
                                 <button
@@ -126,34 +124,34 @@
                                     pRipple
                                     icon="pi pi-eye"
                                     class="p-button-rounded p-button-success"
-                                    (click)="onGotToUserDetail(user)"
+                                    (click)="onGotToContactDetail(contact)"
                                 ></button>
                                 <button
-                                    *ngIf="user.statut === 'attente'"
+                                    *ngIf="contact.statut === 'attente'"
                                     pButton
                                     pRipple
                                     icon="pi pi-check"
                                     class="p-button-rounded p-button-info"
-                                    (click)="validerUser(user)"
+                                    (click)="validerContact(contact)"
                                     title="Valider"
                                 ></button>
                                 <button
-                                    *ngIf="user.statut === 'active'"
+                                    *ngIf="contact.statut === 'active'"
                                     pButton
                                     pRipple
                                     icon="pi pi-lock-open"
                                     class="p-button-rounded p-button-warning"
-                                    (click)="bloquerUser(user)"
+                                    (click)="bloquerContact(contact)"
                                     title="Bloquer"
                                 ></button>
 
                                 <button
-                                    *ngIf="user.statut === 'bloque'"
+                                    *ngIf="contact.statut === 'bloque'"
                                     pButton
                                     pRipple
                                     icon="pi pi-lock"
                                     class="p-button-rounded p-button-danger"
-                                    (click)="debloquerUser(user)"
+                                    (click)="debloquerContact(contact)"
                                     title="Débloquer"
                                 ></button>
 
@@ -162,7 +160,7 @@
                                     pRipple
                                     icon="pi pi-trash"
                                     class="p-button-rounded p-button-danger"
-                                    (click)="deleteUser(user)"
+                                    (click)="deleteContact(contact)"
                                 ></button>
                             </div>
                         </td>

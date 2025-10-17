@@ -189,6 +189,7 @@ export class ContactDetailComponent implements OnInit, OnDestroy {
         this.submitted = false;
         this.errors = {};
         this.loadUser();
+        this.isEditing = false;
       },
       error: (err) => {
         console.error('Erreur lors de la création du user:', err);

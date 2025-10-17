@@ -8,7 +8,7 @@
       <ng-container *ngIf="!loadingContact
 ; else skeletonActions">
         <button pButton icon="pi pi-pencil" label="Modifier" class="p-button-outlined p-button-primary" (click)="toggleEditMode()" *ngIf="!isEditing"></button>
-        <button pButton icon="pi pi-check" label="Enregistrer" class="p-button-success" (click)="saveClient()" *ngIf="isEditing"></button>
+        <button pButton icon="pi pi-check" label="Enregistrer" class="p-button-primary" (click)="saveClient()" *ngIf="isEditing"></button>
         <button pButton icon="pi pi-times" label="Annuler" class="p-button-secondary" (click)="toggleEditMode()" *ngIf="isEditing"></button>
       </ng-container>
       <ng-template #skeletonActions>

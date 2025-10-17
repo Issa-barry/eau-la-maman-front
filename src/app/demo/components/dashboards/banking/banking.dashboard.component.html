@@ -99,46 +99,59 @@
             </div>
         </div>
     </div>
-    <div class="col-12 md:col-6 xl:col-4" *ngIf="!encLoading && encStats as s">
+
+    <!-- <div class="col-12 md:col-8 xl:col-3" *ngIf="!encLoading && encStats as s">
         <div class="card h-full">
             <div class="flex align-items-center justify-content-between mb-3">
                 <div class="text-900 text-xl font-semibold">Orange Money</div>
                 <img src="assets/demo/images/banking/visa.svg" class="h-1rem" />
             </div>
-            <div class="text-600 mb-1 font-semibold">Debt</div>
+            <div class="text-600 mb-1 font-semibold">Balance</div>
             <div class="text-900 text-2xl text-primary mb-5 font-bold">
                 {{ s.encaissements.orange_money | number : "1.0-0" }} GNF
             </div>
             <div class="flex align-items-center justify-content-between">
                 <span class="text-lg">Date : </span>
-                <span class="font-medium text-lg">26/12/2025</span>
+                <span class="font-medium text-lg">26/12/2025</span>  
             </div>
         </div>
-    </div>
-    <div class="col-12 md:col-6 xl:col-2" *ngIf="!encLoading && encStats as s">
+    </div> -->
+
+       <div
+        class="col-12 md:col-6 xl:col-4"
+        *ngIf="!encLoading && cmdStats as cmd">
         <div
             class="card h-full flex flex-column align-items-center justify-content-center"
         >
-            <i class="pi pi-building-columns text-primary text-4xl mb-4"></i>
-            <span class="text-900 text-lg mb-4 font-medium">Banque</span>
+            <i class="pi pi-mobile text-primary text-4xl mb-4"></i>
+            <span class="text-900 text-lg mb-4 font-medium">Orange-Money</span>
             <span class="text-900 text-2xl text-primary font-bold"
-                >{{ s.encaissements.depot_banque | number : "1.0-0" }} GNF</span
-            >
+                >10 416 000 GNF</span>
         </div>
     </div>
+    
     <div
-        class="col-12 md:col-6 xl:col-2"
+        class="col-12 md:col-6 xl:col-4"
         *ngIf="!encLoading && cmdStats as cmd"
     >
         <div
             class="card h-full flex flex-column align-items-center justify-content-center"
         >
             <i class="pi pi-wallet text-primary text-4xl mb-4"></i>
-            <span class="text-900 text-lg mb-4 font-medium">Total</span>
+            <span class="text-900 text-lg mb-4 font-medium">Total-CA</span>
             <span class="text-900 text-2xl text-primary font-bold"
                 >10 416 000 GNF</span>
         </div>
     </div>
+    <!-- <div class="col-12 md:col-6 xl:col-2" *ngIf="!encLoading && encStats as s">
+        <divclass="card h-full flex flex-column align-items-center justify-content-center">
+            <i class="pi pi-building text-primary text-4xl mb-4"></i>
+            <span class="text-900 text-lg mb-4 font-medium">Banque</span>
+            <span class="text-900 text-2xl text-primary font-bold"
+                >{{ s.encaissements.depot_banque | number : "1.0-0" }} GNF</span
+            >
+        </div>
+    </div> -->
 
     <div class="col-12 lg:col-6">
         <div class="card">

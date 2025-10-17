@@ -4,43 +4,40 @@
       <p-toast></p-toast>
 
       <p-toolbar styleClass="mb-4">
-        <!-- <div class="p-toolbar-group-left">
-          <button
-            pButton
-            pRipple
-            label="Paiement"
-            icon="pi pi-money-bill"
-            class="p-button-success mr-2"
-          ></button>
-        </div> -->
-
         <ng-template pTemplate="right">
           <p-splitButton
-            label="Filtre" 
+            label="Filtre"
             icon="pi pi-filter"
             [model]="itemsFiltre"
           ></p-splitButton>
         </ng-template>
       </p-toolbar>
 
-     <p-table
-  #dt
-  [value]="loading ? skeletonRows : factures"
-  responsiveLayout="scroll"
-  [rows]="10"
-  [paginator]="true"
-  [rowsPerPageOptions]="[10, 20, 30]"
-  [showCurrentPageReport]="true"
-  currentPageReportTemplate="Factures {first} - {last} sur {totalRecords}"
-  [rowHover]="true"
-  dataKey="id"
->
-
-        <!-- HEADER -->
+      <p-table
+        #dt
+        [value]="loading ? skeletonRows : factures"
+        responsiveLayout="scroll"
+        [rows]="10"
+        [paginator]="true"
+        [rowsPerPageOptions]="[10, 20, 30]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Factures {first} - {last} sur {totalRecords}"
+        [rowHover]="true"
+        dataKey="id"
+        [globalFilterFields]="[
+        'numero',
+        'commande.numero',
+        'commande.vehicule.immatriculation',
+        'commande.vehicule.nom',
+        'commande.vehicule.phone_livreur',
+        'montant_du',
+        'total',
+              'statut'
+            ]"
+      >
+        <!-- CAPTION -->
         <ng-template pTemplate="caption">
-          <div
-            class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
-          >
+          <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
             <h5 class="m-0">Liste des factures</h5>
             <span class="block mt-2 md:mt-0 p-input-icon-left">
               <i class="pi pi-search"></i>
@@ -55,12 +52,14 @@
           </div>
         </ng-template>
 
+        <!-- HEADER -->
         <ng-template pTemplate="header">
           <tr>
             <th pSortableColumn="numero">N° Facture <p-sortIcon field="numero" /></th>
-            <th pSortableColumn="commande.contact.nom_complet">Client <p-sortIcon field="commande.contact.nom_complet" /></th>
-            <th pSortableColumn="commande.contact.phone">Téléphone <p-sortIcon field="commande.contact.phone" /></th>
             <th pSortableColumn="commande.numero">Commande <p-sortIcon field="commande.numero" /></th>
+            <th>Immatriculation</th>
+            <th>Véhicule</th>
+            <th>Phone livreur</th>
             <th pSortableColumn="total">Montant TTC <p-sortIcon field="total" /></th>
             <th pSortableColumn="montant_du">Reste à payer <p-sortIcon field="montant_du" /></th>
             <th pSortableColumn="statut">Statut <p-sortIcon field="statut" /></th>
@@ -73,26 +72,26 @@
           <!-- Skeleton row -->
           <tr *ngIf="loading">
             <td><p-skeleton width="8rem" /></td>
+            <td><p-skeleton width="10rem" /></td>
             <td><p-skeleton width="12rem" /></td>
             <td><p-skeleton width="10rem" /></td>
             <td><p-skeleton width="8rem" /></td>
             <td><p-skeleton width="7rem" /></td>
             <td><p-skeleton width="7rem" /></td>
             <td><p-skeleton width="6rem" /></td>
-            <td>
-              <p-skeleton width="3rem" height="2rem" borderRadius="50%" />
-            </td>
+            <td><p-skeleton width="3rem" height="2rem" borderRadius="50%" /></td>
           </tr>
 
           <!-- Normal row -->
           <tr *ngIf="!loading">
-            <td>{{ facture.numero }}</td>
-            <td>{{ facture.commande.contact.nom_complet }}</td>
-            <td>{{ facture.commande.contact.phone }}</td>
-            <td>{{ facture.commande?.numero }}</td>
-            <td>{{ facture.total }} GNF</td>
-            <td>{{ facture.montant_du }} GNF</td>
-            <td>{{ facture.statut }}</td>
+            <td>{{ facture?.numero }}</td>
+            <td>{{ facture?.commande?.numero }}</td>
+            <td>{{ facture?.commande?.vehicule?.immatriculation || '—' }}</td>
+            <td>{{ facture?.commande?.vehicule?.nom || '—' }}</td>
+            <td>{{ facture?.commande?.vehicule?.phone_livreur || '—' }}</td>
+            <td>{{ facture?.total | number:'1.0-0' }} GNF</td>
+            <td>{{ facture?.montant_du | number:'1.0-0' }} GNF</td>
+            <td>{{ facture?.statut }}</td>
             <td>
               <button
                 pButton
@@ -107,7 +106,7 @@
 
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="8">Aucune facture trouvée.</td>
+            <td colspan="9">Aucune facture trouvée.</td>
           </tr>
         </ng-template>
       </p-table>

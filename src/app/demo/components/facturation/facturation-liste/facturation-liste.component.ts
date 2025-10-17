@@ -22,7 +22,7 @@ import { Facture } from 'src/app/demo/models/Facture';
 })
 export class FacturationListeComponent implements OnInit {
   @ViewChild('filter') filter!: ElementRef<HTMLInputElement>;
-
+ 
   factures: Facture[] = [];
   loading = true;
   skeletonRows = Array(10).fill({});

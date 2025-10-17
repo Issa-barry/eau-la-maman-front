@@ -112,6 +112,12 @@ export class CommandeService {
       .pipe(map((res) => res.data), catchError(this.handleError));
   }
 
+    createCommandeImedia(dto: CreateCommandeDto): Observable<Commande> {
+    return this.http
+      .post<ApiSuccess<Commande>>(`${this.apiUrl}/imedia/create`, dto, httpOptions)
+      .pipe(map((res) => res.data), catchError(this.handleError));
+  }
+
   createCommande(dto: CreateCommandeDto): Observable<Commande> {
     return this.http
       .post<ApiSuccess<Commande>>(`${this.apiUrl}/create`, dto, httpOptions)

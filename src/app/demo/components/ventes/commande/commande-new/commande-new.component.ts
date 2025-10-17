@@ -169,7 +169,7 @@ export class CommandeNewComponent implements OnInit {
     } as any;
 
     this.isSaving = true;
-    this.commandeService.createCommande(payload as any).subscribe({
+    this.commandeService.createCommandeImedia(payload as any).subscribe({
       next: () => {
         this.isSaving = false;
         this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Commande créée avec succès.' });

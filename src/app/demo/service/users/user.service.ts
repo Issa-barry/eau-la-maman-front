@@ -65,7 +65,10 @@ export class UserService {
         return throwError(() => new Error(errorMessage));
     }
 
-    getUser(): Observable<User[]> {
+    
+
+
+       getUser(): Observable<User[]> {
         return this.http
             .get<{ success: boolean; data: User[] }>(`${this.apiUrl}/all`)
             .pipe(

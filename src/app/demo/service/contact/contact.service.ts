@@ -112,7 +112,6 @@ export class ContactService {
       );
   }
 
- 
 
   /** POST /contacts/create */
   create(contact: Partial<Contact>): Observable<Contact> {

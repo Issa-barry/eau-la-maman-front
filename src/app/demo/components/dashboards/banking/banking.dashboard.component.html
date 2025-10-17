@@ -9,18 +9,16 @@
                 <div
                     class="flex flex-column align-items-center sm:align-items-start"
                 >
-                    <span class="text-900 font-bold text-4xl"
-                        >Welcome Isabel</span
-                    >
+                    <span class="text-900 font-bold text-4xl">{{ (me$ | async)?.nom_complet}}</span>
                     <p class="text-600 m-0">
-                        Your last login was on 04/05/2022 at 10:24 am
+                         {{ (me$ | async)?.reference}}
                     </p>
                 </div>
             </div>
-            <div class="flex gap-2 sm:ml-auto">
+            <div class="flex gap-2 sm:ml-auto"> 
                 <button
                     type="button"
-                    pButton
+                    pButton 
                     pTooltip="Exchange"
                     tooltipPosition="bottom"
                     icon="pi pi-arrows-h"

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription, debounceTime } from 'rxjs';
+import { Observable, Subscription, debounceTime } from 'rxjs';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { MessageService } from 'primeng/api';
 
@@ -16,6 +16,8 @@ import { EncaissementStatsType } from 'src/app/demo/components/types/Encaissemen
 import { PERIODES, Periode, PERIODE_LABELS } from 'src/app/demo/components/types/periode.type';
 import { CommandeStatsType } from 'src/app/demo/components/types/CommandeStats.type';
 import { FactureStatsType } from 'src/app/demo/components/types/FactureStats.type';
+import { User } from 'src/app/demo/models/User';
+ import { AuthService } from 'src/app/demo/service/auth/auth.service';
 
 interface MonthlyPayment {
   name?: string;
@@ -42,9 +44,13 @@ type RowUI = {
   providers: [MessageService],
 })
 export class BankingDashboardComponent implements OnInit, OnDestroy {
+  // iba
+    // me: User = new User();
+    me$!: Observable<User | null>;
   // --------- UI / Charts ----------
   chartData: any;
   chartOptions: any;
+
 
   payments: MonthlyPayment[] = [];
 
@@ -85,6 +91,7 @@ export class BankingDashboardComponent implements OnInit, OnDestroy {
     private encaissementService: EncaissementService,
     private commandeService: CommandeService,
     private factureService: FactureService,
+    private authService: AuthService,
   ) {
     this.subscription = this.layoutService.configUpdate$
       .pipe(debounceTime(25))
@@ -93,6 +100,7 @@ export class BankingDashboardComponent implements OnInit, OnDestroy {
 
   // -------------------- Lifecycle --------------------
   ngOnInit() {
+     this.lodUserAuth();
     this.loadEncaissementStats();
     this.loadCommandeStats();
     this.loadFactureStats();
@@ -126,6 +134,14 @@ export class BankingDashboardComponent implements OnInit, OnDestroy {
     this.loadFactureStats();
   }
 
+  // -------------------- Me --------------------
+
+   lodUserAuth() {
+    this.me$ = this.authService.currentUser$;
+     if (!this.authService.currentUserValue) {
+      this.authService.getMe().subscribe();
+    }    
+  }
   // -------------------- Encaissements --------------------
   loadEncaissementStats(): void {
     this.encLoading = true;

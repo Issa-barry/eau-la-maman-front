@@ -101,20 +101,13 @@ export class ContactNewComponent  implements OnInit {
       return;
     }
 
-    const payload = {
-      type: this.contact.type,
-      phone: this.contact.phone,
-      nom: this.contact.nom ?? null,
-      prenom: this.contact.prenom ?? null,
-      ville: this.contact.ville ?? null,
-      quartier: this.contact.quartier ?? null,
-    };
+    
 
     this.loading = true;
-    this.contactService.create(payload).subscribe({
-      next: () => {
+    this.contactService.create(this.contact).subscribe({
+      next: (created) => {
         this.loading = false;
-
+        this.submitted = false;
         // Succès : tu peux garder un toast de succès si tu veux
         this.messageService.add({
           severity: 'success',
@@ -122,11 +115,13 @@ export class ContactNewComponent  implements OnInit {
           detail: 'Contact créé avec succès',
           life: 3000,
         });
+        
+        setTimeout(() => {
+        this.router.navigate(['/dashboard/contact/contact-detail', created.id]);
+      }, 3100);
 
         this.contact = new Contact();
-        this.submitted = false;
         this.errors = {};
-        // this.router.navigate(['/dashboard/contact']);
       },
       error: (err) => {
         this.loading = false;

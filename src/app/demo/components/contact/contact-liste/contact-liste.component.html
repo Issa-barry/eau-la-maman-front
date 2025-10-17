@@ -5,7 +5,15 @@
 
             <p-toolbar styleClass="mb-4">
                 <div class="p-toolbar-group-right">
-                    <p-splitButton label="Nouveau" icon="pi pi-check" [model]="items" [routerLink]="['/dashboard/contact/contact-new']" routerLinkActive="router-link-active" ></p-splitButton>
+                     <button
+                        pButton
+                        pRipple 
+                        label="Nouveau"
+                        icon="pi pi-plus"
+                        class="p-button-primary"
+                        (click)="dt.exportCSV()"
+                        [routerLink]="['/dashboard/contact/contact-new']" routerLinkActive="router-link-active"
+                    ></button>
                 </div>
 
                 <ng-template pTemplate="right">

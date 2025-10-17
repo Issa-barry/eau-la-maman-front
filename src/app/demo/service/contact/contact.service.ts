@@ -115,7 +115,7 @@ export class ContactService {
  
 
   /** POST /contacts/create */
-  create(contact: Contact): Observable<Contact> {
+  create(contact: Partial<Contact>): Observable<Contact> {
     return this.http
       .post<ApiResponse<Contact>>(`${this.apiUrl}/create`, contact, httpOption)
       .pipe(map(res => (res.data as Contact)), catchError(this.handleError));

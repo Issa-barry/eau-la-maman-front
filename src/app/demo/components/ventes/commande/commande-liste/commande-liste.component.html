@@ -106,7 +106,7 @@
                         <th pSortableColumn="montant_total">Total <p-sortIcon field="montant_total"></p-sortIcon></th>
                         <th pSortableColumn="qte_total">Qté total <p-sortIcon field="qte_total"></p-sortIcon></th>
                          <th pSortableColumn="statut">Statut <p-sortIcon field="statut"></p-sortIcon></th>
-                        <th >Action </th>
+                        <th >Icone </th>
                         <th></th>
                     </tr>
         </ng-template>
@@ -135,6 +135,7 @@
             <td class="white-space-nowrap" (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.numero }}</td>
             <td (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.vehicule.nom || '—' }}</td>
             <td class="white-space-nowrap" (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.vehicule.immatriculation  }}</td>
+                        <td class="white-space-nowrap" (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.vehicule.phone_livreur  }}</td>
             <td class="white-space-nowrap" (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.montant_total | number:'1.0-0' }} GNF</td>
             <td class="white-space-nowrap"(click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.qte_total }}</td>
  

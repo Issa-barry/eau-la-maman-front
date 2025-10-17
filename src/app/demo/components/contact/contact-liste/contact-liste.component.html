@@ -2,7 +2,7 @@
     <div class="col-12">
         <div class="card px-6 py-6">
             <p-toast></p-toast>
-
+<p-confirmDialog [style]="{width:'26rem'}"></p-confirmDialog>
             <p-toolbar styleClass="mb-4">
                 <div class="p-toolbar-group-right">
                      <button
@@ -20,7 +20,7 @@
                     <button
                         pButton
                         pRipple 
-                        label="Export"
+                        label="Export" 
                         icon="pi pi-upload"
                         class="p-button-help"
                         (click)="dt.exportCSV()"
@@ -168,9 +168,9 @@
                                     pRipple
                                     icon="pi pi-trash"
                                     class="p-button-rounded p-button-danger"
-                                    (click)="deleteContact(contact)"
+                                    (click)="confirmDelete(contact)"
                                 ></button>
-                            </div>
+                            </div> 
                         </td>
                     </tr>
                 </ng-template>

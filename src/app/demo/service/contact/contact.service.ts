@@ -135,9 +135,9 @@ export class ContactService {
   }
 
   /** DELETE /contacts/delateById/:id (⚠️ orthographe côté back ?) */
-  deleteContact(id: number): Observable<void> {
+  deleteContactByReference(contact: Contact): Observable<void> {  
     return this.http
-      .delete<ApiResponse<null>>(`${this.apiUrl}/delateById/${id}`, httpOption)
+      .delete<ApiResponse<null>>(`${this.apiUrl}/deleteByReference/${contact.reference}`, httpOption)
       .pipe(map(() => void 0), catchError(this.handleError));
   }
 

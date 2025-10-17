@@ -3,8 +3,8 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { Router } from '@angular/router';
 
- import { Role } from '../../../models/Role';
- import { RoleService } from '../../../service/role/role.service';
+import { Role } from '../../../models/Role';
+import { RoleService } from '../../../service/role/role.service';
 import { Statut } from 'src/app/demo/enums/statut.enum';
 import { MenuItem } from 'primeng/api';
 import { User } from 'src/app/demo/models/User';
@@ -22,8 +22,8 @@ export class ContactListeComponent implements OnInit {
     users: User[] = [];
     user: User = new User();
 
-     contacts: Contact[] = [];
-     contact: Contact = new Contact();
+    contacts: Contact[] = [];
+    contact: Contact = new Contact();
     meta = { current_page: 1, per_page: 10, total: 0, last_page: 1 };
 
     roles: Role[] = [];
@@ -58,10 +58,10 @@ export class ContactListeComponent implements OnInit {
         private router: Router,
         private messageService: MessageService,
         private confirmationService: ConfirmationService
-    ) {}
+    ) { }
 
     ngOnInit(): void {
-         this.getAllContacts();
+        this.getAllContacts();
 
         this.items = [
             {
@@ -91,37 +91,37 @@ export class ContactListeComponent implements OnInit {
         ];
     }
 
- getAllContacts(): void {
-  this.loading = true;
-  this.contactService.getAll({ page: this.meta.current_page, per_page: this.meta.per_page }).subscribe({
-    next: (p) => {
-      this.contacts = p.data ?? [];
-      this.meta = {
-        current_page: p.current_page,
-        per_page: p.per_page,
-        total: p.total,
-        last_page: p.last_page,
-      };
-      this.loading = false;
-      console.log(this.contacts);
-      
-    },
-    error: () => {
-      this.contacts = [];
-      this.loading = false;
-    },
-  });
-}
+    getAllContacts(): void {
+        this.loading = true;
+        this.contactService.getAll({ page: this.meta.current_page, per_page: this.meta.per_page }).subscribe({
+            next: (p) => {
+                this.contacts = p.data ?? [];
+                this.meta = {
+                    current_page: p.current_page,
+                    per_page: p.per_page,
+                    total: p.total,
+                    last_page: p.last_page,
+                };
+                this.loading = false;
+                console.log(this.contacts);
 
-onPageChange(e: any) {
-  // PrimeNG paginator 0-based
-  const page = typeof e.page === 'number' ? e.page + 1 : Math.floor((e.first ?? 0) / (e.rows ?? this.meta.per_page)) + 1;
-  this.meta.current_page = page;
-  this.meta.per_page = e.rows ?? this.meta.per_page;
-  this.getAllContacts();
-}
- 
-  
+            },
+            error: () => {
+                this.contacts = [];
+                this.loading = false;
+            },
+        });
+    }
+
+    onPageChange(e: any) {
+        // PrimeNG paginator 0-based
+        const page = typeof e.page === 'number' ? e.page + 1 : Math.floor((e.first ?? 0) / (e.rows ?? this.meta.per_page)) + 1;
+        this.meta.current_page = page;
+        this.meta.per_page = e.rows ?? this.meta.per_page;
+        this.getAllContacts();
+    }
+
+
     validatePhone(): void {
         const regex = /^(?:\+|00)?(\d{1,3})[-.\s]?\d{10,}$/;
         this.isValidPhone = regex.test(this.user.phone || '');
@@ -158,9 +158,9 @@ onPageChange(e: any) {
         const serviceCall =
             this.user.id && this.user.password
                 ? this.userService.updateUser(
-                      this.user.id,
-                      this.user
-                  )
+                    this.user.id,
+                    this.user
+                )
                 : this.userService.createUser(this.user);
 
         serviceCall.subscribe({
@@ -197,50 +197,56 @@ onPageChange(e: any) {
         this.deleteContactDialog = true;
     }
 
-    confirmDelete(): void {
+    confirmDelete(contact: Contact): void {
         this.deleteContactDialog = false;
-        if (!this.user.id) {
+
+        if (!contact.reference) {
             this.messageService.add({
                 severity: 'error',
                 summary: 'Erreur',
-                detail: 'ID du user non défini',
+                detail: 'Reference du contact non défini.',
                 life: 3000,
             });
             return;
         }
 
-        this.userService.deleteUser(this.user.id).subscribe({
-            next: () => {
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Succès',
-                    detail: 'User supprimé avec succès',
-                    life: 3000,
+
+        this.confirmationService.confirm({
+            message: `Voulez-vous supprimer le contact « ${contact.nom ?? contact.reference} » ?`,
+            header: 'Confirmation',
+            // icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Supprimer',
+            rejectLabel: 'Annuler',
+            acceptButtonStyleClass: 'p-button-danger',
+            accept: () => {
+                this.contactService.deleteContactByReference(contact).subscribe({
+                    next: () => {
+                        this.messageService.add({ severity: 'success', summary: 'Supprimé', detail: 'Contact supprimé avec succès.' });
+                        this.getAllContacts();
+                    },
+                    error: (err) => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Erreur',
+                            detail: err?.error?.message ?? 'Échec de la suppression.',
+                            life: 3000,
+                        });
+                    },
                 });
-                this.getAllContacts();
-            },
-            error: (err) => {
-                console.error('Erreur suppression:', err);
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Erreur',
-                    detail: 'Échec de la suppression du user',
-                    life: 3000,
-                });
-            },
+            }
         });
     }
 
     confirmDeleteSelected(): void {
-        this.deleteContactDialog = false;
-        // Implémentez la logique réelle si vous avez un service côté backend
-        this.selectedContacts = [];
-        this.messageService.add({
-            severity: 'success',
-            summary: 'Suppression multiple',
-            detail: 'Users supprimés',
-            life: 3000,
-        });
+        // this.deleteContactDialog = false;
+        // // Implémentez la logique réelle si vous avez un service côté backend
+        // this.selectedContacts = [];
+        // this.messageService.add({
+        //     severity: 'success',
+        //     summary: 'Suppression multiple',
+        //     detail: 'Users supprimés',
+        //     life: 3000,
+        // });
     }
 
     openNew(): void {
@@ -316,7 +322,7 @@ onPageChange(e: any) {
             'débloquée'
         );
     }
-    
+
     deleteSelectedContacts(): void {
         this.deleteContactDialog = true;
     }

@@ -31,6 +31,7 @@ import { MenuModule } from 'primeng/menu';
  import { DividerModule } from 'primeng/divider';
 import { SplitterModule } from 'primeng/splitter';
 import { PanelModule } from 'primeng/panel';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 
 @NgModule({
@@ -69,7 +70,8 @@ import { PanelModule } from 'primeng/panel';
 		InputTextModule,
 		DividerModule,
 		SplitterModule,
-		PanelModule
+		PanelModule,
+    ConfirmDialogModule
   ]
 })
 export class ContactListeModule { }

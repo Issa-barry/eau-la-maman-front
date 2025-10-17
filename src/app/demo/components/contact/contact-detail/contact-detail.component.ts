@@ -169,16 +169,20 @@ export class ContactDetailComponent implements OnInit, OnDestroy {
     this.submitted = true;
     this.errors = {};
 
-    if (!this.user.nom_complet || !this.user.phone) {
+    if (!this.contact.nom || !this.contact.prenom || !this.contact.type ||   !this.contact.phone) {
       return this.showWarn('Veuillez remplir tous les champs obligatoires.');
     }
 
     const payload = {
-      nom_complet: this.user.nom_complet,
+      nom: this.contact.nom,
+      prenom: this.contact.prenom,
+      type: this.contact.type,  
+      ville: this.contact.ville,
+      quartier: this.contact.quartier,
       phone: this.user.phone
     };
 
-    this.userervice.createClient(payload).subscribe({
+    this.contactService.updateContact(this.id, this.contact).subscribe({
       next: () => {
         this.showSuccess('User créé avec succès');
         this.user = new User();

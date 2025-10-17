@@ -31,11 +31,10 @@
         </ng-template>
       </p-toolbar>
 
-      <p-table
+      <!-- <p-table
         #dt
         [value]="loading ? skeletonRows : commandes"
         [lazy]="true"
-        
         [paginator]="true"
         [rows]="perPage"
         [rowsPerPageOptions]="rowsPerPageOptions"
@@ -44,9 +43,40 @@
         currentPageReportTemplate="{first} à {last} sur {totalRecords} commandes"
         dataKey="id"
         responsiveLayout="scroll"
-        (onPage)="onPageChange($event)"
         styleClass="p-datatable-sm"
-        [rowHover]="true">
+        [rowHover]="true"
+        [globalFilterFields]="[
+        'numero',
+        'commande.numero',
+        'commande.vehicule.immatriculation',
+        'commande.vehicule.nom',
+        'commande.vehicule.phone_livreur',
+        'montant_du',
+        'total',
+              'statut'
+            ]">  -->
+      <p-table
+        #dt
+        [value]="loading ? skeletonRows : commandes"
+        responsiveLayout="scroll"
+        [rows]="10"
+        [paginator]="true"
+        [rowsPerPageOptions]="[10, 20, 30]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="commandes {first} - {last} sur {totalRecords}"
+        [rowHover]="true"
+        dataKey="id"
+        [globalFilterFields]="[
+        'numero',
+        'commande.numero',
+        'vehicule.immatriculation',
+        'vehicule.nom',
+        'vehicule.phone_livreur',
+         'montant_total',
+        'total',
+              'statut'
+            ]"
+      >
 
         <ng-template pTemplate="caption">
           <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center gap-3">
@@ -55,38 +85,27 @@
             <!-- Recherche serveur -->
             <span class="block mt-2 md:mt-0 p-input-icon-left w-full md:w-20rem">
               <i class="pi pi-search"></i>
-              <input
+               <input
                 pInputText
                 type="text"
-                (input)="onGlobalFilter($event)"
-                placeholder="Recherche..."
-                aria-label="Recherche de commandes"
-                class="w-full" />
+                (input)="onGlobalFilter(dt, $event)"
+                placeholder="Rechercher..."
+                class="w-full sm:w-auto"
+              />
             </span>
           </div>
         </ng-template>
 
-        <ng-template pTemplate="header">
-          <!-- <tr>
-            <th style="width:3rem">
-              <p-tableHeaderCheckbox aria-label="Sélectionner toutes les commandes"></p-tableHeaderCheckbox>
-            </th>
-            <th>N° Commande</th>
-            <th>Livreur</th>
-            <th class="text-right">Total</th>
-            <th class="text-right">Qté commandée</th>
-            <th class="text-right">Qté livrée</th>
-            <th>Statut</th>
-            <th style="width: 15rem;">Actions</th>
-          </tr> -->
+        <ng-template pTemplate="header"> 
             <tr>
                        
-                        <th pSortableColumn="numero">N° Commande <p-sortIcon field="numero"></p-sortIcon></th>
-                        <th pSortableColumn="contact?.nom_complet">Véhicule <p-sortIcon field="contact?.nom_complet"></p-sortIcon></th>
+                 <th pSortableColumn="commande.numero">Commande <p-sortIcon field="commande.numero" /></th>
+                        <th pSortableColumn="vehicule.nom">Véhicule <p-sortIcon field="vehicule.nom"></p-sortIcon></th>
+                        <th pSortableColumn="vehicule.immatriculation">Immatriculation <p-sortIcon field="vehicule.immatriculation"></p-sortIcon></th>
+                        <th pSortableColumn="vehicule.phone_livreur">Tel Livreur <p-sortIcon field="vehicule.phone_livreur"></p-sortIcon></th>
                         <th pSortableColumn="montant_total">Total <p-sortIcon field="montant_total"></p-sortIcon></th>
                         <th pSortableColumn="qte_total">Qté total <p-sortIcon field="qte_total"></p-sortIcon></th>
-                        <th pSortableColumn="qte_livree">Livrée <p-sortIcon field="qte_livree"></p-sortIcon></th>
-                        <th pSortableColumn="statut">Statut <p-sortIcon field="statut"></p-sortIcon></th>
+                         <th pSortableColumn="statut">Statut <p-sortIcon field="statut"></p-sortIcon></th>
                         <th >Action </th>
                         <th></th>
                     </tr>
@@ -115,11 +134,10 @@
 
             <td class="white-space-nowrap" (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.numero }}</td>
             <td (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.vehicule.nom || '—' }}</td>
-
+            <td class="white-space-nowrap" (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.vehicule.immatriculation  }}</td>
             <td class="white-space-nowrap" (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.montant_total | number:'1.0-0' }} GNF</td>
             <td class="white-space-nowrap"(click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.qte_total }}</td>
-            <td class="white-space-nowrap" (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.qte_livree }}</td>
-
+ 
               <td (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">
       <span class="status-badge"
             [ngClass]="'status-' + statusKey(commande.statut)">

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { Table } from 'primeng/table';
 
 import { Commande } from 'src/app/demo/models/commande.model';
 import {
@@ -82,7 +83,7 @@ meta: { total: number; per_page: number; current_page: number; last_page: number
       this.commandes = res.items ?? [];
       this.meta = res.meta ?? this.meta; // garde une meta valide
       this.loading = false;
-      // console.log(this.commandes);
+      console.log(this.commandes);
     },
     error: (err) => {
       console.error('Erreur lors du chargement des commandes :', err);
@@ -121,12 +122,17 @@ getStatusLabel(raw?: string): string {
 
 
   /** Recherche globale (serveur) */
-  onGlobalFilter(event: Event): void {
-    const value = (event.target as HTMLInputElement).value ?? '';
-    this.searchTerm = value.trim();
-    this.page = 1;
-    this.loadCommandes();
+  // onGlobalFilter(event: Event): void {
+  //   const value = (event.target as HTMLInputElement).value ?? '';
+  //   this.searchTerm = value.trim();
+  //   this.page = 1;
+  //   this.loadCommandes();
+  // }
+
+ onGlobalFilter(table: Table, event: Event) {
+    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
+
 
   /** Changement de période via dropdown */
   onPeriodeChange(): void {

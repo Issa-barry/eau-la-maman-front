@@ -13,6 +13,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/pipes/shared.module';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
  
 @NgModule({
     imports: [
@@ -30,6 +31,7 @@ import { SkeletonModule } from 'primeng/skeleton';
         SharedModule,
         SkeletonModule,
         TableModule,
+        ProgressSpinnerModule   
         
     ],
     declarations: [BankingDashboardComponent],

@@ -8,7 +8,7 @@ export type EncaissementStatsType = {
     orange_money: number;
     depot_banque: number;
     total: number;
-  };
+  }; 
 };
 
 export type EncaissementStatsQueryType = {

@@ -167,7 +167,7 @@ trackByIdx = (_: number, __: any, index?: number) => index ?? 0;
         this.encError = err?.message || 'Erreur lors du chargement des encaissements.';
         this.messageService.add({ severity: 'error', summary: 'Encaissements', detail: this.encError });
       },
-    });
+    }); 
   }
 
   get encCash(): number { return this.encStats?.encaissements.cash ?? 0; }

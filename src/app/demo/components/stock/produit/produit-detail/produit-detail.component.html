@@ -43,7 +43,7 @@
         <div class="col-12 lg:col-8">
             <div class="grid formgrid">
                 <!-- NOM -->
-                <div class="col-12 field">
+                <div class="col-6 field">
                     <label class="font-medium text-900">Nom du produit</label>
                     <ng-container *ngIf="!isLoading; else skeletonNom">
                         <input
@@ -62,6 +62,54 @@
                         </small>
                     </ng-container>
                     <ng-template #skeletonNom>
+                        <p-skeleton height="2rem" class="w-full"></p-skeleton>
+                    </ng-template>
+                </div>
+
+                 <!-- NOM -->
+                <div class="col-6 field">
+                    <label class="font-medium text-900">Catégorie</label>
+                    <ng-container *ngIf="!isLoading; else skeletonCategorie">
+                        <input
+                            pInputText
+                            [(ngModel)]="produit.categorie"
+                            [readonly]="!isEditMode"
+                            [ngClass]="{
+                                'ng-invalid ng-dirty':
+                                    submitted &&
+                                    (!produit.categorie || apiErrors['categorie']),
+                                'field-disabled': !isEditMode, 
+                            }"
+                        />
+                        <small class="p-error" *ngIf="apiErrors['nom']">
+                            {{ apiErrors["nom"][0] }}
+                        </small>
+                    </ng-container>
+                    <ng-template #skeletonCategorie>
+                        <p-skeleton height="2rem" class="w-full"></p-skeleton>
+                    </ng-template>
+                </div>
+
+                <!-- PRIX USINE -->
+                <div class="col-12 lg:col-6 field">
+                    <label class="font-medium text-900">Prix d'usine</label>
+                    <ng-container *ngIf="!isLoading; else skeletonPrixUsine">
+                        <input
+                            pInputText
+                            type="number"
+                            [(ngModel)]="produit.prix_usine"
+                            [readonly]="!isEditMode"
+                            [ngClass]="{
+                                'ng-invalid ng-dirty':
+                                    submitted && apiErrors['prix_usine'],
+                                'field-disabled': !isEditMode
+                            }"
+                        />
+                        <small class="p-error" *ngIf="apiErrors['prix_usine']">
+                            {{ apiErrors["prix_vente"][0] }}
+                        </small>
+                    </ng-container>
+                    <ng-template #skeletonPrixUsine>
                         <p-skeleton height="2rem" class="w-full"></p-skeleton>
                     </ng-template>
                 </div>
@@ -114,34 +162,7 @@
                     </ng-template>
                 </div>
 
-                <!-- QUANTITÉ -->
-                <div class="col-12 lg:col-6 field">
-                    <label class="font-medium text-900"
-                        >Quantité en stock</label
-                    >
-                    <ng-container *ngIf="!isLoading; else skeletonStock">
-                        <input
-                            pInputText
-                            type="number"
-                            [(ngModel)]="produit.quantite_stock"
-                            [readonly]="!isEditMode"
-                            [ngClass]="{
-                                'ng-invalid ng-dirty':
-                                    submitted && apiErrors['quantite_stock'],
-                                'field-disabled': !isEditMode
-                            }"
-                        />
-                        <small
-                            class="p-error"
-                            *ngIf="apiErrors['quantite_stock']"
-                        >
-                            {{ apiErrors["quantite_stock"][0] }}
-                        </small>
-                    </ng-container>
-                    <ng-template #skeletonStock>
-                        <p-skeleton height="2rem" class="w-full"></p-skeleton>
-                    </ng-template>
-                </div>
+               
 
                 <!-- COÛT -->
                 <div class="col-12 lg:col-6 field">
@@ -199,7 +220,7 @@
                     <ng-template #skeletonTypeProduit>
                         <p-skeleton height="2rem" class="w-full"></p-skeleton>
                     </ng-template>
-                </div>
+                </div> 
             </div>
 
             <!-- STATUT -->
@@ -214,6 +235,33 @@
                     />
                 </ng-container>
                 <ng-template #skeletonStatut>
+                    <p-skeleton height="2rem" class="w-full"></p-skeleton>
+                </ng-template>
+            </div>
+
+            <!-- QTE -->
+            <div class="field">
+                <label class="font-medium text-900">Quantité</label>
+                <ng-container *ngIf="!isLoading; else skeletonStock">
+                    <input
+                        pInputText
+                        type="number"
+                        [(ngModel)]="produit.quantite_stock"
+                        [readonly]="!isEditMode"
+                         [ngClass]="{
+                                'ng-invalid ng-dirty':
+                                    submitted && apiErrors['quantite_stock'],
+                                'field-disabled': !isEditMode
+                            }"
+                     />
+                      <small
+                            class="p-error"
+                            *ngIf="apiErrors['quantite_stock']"
+                        >
+                            {{ apiErrors["quantite_stock"][0] }}
+                        </small>
+                </ng-container>
+                <ng-template #skeletonStock>
                     <p-skeleton height="2rem" class="w-full"></p-skeleton>
                 </ng-template>
             </div>

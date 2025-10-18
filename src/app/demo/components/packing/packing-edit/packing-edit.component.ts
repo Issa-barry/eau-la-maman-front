@@ -48,7 +48,7 @@ export class PackingEditComponent implements OnInit {
     //     this.loading = false;
     //     console.log(err);
         
-    //   }
+    //   } 
     // });
 
     const id = this.route.snapshot.paramMap.get('id');
@@ -56,9 +56,9 @@ export class PackingEditComponent implements OnInit {
       this.packingService.getById(+id).subscribe({
         next: (data) => {
           this.packing = data;
-          if (!this.packing.user_id && this.packing.user?.id !== undefined) {
-            this.packing.user_id = this.packing.user.id;
-          }
+          // if (!this.packing.user_id && this.packing.user?.id !== undefined) {
+          //   this.packing.user_id = this.packing.user.id;
+          // }
           this.loading = false;
         },
         error: (err) => {
@@ -70,15 +70,15 @@ export class PackingEditComponent implements OnInit {
   }
 
   addLigne(): void {
-    this.packing.lignes.push({
-      produit_id: this.produits[0]?.id ?? 0,
-      quantite_packed: 1,
-      packing_id: this.packing.id!
-    });
+    // this.packing.lignes.push({
+    //   produit_id: this.produits[0]?.id ?? 0,
+    //   quantite_packed: 1,
+    //   packing_id: this.packing.id!
+    // });
   }
 
   removeLigne(index: number): void {
-    this.packing.lignes.splice(index, 1);
+    // this.packing.lignes.splice(index, 1);
   }
 
   onSubmit(): void {

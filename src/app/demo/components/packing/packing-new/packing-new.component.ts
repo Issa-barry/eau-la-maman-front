@@ -31,7 +31,7 @@ export class PackingNewComponent implements OnInit {
     { label: 'Annulé', value: 'annule' },
   ];
 
-   shifft = [
+   shift = [
     { label: 'Jour', value: 'jour' },
     { label: 'Nuit', value: 'nuit' },
   ];
@@ -47,7 +47,7 @@ export class PackingNewComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.packing.lignes = [];
+    // this.packing.lignes = [];
        this.packing.date = this.todayISO();
     this.loadProduit();
     this.getAllContacts();
@@ -84,31 +84,28 @@ export class PackingNewComponent implements OnInit {
         });
     }
 
-  loadProduit() : void {
- // Produits: auto-sélection du "Rouleau"
-    this.produitService.getProduits().subscribe({
-      next: (data) => {
-        this.produits = data;
-        this.rouleau =
-          data.find(p => (p.nom ?? '').toLowerCase().includes('rouleau')) ?? data[0] ?? null;
+  loadProduit(): void {
+  this.produitService.getProduits().subscribe({
+    next: (data) => {
+      this.produits = data;
+      this.rouleau = data.find(p => (p.nom ?? '').toLowerCase().includes('rouleau')) ?? data[0] ?? null;
 
-        if (this.rouleau) {
-          this.rouleauNomAffiche = this.rouleau.nom ?? 'Rouleau';
-          const rid = this.getRouleauId(); // garanti number
-          this.packing.lignes = [{
-            produit_id: rid,
-            quantite_packed: this.packing.lignes?.[0]?.quantite_packed ?? 1,
-            packing_id: 0
-          }];
-        } else {
-          this.errorMessage = 'Produit "Rouleau" introuvable.';
+      if (this.rouleau) {
+        this.rouleauNomAffiche = this.rouleau.nom ?? 'Rouleau';
+        const rid = this.getRouleauId();        // ← garanti number
+        this.packing.produit_id = rid;          // ✅ IMPORTANT
+        if (!this.packing.quantite_packed) {
+          this.packing.quantite_packed = 1;     // (optionnel) valeur par défaut
         }
-      },
-      error: (err) => (this.errorMessage = err.message),
-      complete: () => (this.loading = false)
-    });
- 
-  }
+      } else {
+        this.errorMessage = 'Produit "Rouleau" introuvable.';
+      }
+    },
+    error: (err) => (this.errorMessage = err.message),
+    complete: () => (this.loading = false)
+  });
+}
+
 
 
   /** Retourne l'id du rouleau ou jette une erreur (évite number|undefined) */
@@ -127,27 +124,27 @@ export class PackingNewComponent implements OnInit {
     }
     const rid = this.getRouleauId();
 
-    if (this.packing.lignes.length === 0) {
-      this.packing.lignes.push({ produit_id: rid, quantite_packed: 1, packing_id: 0 });
-      return;
-    }
+    // if (this.packing.lignes.length === 0) {
+    //   this.packing.lignes.push({ produit_id: rid, quantite_packed: 1, packing_id: 0 });
+    //   return;
+    // }
 
-    const l0 = this.packing.lignes[0];
-    l0.produit_id = rid;
-    l0.quantite_packed = (l0.quantite_packed ?? 0) + 1;
-    this.packing.lignes = [l0];
+    // const l0 = this.packing.lignes[0];
+    // l0.produit_id = rid;
+    // l0.quantite_packed = (l0.quantite_packed ?? 0) + 1;
+    // this.packing.lignes = [l0];
   }
 
   removeLigne(_index: number): void {
-    if (!this.rouleau) return;
-    const rid = this.getRouleauId();
+    // if (!this.rouleau) return;
+    // const rid = this.getRouleauId();
 
-    const current = this.packing.lignes[0] ?? null;
-    this.packing.lignes = [{
-      produit_id: rid,
-      quantite_packed: Math.max(1, current?.quantite_packed ?? 1),
-      packing_id: 0
-    }];
+    // const current = this.packing.lignes[0] ?? null;
+    // this.packing.lignes = [{
+    //   produit_id: rid,
+    //   quantite_packed: Math.max(1, current?.quantite_packed ?? 1),
+    //   packing_id: 0
+    // }];
   }
 
   onSubmit(): void {
@@ -157,17 +154,25 @@ export class PackingNewComponent implements OnInit {
     }
     const rid = this.getRouleauId();
 
-    if (this.packing.lignes.length === 0) {
-      this.packing.lignes = [{ produit_id: rid, quantite_packed: 1, packing_id: 0 }];
-    } else {
-      this.packing.lignes[0].produit_id = rid;
-      this.packing.lignes[0].quantite_packed = this.packing.lignes[0].quantite_packed || 1;
-      this.packing.lignes = [this.packing.lignes[0]];
-    }
+    // if (this.packing.lignes.length === 0) {
+    //   this.packing.lignes = [{ produit_id: rid, quantite_packed: 1, packing_id: 0 }];
+    // } else {
+    //   this.packing.lignes[0].produit_id = rid;
+    //   this.packing.lignes[0].quantite_packed = this.packing.lignes[0].quantite_packed || 1;
+    //   this.packing.lignes = [this.packing.lignes[0]];
+    // }
 
     this.packingService.create(this.packing).subscribe({
-      next: () => this.router.navigate(['/dashboard/packing']),
-      error: (err) => (this.errorMessage = err.message)
+      next: () => {
+        // this.router.navigate(['/dashboard/packing'])
+      },
+      error: (err) => {
+        console.log(err);
+        (this.errorMessage = err.message)
+      }
     });
+
+  
+  
   }
 }

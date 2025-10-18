@@ -12,23 +12,14 @@
 
           <div class="field col-12">
             <label for="user_id" class="font-semibold">Employé</label>
-            <p-dropdown id="user_id" [options]="contacts" optionLabel="nom_complet" optionValue="id" [(ngModel)]="packing.user_id" name="user_id" placeholder="Sélectionner un employé" class="text-lg"></p-dropdown>
+            <!-- <p-dropdown id="user_id" [options]="contacts" optionLabel="nom_complet" optionValue="id" [(ngModel)]="packing.user_id" name="user_id" placeholder="Sélectionner un employé" class="text-lg"></p-dropdown> -->
           </div>
 
           <div class="field col-12 md:col-6">
             <label for="date" class="font-semibold">Date</label>
             <input type="date" pInputText id="date" [(ngModel)]="packing.date" name="date" required class="text-lg" />
           </div>
-
-          <div class="field col-12 md:col-6">
-            <label for="heure_debut" class="font-semibold">Heure début</label>
-            <input type="time" pInputText id="heure_debut" [(ngModel)]="packing.heure_debut" name="heure_debut" required class="text-lg" />
-          </div>
-
-          <div class="field col-12 md:col-6">
-            <label for="heure_fin" class="font-semibold">Heure fin</label>
-            <input type="time" pInputText id="heure_fin" [(ngModel)]="packing.heure_fin" name="heure_fin" required class="text-lg" />
-          </div>
+  
 
           <div class="field col-12 md:col-6">
             <label for="statut" class="font-semibold">Statut</label>
@@ -40,19 +31,6 @@
         <div class="mt-5">
           <h3 class="text-2xl font-semibold mb-3 text-primary">Produits utilisés</h3>
 
-          <div *ngFor="let ligne of packing.lignes; let i = index" class="formgrid grid mb-3">
-            <div class="field col-8">
-              <label>Produit</label>
-              <p-dropdown [options]="produits" optionLabel="nom" optionValue="id" [(ngModel)]="ligne.produit_id" name="produit_{{i}}" placeholder="Choisir un produit"></p-dropdown>
-            </div>
-            <div class="field col-3">
-              <label>Quantité</label>
-              <input type="number" pInputText [(ngModel)]="ligne.quantite_packed" name="quantite_{{i}}" />
-            </div>
-            <div class="field col-1 flex align-items-end">
-              <button type="button" pButton icon="pi pi-trash" class="p-button-danger p-button-rounded" (click)="removeLigne(i)"></button>
-            </div>
-          </div>
 
           <button type="button" pButton icon="pi pi-plus" label="Ajouter un produit" class="p-button-primary col-3" (click)="addLigne()"></button>
         </div>

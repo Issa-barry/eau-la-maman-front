@@ -6,8 +6,8 @@
       <form *ngIf="packing" (ngSubmit)="onSubmit()" #packingForm="ngForm" class="p-fluid">
         <div class="formgrid grid"> 
           <div class="field col-12">
-            <label for="user_id" class="font-semibold">Employé</label>
-            <p-dropdown id="user_id" [options]="contacts" optionLabel="nom_complet" optionValue="id" [(ngModel)]="packing.user_id" name="user_id" placeholder="Sélectionner un employé" class="text-lg"></p-dropdown>
+            <label for="contact_id" class="font-semibold">Employé</label>
+            <p-dropdown id="contact_id" [options]="contacts" optionLabel="nom_complet" optionValue="id" [(ngModel)]="packing.contact_id" name="contact_id" placeholder="Sélectionner un employé" class="text-lg"></p-dropdown>
           </div>
 
           <div class="field col-12 md:col-6">
@@ -16,8 +16,8 @@
           </div>
 
           <div class="field col-12 md:col-6">
-            <label for="shifft" class="font-semibold">Shifft</label>
-            <p-dropdown id="shifft" [options]="shifft" [(ngModel)]="packing.shifft" name="shifft" placeholder="Sélectionner un shifft" class="text-lg"></p-dropdown>
+            <label for="shift" class="font-semibold">Shift</label>
+            <p-dropdown id="shift" [options]="shift" [(ngModel)]="packing.shift" name="shift" placeholder="Sélectionner un shift" class="text-lg"></p-dropdown>
           </div>
 <!-- 
           <div class="field col-12 md:col-6">
@@ -31,19 +31,18 @@
 
   <!-- Affiche un libellé figé "Rouleau" + cache l'id produit -->
   <div class="formgrid grid align-items-end mb-3"
-       *ngIf="packing?.lignes?.length; else rouleauLoading">
+        >
     <div class="field col-12 md:col-6">
       <label>Produit</label>
       <input pInputText type="text" [value]="rouleauNomAffiche" readonly class="text-lg">
-      <!-- id produit figé -->
-      <input type="hidden" [ngModel]="packing.lignes[0].produit_id" name="rouleau_id">
+       <input type="hidden" [(ngModel)]="packing.produit_id" name="rouleau_id">
     </div>
 
     <div class="field col-12 md:col-6">
       <label>Quantité</label>
       <input type="number"
              pInputText
-             [(ngModel)]="packing.lignes[0].quantite_packed"
+             [(ngModel)]="packing.quantite_packed"
              name="quantite_rouleau"
              min="1"
              required

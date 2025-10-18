@@ -7,11 +7,10 @@
         <p><b>Référence :</b> {{ packing.reference }}</p>
         <!-- <p><b>Employé :</b> {{ packing.user?.nom_complet }}</p> -->
         <p><b>Date :</b> {{ packing.date | date }}</p>
-        <p><b>Heure début :</b> {{ packing.heure_debut }}</p>
-        <p><b>Heure fin :</b> {{ packing.heure_fin }}</p>
+
         <p><b>Statut :</b> {{ packing.statut }}</p>
 
-        <p-table [value]="packing.lignes" responsiveLayout="scroll">
+        <!-- <p-table [value]="packing.lignes" responsiveLayout="scroll">
           <ng-template pTemplate="header">
             <tr>
               <th>Produit</th>
@@ -24,7 +23,7 @@
               <td>{{ ligne.quantite_utilisee }}</td>
             </tr>
           </ng-template>
-        </p-table>
+        </p-table> -->
 
         <button pButton label="Retour à la liste" icon="pi pi-arrow-left" class="mt-4" routerLink="/dashboard/packing/"></button>
       </div>

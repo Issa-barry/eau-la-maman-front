@@ -1,22 +1,21 @@
- 
-import { ShifftPackingEnum } from '../enums/packing-shifft.enum';
-import { Commande } from './commande.model';
+import { ShiftPackingEnum } from '../enums/packing-shift.enum';
 import { Contact } from './contact';
-import { PackingLigne } from './packing-ligne.model';
+import { Produit } from './produit.model';
 
 export class Packing {
   id?: number;
-  user_id!: number;
-  date!: string;
-  heure_debut!: string;
-  heure_fin!: string;
-  statut!: string;
   reference!: string;
-  shifft!: ShifftPackingEnum;
+  date!: string;
+  shift!: ShiftPackingEnum;     // "jour" | "nuit"
+  statut!: string;               // "brouillon" | "en_cours" | "validé" | "annulé"
 
-  // Relations
-  user?: Contact;
-  lignes: PackingLigne[] = [];
+  // ✅ Nouvelles relations directes
+  contact_id!: number;
+  produit_id!: number;
+  quantite_packed!: number;
+
+  contact?: Contact;
+  produit?: Produit;
 
   constructor(init?: Partial<Packing>) {
     Object.assign(this, init);

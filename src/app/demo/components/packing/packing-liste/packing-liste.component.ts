@@ -39,6 +39,7 @@ export class PackingListeComponent implements OnInit {
     this.cols = [
       { field: 'reference', header: 'Référence' },
       { field: 'employé', header: 'Employé' },
+      { field: 'quantite_packed', header: 'Qté' },
       { field: 'date_packing', header: 'Date' },
       { field: 'statut', header: 'Statut' },
     ];

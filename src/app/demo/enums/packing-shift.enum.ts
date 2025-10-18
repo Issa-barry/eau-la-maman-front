@@ -1,4 +1,4 @@
-export enum ShifftPackingEnum {
+export enum ShiftPackingEnum {
   Jour = 'jour',
   Nuit = 'nuit'
   }

@@ -48,7 +48,8 @@
               <p-tableCheckbox [value]="packing"></p-tableCheckbox>
             </td>
             <td>{{ packing.reference }}</td>
-            <!-- <td>{{ packing.user?.nom_complet }}</td> -->
+            <td>{{ packing.contact?.nom_complet }}</td>
+            <td>{{ packing.quantite_packed }}</td>
             <td>{{ packing.date | date }}</td>
             <td>{{ packing.statut }}</td>
             <td>
@@ -93,25 +94,10 @@
           <p><b>Référence :</b> {{ selectedPacking.reference }}</p>
           <!-- <p><b>Employé :</b> {{ selectedPacking.user?.nom_complet }}</p> -->
           <p><b>Date :</b> {{ selectedPacking.date | date }}</p>
-          <p><b>Heure début :</b> {{ selectedPacking.heure_debut }}</p>
-          <p><b>Heure fin :</b> {{ selectedPacking.heure_fin }}</p>
+ 
           <p><b>Statut :</b> {{ selectedPacking.statut }}</p>
-          <p><b>Nombre de lignes :</b> {{ selectedPacking.lignes?.length || 0 }}</p>
-
-          <p-table [value]="selectedPacking.lignes" responsiveLayout="scroll">
-            <ng-template pTemplate="header">
-              <tr>
-                <th>Produit</th>
-                <th>Quantité utilisée</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-ligne>
-              <tr>
-                <td>{{ ligne.produit?.nom }}</td>
-                <td>{{ ligne.quantite_packed }}</td>
-              </tr>
-            </ng-template>
-          </p-table>
+ 
+         
         </div>
         <ng-template pTemplate="footer">
           <!-- <button pButton pRipple icon="pi pi-pencil" class="p-button-text p-button-warning" label="Modifier" [routerLink]="['/dashboard/packing/packing-detail', selectedPacking?.id]" (click)="showDetailDialog = false"></button> -->

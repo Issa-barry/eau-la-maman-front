@@ -102,6 +102,20 @@ export class ContactService {
       .pipe(map(res => this.toPaginated<Contact>(res)), catchError(this.handleError));
   }
 
+  // Ajoute "type?" dans les options
+getPackers(page = 1, per_page = 50): Observable<Paginated<Contact>> {
+  const params = new HttpParams()
+    .set('type', 'packing')
+    .set('page', String(page))
+    .set('per_page', String(per_page));
+
+  return this.http
+    .get<any>(`${this.apiUrl}/all`, { params })
+    .pipe(map(res => this.toPaginated<Contact>(res)), catchError(this.handleError));
+}
+
+
+
   /** GET /contacts/getById/:id */
   getContactById(id: number): Observable<Contact> {
     return this.http

@@ -4,7 +4,7 @@
       <h2 class="text-3xl font-semibold mb-5 text-center text-primary">Nouveau packing</h2>
 
       <form *ngIf="packing" (ngSubmit)="onSubmit()" #packingForm="ngForm" class="p-fluid">
-        <div class="formgrid grid">
+        <div class="formgrid grid"> 
           <div class="field col-12">
             <label for="user_id" class="font-semibold">Employé</label>
             <p-dropdown id="user_id" [options]="contacts" optionLabel="nom_complet" optionValue="id" [(ngModel)]="packing.user_id" name="user_id" placeholder="Sélectionner un employé" class="text-lg"></p-dropdown>
@@ -32,26 +32,37 @@
         </div>
  
         <div class="mt-5">
-          <h3 class="text-2xl font-semibold mb-3 text-primary">Produits utilisés</h3>
+  <h3 class="text-2xl font-semibold mb-3 text-primary">Produits utilisés</h3>
 
-          <div *ngFor="let ligne of packing.lignes; let i = index" class="formgrid grid align-items-end mb-3">
-            <div class="field col-12 md:col-5">
-              <label>Produit</label>
-              <p-dropdown [options]="produits" optionLabel="nom" optionValue="id" [(ngModel)]="ligne.produit_id" name="produit_{{i}}" placeholder="Choisir un produit"></p-dropdown>
-            </div>
-            <div class="field col-6 md:col-3">
-              <label>Quantité</label>
-              <input type="number" pInputText [(ngModel)]="ligne.quantite_packed" name="quantite_{{i}}" />
-            </div>
-            <div class="field col-6 md:col-2">
-              <button type="button" pButton icon="pi pi-trash" class="p-button-rounded p-button-danger mt-1" (click)="removeLigne(i)"></button>
-            </div>
-          </div>
+  <!-- Affiche un libellé figé "Rouleau" + cache l'id produit -->
+  <div class="formgrid grid align-items-end mb-3"
+       *ngIf="packing?.lignes?.length; else rouleauLoading">
+    <div class="field col-12 md:col-6">
+      <label>Produit</label>
+      <input pInputText type="text" [value]="rouleauNomAffiche" readonly class="text-lg">
+      <!-- id produit figé -->
+      <input type="hidden" [ngModel]="packing.lignes[0].produit_id" name="rouleau_id">
+    </div>
 
-          <div class="flex justify-content-start mt-2">
-            <button type="button" pButton icon="pi pi-plus" label="Ajouter un produit" class="p-button-sm p-button-text p-button-primary" (click)="addLigne()"></button>
-          </div>
-        </div>
+    <div class="field col-12 md:col-3">
+      <label>Quantité</label>
+      <input type="number"
+             pInputText
+             [(ngModel)]="packing.lignes[0].quantite_packed"
+             name="quantite_rouleau"
+             min="1"
+             required
+             class="text-lg" />
+    </div>
+  </div>
+
+  <ng-template #rouleauLoading>
+    <p-skeleton width="100%" height="3rem"></p-skeleton>
+  </ng-template>
+
+  <!-- on supprime le bouton "Ajouter un produit" -->
+</div>
+
  
         <div class="flex justify-content-center gap-3 mt-5">
           <button type="submit" pButton label="Enregistrer" class="p-button-lg p-button-primary px-5" [disabled]="packingForm.invalid"></button>

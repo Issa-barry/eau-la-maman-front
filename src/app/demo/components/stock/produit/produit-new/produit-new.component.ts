@@ -2,7 +2,7 @@ import { Component, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProduitService } from 'src/app/demo/service/produit/produit.service';
 import { Produit } from 'src/app/demo/models/produit.model';
-import { Categorie } from 'src/app/demo/enums/categorie.enum';
+import {  TypeProduitEnum } from 'src/app/demo/enums/typeProduit.enum';
 
 @Component({
   selector: 'app-produit-new',
@@ -18,7 +18,7 @@ export class ProduitNewComponent {
   errorMessage: string = '';
 
   uploadedFiles: any[] = [];
-  categoryOptions = Object.values(Categorie);
+  categoryOptions = Object.values(TypeProduitEnum);
   showRemove: boolean = false;
 
   constructor(

@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Produit } from 'src/app/demo/models/produit.model';
 import { ProduitService } from 'src/app/demo/service/produit/produit.service';
-import { Categorie } from 'src/app/demo/enums/categorie.enum';
-import { ConfirmationService, MessageService } from 'primeng/api';
+ import { ConfirmationService, MessageService } from 'primeng/api';
+import { TypeProduitEnum } from 'src/app/demo/enums/typeProduit.enum';
 
 @Component({
     selector: 'app-produit-detail',
@@ -14,7 +14,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 export class ProduitDetailComponent implements OnInit {
     produit: Produit = new Produit();
     pageTitle: string = 'Détail du produit';
-    categoryOptions = Object.values(Categorie);
+    TypeProduitOptions = Object.values(TypeProduitEnum);
 
     apiErrors: { [key: string]: string[] } = {};
     isEditMode: boolean = false;

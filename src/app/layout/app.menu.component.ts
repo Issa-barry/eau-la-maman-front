@@ -24,7 +24,12 @@ export class AppMenuComponent implements OnInit {
                         label: "Chiffre-d'affaire",
                         icon: 'pi pi-fw pi-chart-line',
                         routerLink: ['/dashboard/dashboard-banking']
-                    }
+                    },
+                     {
+                        label: 'Stock',
+                        icon: 'pi pi-fw pi-database',
+                        routerLink: ['/dashboard/stock']
+                    },
                 ]
             },
             {
@@ -36,22 +41,29 @@ export class AppMenuComponent implements OnInit {
                         icon: 'pi pi-fw pi-cart-plus',
                         routerLink: ['/dashboard/ventes']
                     },
-                    //    {
-                    //     label: 'Packing',
-                    //     icon: 'pi pi-fw pi-box',
-                    //     routerLink: ['/dashboard/packing']
-                    // },
                      
-                     {
+                    {
                         label: 'Facturation',
                         icon: 'pi pi-fw pi-calculator',
-                        routerLink: ['/dashboard/facturation']
+                        items: [
+                            {
+                                label: 'Factures-vente',
+                                // icon: 'pi pi-fw pi-cart-plus',
+                                routerLink: ['/dashboard/facturation']
+                            },
+                            {
+                                label: 'Facture-Packing',
+                                // icon: 'pi pi-fw pi-shopping-cart',
+                                routerLink: ['/dashboard/parametre/role-liste']
+                            }
+                        ]
                     },
-                     {
-                        label: 'Stock',
-                        icon: 'pi pi-fw pi-database',
-                        routerLink: ['/dashboard/stock']
+                        {
+                        label: 'Packing',
+                        icon: 'pi pi-fw pi-box',
+                        routerLink: ['/dashboard/packing']
                     },
+                    
                     //    {
                     //     label: 'Achats',
                     //     icon: 'pi pi-fw pi-map-marker',

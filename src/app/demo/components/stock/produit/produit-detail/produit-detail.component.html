@@ -15,7 +15,7 @@
                 (click)="enableEditMode()"
             ></button>
         </ng-template>
-
+ 
         <ng-template pTemplate="right">
             <button
                 *ngIf="!isEditMode"
@@ -177,18 +177,18 @@
             <div class="border-1 surface-border border-round">
                 <span
                     class="text-900 font-bold block border-bottom-1 surface-border p-3"
-                    >Catégorie</span
+                    >Type</span
                 >
                 <div class="p-3">
-                    <ng-container *ngIf="!isLoading; else skeletonCategorie">
+                    <ng-container *ngIf="!isLoading; else skeletonTypeProduit">
                         <p-dropdown
-                            [options]="categoryOptions"
-                            [(ngModel)]="produit.categorie"
-                            placeholder="Catégorie"
+                            [options]="TypeProduitOptions"
+                            [(ngModel)]="produit.type"
+                            placeholder="Type du produit"
                             [disabled]="!isEditMode"
                             [ngClass]="{
                                 'ng-invalid ng-dirty':
-                                    submitted && apiErrors['categorie'],
+                                    submitted && apiErrors['type'],
                                 'field-disabled': !isEditMode
                             }"
                         ></p-dropdown>
@@ -196,7 +196,7 @@
                             {{ apiErrors["categorie"][0] }}
                         </small>
                     </ng-container>
-                    <ng-template #skeletonCategorie>
+                    <ng-template #skeletonTypeProduit>
                         <p-skeleton height="2rem" class="w-full"></p-skeleton>
                     </ng-template>
                 </div>

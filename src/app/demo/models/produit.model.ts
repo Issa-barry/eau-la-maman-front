@@ -1,15 +1,16 @@
-import { Categorie } from "../enums/categorie.enum";
+import { TypeProduitEnum } from "../enums/typeProduit.enum";
 
 export class Produit {
   id?: number;
   code?: string;
   nom: string;
+  type: TypeProduitEnum = TypeProduitEnum.Vente
   prix_vente: number;
   quantite_stock: number;
   prix_achat?: number;
   cout?: number;
   image?: string;
-  categorie: Categorie = Categorie.Vente;
+  categorie: string;
  
   created_at?: string;
   updated_at?: string;
@@ -20,6 +21,7 @@ export class Produit {
   constructor()
       {
           this.nom = ""; 
+          this.categorie = "";
           this.prix_vente = 0;
           this.quantite_stock = 0;
           this.image ="defaut1.png";

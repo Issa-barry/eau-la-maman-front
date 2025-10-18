@@ -10,6 +10,7 @@ import { TooltipModule } from 'primeng/tooltip';
 
 import { StockListeRoutingModule } from './stock-liste-routing.module';
 import { StockListeComponent } from './stock-liste.component';
+import { PipeModule } from 'src/app/demo/pipes/pipe.module';
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import { StockListeComponent } from './stock-liste.component';
         TableModule,
         InputNumberModule,
         ChartModule,
+        PipeModule
   ]
 })
 export class StockListeModule { }

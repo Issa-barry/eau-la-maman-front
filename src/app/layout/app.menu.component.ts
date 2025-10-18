@@ -33,7 +33,7 @@ export class AppMenuComponent implements OnInit {
                 items: [
                      {
                         label: 'Ventes',
-                        icon: 'pi pi-fw pi-map-marker',
+                        icon: 'pi pi-fw pi-cart-plus',
                         routerLink: ['/dashboard/ventes']
                     },
                     //    {
@@ -42,15 +42,15 @@ export class AppMenuComponent implements OnInit {
                     //     routerLink: ['/dashboard/packing']
                     // },
                      
-                    //  {
-                    //     label: 'Stock',
-                    //     icon: 'pi pi-fw pi-database',
-                    //     routerLink: ['/dashboard/stock']
-                    // },
                      {
                         label: 'Facturation',
-                        icon: 'pi pi-fw pi-database',
+                        icon: 'pi pi-fw pi-calculator',
                         routerLink: ['/dashboard/facturation']
+                    },
+                     {
+                        label: 'Stock',
+                        icon: 'pi pi-fw pi-database',
+                        routerLink: ['/dashboard/stock']
                     },
                     //    {
                     //     label: 'Achats',
@@ -70,7 +70,7 @@ export class AppMenuComponent implements OnInit {
                     },
                     {
                         label: 'Employes',
-                        icon: 'pi pi-fw pi-users',
+                        icon: 'pi pi-fw pi-id-card',
                         routerLink: ['/dashboard/user']
                     },
                     {

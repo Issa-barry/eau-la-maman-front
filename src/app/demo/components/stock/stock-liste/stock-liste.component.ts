@@ -35,30 +35,23 @@ export class StockListeComponent implements OnInit, OnDestroy {chartData: any;
   
           this.payments = [
               {
-                  name: 'Electric Bill',
-                  amount: 75.6,
+                  name: 'Pack-30',
+                  amount: 1050000,
                   paid: true,
-                  date: '06/04/2022',
+                  date: '1345',
               },
               {
-                  name: 'Water Bill',
-                  amount: 45.5,
-                  paid: true,
-                  date: '07/04/2022',
-              },
-              { name: 'Gas Bill', amount: 45.2, paid: false, date: '12/04/2022' },
-              {
-                  name: 'Internet Bill',
-                  amount: 25.9,
-                  paid: true,
-                  date: '17/04/2022',
-              },
-              {
-                  name: 'Streaming',
-                  amount: 40.9,
+                  name: 'Rouleau',
+                  amount: 9000500,
                   paid: false,
-                  date: '20/04/2022',
+                  date: '548',
               },
+              {
+                  name: 'Veste de pluie',
+                  amount: 2547855,
+                  paid: true,
+                  date: '6',
+              }, 
           ];
       }
   

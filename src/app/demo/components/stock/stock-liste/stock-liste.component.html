@@ -35,8 +35,16 @@
         <div class="card h-full">
             <div class="flex align-items-center justify-content-between mb-3">
                 <div class="text-900 text-xl font-semibold">Produits</div>
-                <img src="assets/demo/images/banking/visa.svg" class="h-1rem">
-            </div>
+                <!-- <img src="assets/demo/images/banking/visa.svg" class="h-1rem"> -->
+                 <button
+                        pButton
+                        pRipple 
+                        label="Voir"
+                        icon="pi pi-eye"
+                        class="p-button-primary"
+                         [routerLink]="['/dashboard/produit']" routerLinkActive="router-link-active"
+                    ></button>
+             </div>
             <div class="text-600 mb-1 font-semibold">En Stock</div>
             <div class="text-900 text-2xl text-primary mb-5 font-bold">1.500,00</div>
             <div class="flex align-items-center justify-content-between">
@@ -55,31 +63,25 @@
     </div> 
 
      
- <div class="col-12 md:col-6 xl:col-6 cursor-pointer" [routerLink]="['/dashboard/stock/livraison']">
-        <div class="card h-full flex flex-column align-items-center justify-content-center">
-            <i class="pi pi-dollar text-primary text-4xl mb-4"></i>
-            <span class="text-900 text-lg mb-4 font-medium">Livraisons</span>
-            <span class="text-900 text-2xl text-primary font-bold">5</span>
-        </div>
-    </div> 
 
 
-    <!-- <div class="col-12 lg:col-6">
+
+    <div class="col-12 lg:col-6">
         <div class="card">
             <div class="text-900 text-xl font-semibold mb-3">Résumé</div>
             <p-table [value]="payments" responsiveLayout="scroll">
                 <ng-template pTemplate="header">
                     <tr>
-                        <th class="white-space-nowrap w-4">Name</th>
-                        <th class="white-space-nowrap w-4">Amount</th>
-                        <th class="white-space-nowrap w-4">Date</th>
+                        <th class="white-space-nowrap w-4">Produit</th>
+                        <th class="white-space-nowrap w-4">Nombre</th>
+                        <th class="white-space-nowrap w-4">Valeur</th>
                         <th class="white-space-nowrap w-4">Status</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-payment>
                     <tr>
                         <td>{{payment.name}}</td>
-                        <td>{{payment.amount | currency}}</td>
+                        <td>{{payment.amount | money:'GNF':'normal'}}</td>
                         <td>{{payment.date}}</td>
                         <td class="text-right">
                             <p-tag *ngIf="payment.paid" value="COMPLETED" severity="success"></p-tag>
@@ -89,6 +91,6 @@
                 </ng-template>
             </p-table>
         </div>
-    </div> -->
+    </div>
                 
 </div>

@@ -1,4 +1,5 @@
  
+import { ShifftPackingEnum } from '../enums/packing-shifft.enum';
 import { Commande } from './commande.model';
 import { Contact } from './contact';
 import { PackingLigne } from './packing-ligne.model';
@@ -11,6 +12,7 @@ export class Packing {
   heure_fin!: string;
   statut!: string;
   reference!: string;
+  shifft!: ShifftPackingEnum;
 
   // Relations
   user?: Contact;

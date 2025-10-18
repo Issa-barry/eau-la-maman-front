@@ -30,6 +30,12 @@ export class PackingNewComponent implements OnInit {
     { label: 'Terminé', value: 'termine' },
     { label: 'Annulé', value: 'annule' },
   ];
+
+   shifft = [
+    { label: 'Jour', value: 'jour' },
+    { label: 'Nuit', value: 'nuit' },
+  ];
+
   errorMessage = '';
   loading = true;
 
@@ -42,10 +48,19 @@ export class PackingNewComponent implements OnInit {
 
   ngOnInit(): void {
     this.packing.lignes = [];
+       this.packing.date = this.todayISO();
     this.loadProduit();
     this.getAllContacts();
   }
 
+   /** YYYY-MM-DD pour input[type=date] */
+  private todayISO(): string {
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
   
       getAllContacts(): void {
         this.loading = true;

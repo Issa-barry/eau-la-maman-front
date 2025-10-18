@@ -5,7 +5,8 @@
 
             <p-toolbar styleClass="mb-4">
                 <div class="p-toolbar-group-right">
-                    <p-splitButton label="Nouveau" icon="pi pi-check" [model]="items"></p-splitButton>
+                    <!-- <p-splitButton label="Nouveau" icon="pi pi-check" [model]="items"></p-splitButton> -->
+                    <button  pButton pRipple  label="Nouveau"  icon="pi pi-plus" [routerLink]="['/dashboard/user/user-new']" routerLinkActive="router-link-active"  ></button>
                 </div>
 
                 <ng-template pTemplate="right">

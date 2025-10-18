@@ -59,12 +59,12 @@
                 <path d="M0 400L30 386.5C60 373 120 346 180 334.8C240 323.7 300 328.3 360 345.2C420 362 480 391 540 392C600 393 660 366 720 355.2C780 344.3 840 349.7 870 352.3L900 355L900 601L870 601C840 601 780 601 720 601C660 601 600 601 540 601C480 601 420 601 360 601C300 601 240 601 180 601C120 601 60 601 30 601L0 601Z" fill="var(--primary-500)" stroke-linecap="round" stroke-linejoin="miter"></path>
             </svg>
             <div class="z-2 relative text-white">
-                <div class="text-xl font-semibold mb-3">Debit Card</div>
+                <div class="text-xl font-semibold mb-3">Cash</div>
                 <div class="mb-1 font-semibold">Balance</div>
-                <div class="text-2xl mb-5 font-bold" *ngIf="!encLoading && encStats">{{ encStats.encaissements.cash }}</div>
+                <div class="text-2xl mb-5 font-bold" *ngIf="!encLoading && encStats">{{ encStats.encaissements.cash | money:'GNF':'normal' }}</div>
                 <div class="flex align-items-center justify-content-between" *ngIf="!encLoading">
-                    <span class="text-lg">**** **** **** 1412</span>
-                    <span class="font-medium text-lg">12/26</span>
+                    <!-- <span class="text-lg">**** **** **** 1412</span> -->
+                    <span class="font-medium text-lg">26/12/2025</span>
                 </div>
                   <div class="flex align-items-center justify-content-between"*ngIf="encLoading">
                     <p-progressSpinner  styleClass="w-4rem h-5rem" strokeWidth="2"   fill="var(--surface-ground)" animationDuration=".5s"  ></p-progressSpinner>
@@ -80,7 +80,7 @@
         <div class="card h-full flex flex-column align-items-center justify-content-center">
             <i class="pi pi-mobile text-primary text-4xl mb-4"></i>
             <span class="text-900 text-lg mb-4 font-medium">Orange-Money</span>
-            <span class="text-900 text-2xl text-primary font-bold" *ngIf="!encLoading && encStats">{{ encStats.encaissements.orange_money }}</span>
+            <span class="text-900 text-2xl text-primary font-bold" *ngIf="!encLoading && encStats">{{ encStats.encaissements.orange_money | money:'GNF':'normal' }}</span>
             <div class="flex align-items-center justify-content-center"*ngIf="encLoading">
                     <p-progressSpinner  styleClass="w-4rem h-5rem" strokeWidth="2"   fill="var(--surface-ground)" animationDuration=".5s"  ></p-progressSpinner>
             </div>
@@ -91,7 +91,7 @@
         <div class="card h-full flex flex-column align-items-center justify-content-center">
             <i class="pi pi-wallet text-primary text-4xl mb-4"></i>
             <span class="text-900 text-lg mb-4 font-medium">Total-CA</span>
-            <span class="text-900 text-2xl text-primary font-bold" *ngIf="!encLoading && encStats">{{ encStats.encaissements.total }}</span>
+            <span class="text-900 text-2xl text-primary font-bold" *ngIf="!encLoading && encStats">{{ encStats.encaissements.total | money:'GNF':'normal'  }}</span>
             <div class="flex align-items-center justify-content-center"*ngIf="encLoading">
                     <p-progressSpinner  styleClass="w-4rem h-5rem" strokeWidth="2"   fill="var(--surface-ground)" animationDuration=".5s"  ></p-progressSpinner>
             </div>
@@ -117,8 +117,8 @@
                         <td><p-skeleton width="8rem" height="1.4rem"/></td>
                     </tr>
                     <tr *ngIf="!cmdLoading">
-                       <td><p-tag [value]="row.label"         [severity]="row.severity"></p-tag></td>
-                        <td>{{ row.nombre | number : "1.0-0" }}</td>
+                       <td class="text-600"><p-tag [value]="row.label"         [severity]="row.severity"></p-tag></td>
+                        <td >{{ row.nombre | number : "1.0-0" }}</td>
                         <td>  {{ row.date | dateFr:'moisEnLettre'  }}</td>
                     </tr>
                 </ng-template>

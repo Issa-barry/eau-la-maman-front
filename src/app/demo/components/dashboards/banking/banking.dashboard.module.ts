@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/pipes/shared.module';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { PipeModule } from 'src/app/demo/pipes/pipe.module';
  
 @NgModule({
     imports: [
@@ -31,7 +32,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
         SharedModule,
         SkeletonModule,
         TableModule,
-        ProgressSpinnerModule   
+        ProgressSpinnerModule,
+        PipeModule 
         
     ],
     declarations: [BankingDashboardComponent],

@@ -29,6 +29,8 @@ import { SkeletonModule } from 'primeng/skeleton';
         FormsModule,
         SharedModule,
         SkeletonModule,
+        TableModule,
+        
     ],
     declarations: [BankingDashboardComponent],
     providers: [ ]

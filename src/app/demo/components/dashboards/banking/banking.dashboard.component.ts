@@ -47,8 +47,9 @@ type RowUI = {
 export class BankingDashboardComponent implements OnInit, OnDestroy {
   // iba
   // BankingDashboardComponent.ts (ajouts)
-skeletonRows = Array.from({ length: 3 }); // 3 lignes fantômes pour le tableau
-
+// skeletonRows = Array.from({ length: 3 }); // 3 lignes fantômes pour le tableau
+ skeletonRows = Array.from({ length: 3 }, () => ({}));
+trackByIdx = (_: number, __: any, index?: number) => index ?? 0;
     // me: User = new User();
     me$!: Observable<User | null>;
   // --------- UI / Charts ----------

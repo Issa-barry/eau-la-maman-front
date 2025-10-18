@@ -130,8 +130,13 @@
         </div>
     </div>
     
-    <div class="col-12 md:col-6 xl:col-4" *ngIf="!encLoading && cmdStats as cmd">
-        <div class="card h-full flex flex-column align-items-center justify-content-center">
+    <div
+        class="col-12 md:col-6 xl:col-4"
+        *ngIf="!encLoading && cmdStats as cmd"
+    >
+        <div
+            class="card h-full flex flex-column align-items-center justify-content-center"
+        >
             <i class="pi pi-wallet text-primary text-4xl mb-4"></i>
             <span class="text-900 text-lg mb-4 font-medium">Total-CA</span>
             <span class="text-900 text-2xl text-primary font-bold"
@@ -148,68 +153,38 @@
         </div>
     </div> -->
 
-    <!-- COMMANDES -->
-     
-<div class="col-12 lg:col-6">
-  <div class="card">
-    <div class="text-900 text-xl font-semibold mb-3">Commandes</div>
-
-    <p-table
-      class="stats-table"
-      [value]="cmdLoading ? skeletonRows : commandesList"
-      responsiveLayout="scroll">
-
-      <ng-template pTemplate="header">
-        <tr>
-          <th class="white-space-nowrap w-4">Statut</th>
-          <th class="white-space-nowrap w-2">Nombre</th>
-          <th class="white-space-nowrap w-4">Date</th>
-        </tr>
-      </ng-template>
-
-      <ng-template pTemplate="body" let-row>
-        <tr>
-          <!-- Statut -->
-          <td>
-            <ng-container *ngIf="cmdLoading; else statutCell">
-              <p-skeleton [style]="{width:'7rem',height:'2rem','border-radius':'9999px'}"></p-skeleton>
-            </ng-container>
-            <ng-template #statutCell>
-              <p-tag [value]="row.label" [severity]="row.severity"></p-tag>
-            </ng-template>
-          </td>
-
-          <!-- Nombre -->
-          <td>
-            <ng-container *ngIf="cmdLoading; else nombreCell">
-              <p-skeleton width="3rem" height="1.25rem"></p-skeleton>
-            </ng-container>
-            <ng-template #nombreCell>
-              {{ row.nombre | number:'1.0-0' }}
-            </ng-template>
-          </td>
-
-          <!-- Date -->
-          <td>
-            <ng-container *ngIf="cmdLoading; else dateCell">
-              <p-skeleton width="8rem" height="1.25rem"></p-skeleton>
-            </ng-container>
-            <ng-template #dateCell>
-              {{ row.date | dateFr:'moisEnLettre' }}
-            </ng-template>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </div>
-</div>
-
-    <!-- FACTURES -->
+    <div class="col-12 lg:col-6">
+        <div class="card">
+            <div class="text-900 text-xl font-semibold mb-3">Commandes</div>
+            
+            <p-table [value]=" cmdLoading ? skeletonRows : commandesList" responsiveLayout="scroll">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="white-space-nowrap w-4">Statut</th>
+                        <th class="white-space-nowrap w-2">Nombre</th>
+                         <th class="white-space-nowrap w-4">Date</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr *ngIf="cmdLoading">
+                         <td><p-skeleton width="6rem" /></td>
+                        <td><p-skeleton width="10rem" /></td>
+                        <td><p-skeleton width="8rem" /></td>
+                    </tr>
+                    <tr *ngIf="!cmdLoading">
+                       <td><p-tag [value]="row.label"         [severity]="row.severity"></p-tag></td>
+                        <td>{{ row.nombre | number : "1.0-0" }}</td>
+                        <td>  {{ row.date | dateFr:'moisEnLettre'  }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
 
     <div class="col-12 lg:col-6">
         <div class="card">
             <div class="text-900 text-xl font-semibold mb-3">Factures</div>
-            <p-table [value]="facturesList" responsiveLayout="scroll">
+            <p-table [value]=" facLoading ? skeletonRows : facturesList" responsiveLayout="scroll">
                 <ng-template pTemplate="header">
                     <tr>
                         <th class="white-space-nowrap w-3">Statut</th>
@@ -219,16 +194,21 @@
                      </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-row>
-                    <tr>
-                        <td><p-tag [value]="row.label" [severity]="row.severity"></p-tag></td>
+                     <tr *ngIf="facLoading">
+                         <td><p-skeleton width="6rem" /></td>
+                        <td><p-skeleton width="10rem" /></td>
+                        <td><p-skeleton width="8rem" /></td>
+                    </tr>
+                    <tr *ngIf="!facLoading">
+                         <td><p-tag [value]="row.label" [severity]="row.severity"></p-tag></td>
                          <td>{{ row.nombre | number:'1.0-0' }}</td>
-                       <td>
+                         <td>
                             <ng-container *ngIf="row.montant != null; else dash">
                             {{ row.montant | number:'1.0-0' }} GNF
                             </ng-container>
                             <ng-template #dash>—</ng-template>
                         </td>
-                              <td>{{ row.date | dateFr:'moisEnLettre'  }}</td>
+                        <td>{{ row.date | dateFr:'moisEnLettre'  }}</td>
                     </tr>
                 </ng-template>
             </p-table>

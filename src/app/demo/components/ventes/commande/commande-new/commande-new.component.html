@@ -30,37 +30,37 @@
           ></button>
         </div>
 
-        <!-- Résultats -->
+        <!-- Résultats véhicules -->
         <p-dropdown
-  [options]="vehicules"
-  [(ngModel)]="selectedVehicule"
-  optionLabel="immatriculation"
-  placeholder="Sélectionner un véhicule trouvé"
-  [showClear]="true"
-  appendTo="body"
-  styleClass="w-full"
-  [disabled]="vehicules.length === 0"
-  [ngClass]="{ 'p-invalid': hasError('vehicule_id') }"
->
-  <ng-template let-v pTemplate="selectedItem">
-    <div *ngIf="v" class="flex flex-column">
-      <div class="font-medium">{{ v.immatriculation }}</div>
-      <small class="text-500">
-        Livreur: {{ v.prenom_livreur }} {{ v.nom_livreur }} — {{ v.phone_livreur }}
-      </small>
-    </div>
-  </ng-template>
+          [options]="vehicules"
+          [(ngModel)]="selectedVehicule"
+          optionLabel="immatriculation"
+          placeholder="Sélectionner un véhicule trouvé"
+          [showClear]="true"
+          appendTo="body"
+          styleClass="w-full"
+          [disabled]="vehicules.length === 0"
+          [ngClass]="{ 'p-invalid': hasError('vehicule_id') }"
+          (onChange)="onVehiculePicked()"
+        >
+          <ng-template let-v pTemplate="selectedItem">
+            <div *ngIf="v" class="flex flex-column">
+              <div class="font-medium">{{ v.immatriculation }}</div>
+              <small class="text-500">
+                Livreur: {{ v.prenom_livreur }} {{ v.nom_livreur }} — {{ v.phone_livreur }}
+              </small>
+            </div>
+          </ng-template>
 
-  <ng-template let-v pTemplate="item">
-    <div class="flex flex-column">
-      <div class="font-medium">{{ v.immatriculation }}</div>
-      <small class="text-500">
-        Livreur: {{ v.prenom_livreur }} {{ v.nom_livreur }} — {{ v.phone_livreur }}
-      </small>
-    </div>
-  </ng-template>
-</p-dropdown>
-
+          <ng-template let-v pTemplate="item">
+            <div class="flex flex-column">
+              <div class="font-medium">{{ v.immatriculation }}</div>
+              <small class="text-500">
+                Livreur: {{ v.prenom_livreur }} {{ v.nom_livreur }} — {{ v.phone_livreur }}
+              </small>
+            </div>
+          </ng-template>
+        </p-dropdown>
 
         <div class="flex align-items-center justify-content-between mt-1">
           <small class="text-500" *ngIf="vehicules.length > 0">{{ vehicules.length }} résultat(s)</small>
@@ -81,71 +81,88 @@
             </tr>
           </thead>
 
-        <tbody>
-          <tr *ngFor="let ligne of lignes; let i = index">
-            <!-- Produit -->
-            <td class="py-2">
-              <p-dropdown
-                [options]="produits"
-                [(ngModel)]="ligne.produit"
-                optionLabel="nom"
-                placeholder="Sélectionner un produit"
-                appendTo="body"
-                (onChange)="onProduitChange(i)"
-                styleClass="w-full"
-                [ngClass]="{ 'p-invalid': hasError('produit_id', i) }"
-              ></p-dropdown>
-              <div *ngIf="getError('produit_id', i)" class="text-red-500 text-xs mt-1">
-                {{ getError('produit_id', i) }}
-              </div>
-            </td>
+          <tbody>
+            <tr *ngFor="let ligne of lignes; let i = index">
+              <!-- Produit -->
+              <td class="py-2">
+                <!-- Sur la 1re ligne, on met #firstProduit pour le focus automatique -->
+                <p-dropdown
+                  *ngIf="i === 0; else produitSansRef"
+                  #firstProduit
+                  [options]="produits"
+                  [(ngModel)]="ligne.produit"
+                  optionLabel="nom"
+                  placeholder="Sélectionner un produit"
+                  appendTo="body"
+                  (onChange)="onProduitChange(i)"
+                  styleClass="w-full"
+                  [ngClass]="{ 'p-invalid': hasError('produit_id', i) }"
+                ></p-dropdown>
 
-            <!-- Quantité -->
-            <td class="py-2">
-              <input
-                type="number"
-                class="p-inputtext w-full"
-                [(ngModel)]="ligne.quantite"
-                (input)="recalculerTotal()"
-                min="1"
-                [ngClass]="{ 'p-invalid': hasError('quantite', i) }"
-              />
-              <div *ngIf="getError('quantite', i)" class="text-red-500 text-xs mt-1">
-                {{ getError('quantite', i) }}
-              </div>
-            </td>
+                <ng-template #produitSansRef>
+                  <p-dropdown
+                    [options]="produits"
+                    [(ngModel)]="ligne.produit"
+                    optionLabel="nom"
+                    placeholder="Sélectionner un produit"
+                    appendTo="body"
+                    (onChange)="onProduitChange(i)"
+                    styleClass="w-full"
+                    [ngClass]="{ 'p-invalid': hasError('produit_id', i) }"
+                  ></p-dropdown>
+                </ng-template>
 
-            <!-- Prix unitaire -->
-            <td class="py-2">
-              <input
-                type="number"
-                class="p-inputtext w-full"
-                [(ngModel)]="ligne.prix_vente"
-                (input)="recalculerTotal()"
-                min="0"
-                step="0.01"
-                [ngClass]="{ 'p-invalid': hasError('prix_vente', i) }"
-              />
-              <div *ngIf="getError('prix_vente', i)" class="text-red-500 text-xs mt-1">
-                {{ getError('prix_vente', i) }}
-              </div>
-            </td>
+                <div *ngIf="getError('produit_id', i)" class="text-red-500 text-xs mt-1">
+                  {{ getError('produit_id', i) }}
+                </div>
+              </td>
 
-            <!-- Sous-total -->
-            <td class="py-2">
-              {{ (ligne.quantite || 0) * (ligne.prix_vente || 0) | number: '1.0-0' }} GNF
-            </td>
+              <!-- Quantité -->
+              <td class="py-2">
+                <input
+                  type="number"
+                  class="p-inputtext w-full"
+                  [(ngModel)]="ligne.quantite"
+                  (input)="recalculerTotal()"
+                  min="1"
+                  [ngClass]="{ 'p-invalid': hasError('quantite', i) }"
+                />
+                <div *ngIf="getError('quantite', i)" class="text-red-500 text-xs mt-1">
+                  {{ getError('quantite', i) }}
+                </div>
+              </td>
 
-            <td class="py-2 text-right">
-              <!-- Optionnel: suppression de ligne -->
-              <!--
-              <button pButton icon="pi pi-trash"
-                      class="p-button-danger p-button-sm"
-                      (click)="supprimerLigne(i)"></button>
-              -->
-            </td>
-          </tr>
-        </tbody>
+              <!-- Prix unitaire -->
+              <td class="py-2">
+                <input
+                  type="number"
+                  class="p-inputtext w-full"
+                  [(ngModel)]="ligne.prix_vente"
+                  (input)="recalculerTotal()"
+                  min="0"
+                  step="0.01"
+                  [ngClass]="{ 'p-invalid': hasError('prix_vente', i) }"
+                />
+                <div *ngIf="getError('prix_vente', i)" class="text-red-500 text-xs mt-1">
+                  {{ getError('prix_vente', i) }}
+                </div>
+              </td>
+
+              <!-- Sous-total -->
+              <td class="py-2">
+                {{ (ligne.quantite || 0) * (ligne.prix_vente || 0) | number: '1.0-0' }} GNF
+              </td>
+
+              <td class="py-2 text-right">
+                <!-- Optionnel: suppression -->
+                <!--
+                <button pButton icon="pi pi-trash"
+                        class="p-button-danger p-button-sm"
+                        (click)="supprimerLigne(i)"></button>
+                -->
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
 
@@ -155,9 +172,12 @@
       </div>
 
       <!-- Boutons -->
-      <div class="col-12 flex flex-column lg:flex-row justify-content-center align-items-center lg:justify-content-end my-6">
+      <div
+        class="col-12 flex flex-column lg:flex-row justify-content-center align-items-center lg:justify-content-end my-6"
+      >
         <button
-          pButton pRipple
+          pButton
+          pRipple
           class="p-button-secondary p-button-outlined mt-3 lg:mt-0 w-full lg:w-auto flex-order-2 lg:flex-order-1 lg:mr-4"
           label="Annuler"
           icon="pi pi-fw pi-arrow-left"
@@ -165,7 +185,8 @@
         ></button>
 
         <button
-          pButton pRipple
+          pButton
+          pRipple
           class="p-button-primary w-full lg:w-auto flex-order-1 lg:flex-order-2"
           [label]="isSaving ? 'Création…' : 'Créer la commande'"
           [icon]="isSaving ? 'pi pi-spinner pi-spin' : 'pi pi-fw pi-check'"

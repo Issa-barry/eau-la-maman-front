@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
@@ -9,6 +9,7 @@ import { VehiculeService } from 'src/app/demo/service/vehicule/vehicule.service'
 import { Produit } from 'src/app/demo/models/produit.model';
 import { CreateCommandeDto } from 'src/app/demo/models/commande-create.dto';
 import { Vehicule } from 'src/app/demo/models/vehicule.model';
+import { Dropdown } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-commande-new',
@@ -19,6 +20,7 @@ import { Vehicule } from 'src/app/demo/models/vehicule.model';
 export class CommandeNewComponent implements OnInit {
   // Lignes de commande
   lignes: { produit: Produit | null; quantite: number; prix_vente: number }[] = [];
+  @ViewChild('firstProduit', { read: Dropdown }) firstProduitDd?: Dropdown;
 
   // Totaux & réduction
   reduction = 0;
@@ -55,6 +57,25 @@ export class CommandeNewComponent implements OnInit {
     this.ajouterLigne();
   }
 
+  // ---------- Utils ----------
+  /** Normalise l'immatriculation (supprime espaces/traits/points et met en minuscule) */
+  private normalizeImmat(v: string | null | undefined): string {
+    return (v || '').toLowerCase().replace(/[\s\-.]/g, '').trim();
+  }
+
+  /** Donne le focus au premier dropdown Produit */
+  private focusProduit(): void {
+    setTimeout(() => this.firstProduitDd?.focus(), 0);
+  }
+
+  /** Nettoie l'erreur et passe le focus au produit si un véhicule vient d'être choisi */
+  onVehiculePicked(): void {
+    if (this.apiErrors?.['vehicule_id']) {
+      delete this.apiErrors['vehicule_id'];
+    }
+    this.focusProduit();
+  }
+
   // ---------- Recherche distante des véhicules par immatriculation ----------
   searchVehicules(): void {
     const q = this.matriculeQuery?.trim();
@@ -70,15 +91,42 @@ export class CommandeNewComponent implements OnInit {
     this.loading = true;
     this.vehiculeService.searchByImmatriculation(q).subscribe({
       next: (list) => {
+        this.loading = false;
         this.vehicules = list || [];
+
         if (this.vehicules.length === 0) {
+          this.selectedVehicule = null;
           this.messageService.add({
             severity: 'warn',
             summary: 'Aucun résultat',
             detail: 'Aucun véhicule trouvé pour cette immatriculation.',
           });
+          return;
         }
-        this.loading = false;
+
+        // 1) Un seul résultat -> auto-sélection
+        if (this.vehicules.length === 1) {
+          this.selectedVehicule = this.vehicules[0];
+          this.onVehiculePicked();
+          return;
+        }
+
+        // 2) Plusieurs résultats -> match exact (normalisé)
+        const nq = this.normalizeImmat(q);
+        const exact = this.vehicules.find(v => this.normalizeImmat(v.immatriculation) === nq);
+
+        if (exact) {
+          this.selectedVehicule = exact;
+          this.onVehiculePicked();
+        } else {
+          // Laisser l’utilisateur choisir
+          this.selectedVehicule = null;
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Plusieurs résultats',
+            detail: 'Sélectionnez le véhicule voulu dans la liste.',
+          });
+        }
       },
       error: (err: ApiErrorShape) => {
         this.loading = false;
@@ -98,7 +146,11 @@ export class CommandeNewComponent implements OnInit {
       next: (data) => (this.produits = data),
       error: (err: ApiErrorShape) => {
         this.errorMessage = err?.message || 'Erreur lors du chargement des produits.';
-        this.messageService.add({ severity: 'error', summary: `Erreur ${err?.status ?? ''}`.trim(), detail: this.errorMessage });
+        this.messageService.add({
+          severity: 'error',
+          summary: `Erreur ${err?.status ?? ''}`.trim(),
+          detail: this.errorMessage,
+        });
       },
     });
   }
@@ -145,13 +197,21 @@ export class CommandeNewComponent implements OnInit {
 
     if (!this.selectedVehicule) {
       this.apiErrors['vehicule_id'] = ['Le véhicule est requis.'];
-      this.messageService.add({ severity: 'warn', summary: 'Champs requis', detail: 'Veuillez sélectionner un véhicule.' });
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Champs requis',
+        detail: 'Veuillez sélectionner un véhicule.',
+      });
       return;
     }
 
     if (lignesValides.length === 0) {
       this.apiErrors['lignes.0.produit_id'] = ['Sélectionnez un produit.'];
-      this.messageService.add({ severity: 'warn', summary: 'Champs requis', detail: 'Ajoutez au moins un produit.' });
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Champs requis',
+        detail: 'Ajoutez au moins un produit.',
+      });
       return;
     }
 
@@ -161,7 +221,6 @@ export class CommandeNewComponent implements OnInit {
       prix_vente: Number(ligne.prix_vente) || 0,
     }));
 
-    // NOTE: si CreateCommandeDto n’a pas encore vehicule_id, on caste en any.
     const payload: Partial<CreateCommandeDto> & { vehicule_id: number; lignes: any[] } = {
       vehicule_id: this.selectedVehicule!.id!,
       reduction: Number(this.reduction) || 0,

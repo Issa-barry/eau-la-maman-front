@@ -108,6 +108,7 @@ export class CommandeNewComponent implements OnInit {
         if (this.vehicules.length === 1) {
           this.selectedVehicule = this.vehicules[0];
           this.onVehiculePicked();
+          this.matriculeQuery = ''; //  vide l'input
           return;
         }
 

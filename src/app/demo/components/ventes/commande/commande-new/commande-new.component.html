@@ -6,12 +6,12 @@
   <div class="grid">
     <!-- Colonne de description -->
     <div class="col-12 lg:col-2">
-      <div class="text-900 font-medium text-xl mb-3">Véhicule</div>
+      <!-- <div class="text-900 font-medium text-xl mb-3">Véhicule</div>
       <p class="m-0 p-0 text-600 line-height-3 mr-3">
         Recherchez le véhicule par immatriculation depuis le champ de filtre
         intégré au menu. S’il n’y a qu’un résultat ou une correspondance exacte,
         il sera sélectionné automatiquement.
-      </p>
+      </p> -->
     </div>
 
     <!-- Colonne formulaire -->
@@ -19,60 +19,136 @@
       <div class="grid formgrid p-fluid">
 
         <!-- Dropdown véhicules avec filtre dans le panneau -->
-        <div class="field mb-4 col-12">
-          <label class="font-medium text-900">Véhicule (immatriculation)</label>
+    <div class="col-12 lg:col-7">
+    <div class="field mb-3">
+      <label class="font-medium text-900">Client / Véhicule</label>
+      <p-dropdown
+  #vehiculeDd
+  [options]="vehicules"
+  [(ngModel)]="selectedVehicule"
+  optionLabel="immatriculation"
+  placeholder="Rechercher une immatriculation…"
+  [showClear]="true"
+  appendTo="body"
+  styleClass="w-full"
+  [ngClass]="{ 'p-invalid': hasError('vehicule_id') }"
+  (onChange)="onVehiculePicked()"
+>
+  <!-- 🔎 Barre de recherche dans le panneau (NOTRE champ, pas celui intégré) -->
+  <ng-template pTemplate="header">
+    <div class="p-2">
+      <p-inputGroup>
+        <input
+          type="text"
+          pInputText
+          [(ngModel)]="matriculeQuery"
+          placeholder="Tapez pour rechercher…"
+          (keydown.enter)="panelSearch()"
+        />
+        <p-inputGroupAddon (click)="panelSearch()" [style]="{ cursor: 'pointer' }">
+          <i [class]="loading ? 'pi pi-spinner pi-spin' : 'pi pi-search'"></i>
+        </p-inputGroupAddon>
+      </p-inputGroup>
 
-          <p-dropdown
-            #vehiculeDd
-            [options]="vehicules"
-            [(ngModel)]="selectedVehicule"
-            optionLabel="immatriculation"
-            placeholder="Sélectionner / rechercher un véhicule"
-            [filter]="true"
-            [filterPlaceholder]="'Recherchez une immatriculation…'"
-            filterBy="immatriculation,prenom_livreur,nom_livreur,phone_livreur"
-            [showClear]="true"
-            appendTo="body"
-            styleClass="w-full"
-            [ngClass]="{ 'p-invalid': hasError('vehicule_id') }"
-            (onFilter)="onVehiculeFilter($event)"
-            (onShow)="onVehiculePanelShow()"
-            (onChange)="onVehiculePicked()"
-          >
-            <!-- Affichage sélectionné -->
-            <ng-template let-v pTemplate="selectedItem">
-              <div *ngIf="v" class="flex align-items-center gap-2">
-                <i class="pi pi-truck text-600"></i>
-                <div class="flex flex-column">
-                  <span class="font-medium">{{ v.immatriculation }}</span>
-                  <small class="text-500">
-                    Livreur : {{ v.prenom_livreur }} {{ v.nom_livreur }} — {{ v.phone_livreur }}
-                  </small>
-                </div>
-              </div>
-            </ng-template>
+      <small class="text-500" *ngIf="(vehicules?.length ?? 0) > 0">
+        {{ vehicules.length }} résultat(s)
+      </small>
+    </div>
+  </ng-template>
 
-            <!-- Items -->
-            <ng-template let-v pTemplate="item">
-              <div class="flex align-items-center gap-2">
-                <i class="pi pi-truck text-600"></i>
-                <div class="flex flex-column">
-                  <span class="font-medium">{{ v.immatriculation }}</span>
-                  <small class="text-500">
-                    Livreur : {{ v.prenom_livreur }} {{ v.nom_livreur }} — {{ v.phone_livreur }}
-                  </small>
-                </div>
-              </div>
-            </ng-template>
-          </p-dropdown>
+  <!-- Élément sélectionné -->
+  <ng-template pTemplate="selectedItem" let-v>
+    <div *ngIf="v" class="flex align-items-center gap-2">
+      <i class="pi pi-truck text-600"></i>
+      <div class="flex flex-column">
+        <span class="font-medium">{{ v.immatriculation }}</span>
+        <small class="text-500">
+          Livreur : {{ v.prenom_livreur }} {{ v.nom_livreur }} — {{ v.phone_livreur }}
+        </small>
+      </div>
+    </div>
+  </ng-template>
 
-          <div class="flex align-items-center justify-content-between mt-1">
-<small class="text-500" *ngIf="vehicules && vehicules.length > 0">
-  {{ vehicules.length }} résultat(s)
-</small>
-            <small class="text-red-500" *ngIf="getError('vehicule_id')">{{ getError('vehicule_id') }}</small>
+  <!-- Lignes -->
+  <ng-template pTemplate="item" let-v>
+    <div class="flex align-items-center gap-2">
+      <i class="pi pi-truck text-600"></i>
+      <div class="flex flex-column">
+        <span class="font-medium">{{ v.immatriculation }}</span>
+        <small class="text-500">
+          Livreur : {{ v.prenom_livreur }} {{ v.nom_livreur }} — {{ v.phone_livreur }}
+        </small>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- État vide (après recherche) -->
+  <ng-template pTemplate="empty">
+    <div class="p-2 text-600">Tapez une immatriculation puis appuyez sur Entrée.</div>
+  </ng-template>
+</p-dropdown>
+
+
+      <small class="text-red-500" *ngIf="getError('vehicule_id')">{{ getError('vehicule_id') }}</small>
+      <small class="text-500" *ngIf="vehicules && vehicules.length > 0">{{ vehicules.length }} résultat(s)</small>
+    </div>
+  </div>
+
+  <!-- Colonne droite : fiche d’infos -->
+  <div class="col-12 lg:col-5 mt-4 mb-4">
+    <div class="border-1 surface-border border-round p-3 h-full">
+      <div class="flex align-items-center justify-content-between mb-3">
+        <div class="text-900 font-medium">Informations véhicule</div>
+        <i class="pi pi-info-circle text-600"></i>
+      </div>
+
+      <!-- Aucun véhicule -->
+      <ng-container *ngIf="!selectedVehicule; else ficheVehicule">
+        <div class="text-600">Aucun véhicule sélectionné.</div>
+        <div class="mt-2 text-500 text-sm">Choisissez un véhicule à gauche pour afficher ses informations.</div>
+      </ng-container>
+
+      <!-- Fiche -->
+      <ng-template #ficheVehicule>
+        <div class="grid text-sm">
+          <div class="col-6 text-600">Immatriculation</div>
+          <div class="col-6 text-900 font-medium">{{ selectedVehicule?.immatriculation }}</div>
+
+          <div class="col-6 text-600">Livreur</div>
+          <div class="col-6 text-900">
+            {{ selectedVehicule?.prenom_livreur }} {{ selectedVehicule?.nom_livreur }}
+          </div>
+
+          <div class="col-6 text-600">Téléphone</div>
+          <div class="col-6">
+            <a class="text-primary" [href]="'tel:' + (selectedVehicule?.phone_livreur || '')">
+              {{ selectedVehicule?.phone_livreur }}
+            </a>
+          </div>
+
+          <div class="col-6 text-600">Type</div>
+          <div class="col-6 text-900">{{ selectedVehicule?.type || '—' }}</div>
+
+          <div class="col-6 text-600">Propriétaire</div>
+          <div class="col-6 text-900">
+            {{ selectedVehicule?.prenom_proprietaire }} {{ selectedVehicule?.nom_proprietaire || '' }}
+            <span class="text-600" *ngIf="selectedVehicule?.phone_proprietaire">
+              — {{ selectedVehicule?.phone_proprietaire }}
+            </span>
           </div>
         </div>
+
+        <!-- Actions secondaires -->
+        <div class="mt-3 flex gap-2">
+          <!-- <button pButton pRipple type="button" class="p-button-text p-button-sm"
+    icon="pi pi-external-link" label="Détails" (click)="openVehiculeDetail(selectedVehicule!)"></button> -->
+          <button pButton pRipple type="button" class="p-button-text p-button-sm"
+                  icon="pi pi-map-marker" label="Voir sur carte"></button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+ 
 
         <!-- ===================== Lignes de commande ===================== -->
         <div class="field col-12">

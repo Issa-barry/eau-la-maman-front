@@ -25,6 +25,11 @@ export class CommandeNewComponent implements OnInit {
   // Dropdown véhicule (pour fermer/ouvrir le panneau)
   @ViewChild('vehiculeDd', { read: Dropdown }) vehiculeDd?: Dropdown;
 
+  // ...
+  
+
+
+
   // Totaux & réduction
   reduction = 0;
   totalCommande = 0;
@@ -33,7 +38,8 @@ export class CommandeNewComponent implements OnInit {
   // Sélection véhicule
   selectedVehicule: Vehicule | null = null;
   vehicules: Vehicule[] = [];
-
+  // ➕ remets ce champ pour binder l’input de recherche
+matriculeQuery: string = '';
   // Données annexes
   produits: Produit[] = [];
 
@@ -73,6 +79,39 @@ export class CommandeNewComponent implements OnInit {
   private focusProduit(): void {
     setTimeout(() => this.firstProduitDd?.focus(), 0);
   }
+
+
+  panelSearch(): void {
+  const q = (this.matriculeQuery || '').trim();
+  if (q.length < 2) {
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Recherche',
+      detail: 'Saisissez au moins 2 caractères de l’immatriculation.',
+    });
+    return;
+  }
+
+  this.loading = true;
+  this.vehiculeService.searchByImmatriculation(q).subscribe({
+    next: (list) => {
+      this.loading = false;
+      this.vehicules = list || [];
+      this.selectedVehicule = null; // on laisse l’utilisateur choisir
+      // (optionnel) auto-fermer si 1 seul résultat :
+      // if (this.vehicules.length === 1) { this.selectedVehicule = this.vehicules[0]; this.onVehiculePicked(); this.vehiculeDd?.hide(); }
+    },
+    error: (err: ApiErrorShape) => {
+      this.loading = false;
+      this.errorMessage = err?.message || 'Erreur lors de la recherche des véhicules.';
+      this.messageService.add({
+        severity: 'error',
+        summary: `Erreur ${err?.status ?? ''}`.trim(),
+        detail: this.errorMessage,
+      });
+    },
+  });
+}
 
   /** Nettoie l'erreur et passe le focus au produit si un véhicule vient d'être choisi */
   onVehiculePicked(): void {

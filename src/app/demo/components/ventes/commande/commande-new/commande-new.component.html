@@ -1,198 +1,200 @@
 <div class="card">
   <p-toast></p-toast>
 
-  <div class="grid grid-nogutter">
-    <div class="col-12 px-4 mt-4 md:mt-6 md:px-6">
-      <span class="text-900 block font-bold text-xl">Créer une commande</span>
-      <p-message *ngIf="errorMessage" severity="error" [text]="errorMessage"></p-message>
+  <span class="text-900 text-xl font-bold mb-4 block">Créer une commande</span>
+
+  <div class="grid">
+    <!-- Colonne de description -->
+    <div class="col-12 lg:col-2">
+      <div class="text-900 font-medium text-xl mb-3">Véhicule</div>
+      <p class="m-0 p-0 text-600 line-height-3 mr-3">
+        Recherchez le véhicule par immatriculation depuis le champ de filtre
+        intégré au menu. S’il n’y a qu’un résultat ou une correspondance exacte,
+        il sera sélectionné automatiquement.
+      </p>
     </div>
 
-    <div class="col-12 lg:col-10 h-full px-4 py-4 md:px-6">
-      <!-- ===================== Véhicule ===================== -->
-      <div class="field mb-4">
-        <label class="text-800 text-m block font-normal mb-2">Véhicule (immatriculation)</label>
+    <!-- Colonne formulaire -->
+    <div class="col-12 lg:col-10">
+      <div class="grid formgrid p-fluid">
 
-        <!-- Barre de recherche -->
-        <div class="p-inputgroup mb-2">
-          <input
-            type="text"
-            pInputText
-            [(ngModel)]="matriculeQuery"
-            placeholder="Saisir l’immatriculation (ex: 1234-AB)"
-            (keyup.enter)="searchVehicules()"
-          />
+        <!-- Dropdown véhicules avec filtre dans le panneau -->
+        <div class="field mb-4 col-12">
+          <label class="font-medium text-900">Véhicule (immatriculation)</label>
+
+          <p-dropdown
+            #vehiculeDd
+            [options]="vehicules"
+            [(ngModel)]="selectedVehicule"
+            optionLabel="immatriculation"
+            placeholder="Sélectionner / rechercher un véhicule"
+            [filter]="true"
+            [filterPlaceholder]="'Recherchez une immatriculation…'"
+            filterBy="immatriculation,prenom_livreur,nom_livreur,phone_livreur"
+            [showClear]="true"
+            appendTo="body"
+            styleClass="w-full"
+            [ngClass]="{ 'p-invalid': hasError('vehicule_id') }"
+            (onFilter)="onVehiculeFilter($event)"
+            (onShow)="onVehiculePanelShow()"
+            (onChange)="onVehiculePicked()"
+          >
+            <!-- Affichage sélectionné -->
+            <ng-template let-v pTemplate="selectedItem">
+              <div *ngIf="v" class="flex align-items-center gap-2">
+                <i class="pi pi-truck text-600"></i>
+                <div class="flex flex-column">
+                  <span class="font-medium">{{ v.immatriculation }}</span>
+                  <small class="text-500">
+                    Livreur : {{ v.prenom_livreur }} {{ v.nom_livreur }} — {{ v.phone_livreur }}
+                  </small>
+                </div>
+              </div>
+            </ng-template>
+
+            <!-- Items -->
+            <ng-template let-v pTemplate="item">
+              <div class="flex align-items-center gap-2">
+                <i class="pi pi-truck text-600"></i>
+                <div class="flex flex-column">
+                  <span class="font-medium">{{ v.immatriculation }}</span>
+                  <small class="text-500">
+                    Livreur : {{ v.prenom_livreur }} {{ v.nom_livreur }} — {{ v.phone_livreur }}
+                  </small>
+                </div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+
+          <div class="flex align-items-center justify-content-between mt-1">
+<small class="text-500" *ngIf="vehicules && vehicules.length > 0">
+  {{ vehicules.length }} résultat(s)
+</small>
+            <small class="text-red-500" *ngIf="getError('vehicule_id')">{{ getError('vehicule_id') }}</small>
+          </div>
+        </div>
+
+        <!-- ===================== Lignes de commande ===================== -->
+        <div class="field col-12">
+          <label class="font-medium text-900">Lignes de commande</label>
+
+          <div class="overflow-auto">
+            <table class="w-full text-sm text-left">
+              <thead class="text-xs text-gray-700">
+                <tr>
+                  <th class="py-2">Produit</th>
+                  <th class="py-2">Quantité</th>
+                  <th class="py-2">Prix unitaire</th>
+                  <th class="py-2">Sous-total</th>
+                  <th class="py-2"></th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let ligne of lignes; let i = index">
+                  <!-- Produit -->
+                  <td class="py-2">
+                    <p-dropdown
+                      *ngIf="i === 0; else produitSansRef"
+                      #firstProduit
+                      [options]="produits"
+                      [(ngModel)]="ligne.produit"
+                      optionLabel="nom"
+                      placeholder="Sélectionner un produit"
+                      appendTo="body"
+                      (onChange)="onProduitChange(i)"
+                      styleClass="w-full"
+                      [ngClass]="{ 'p-invalid': hasError('produit_id', i) }"
+                    ></p-dropdown>
+
+                    <ng-template #produitSansRef>
+                      <p-dropdown
+                        [options]="produits"
+                        [(ngModel)]="ligne.produit"
+                        optionLabel="nom"
+                        placeholder="Sélectionner un produit"
+                        appendTo="body"
+                        (onChange)="onProduitChange(i)"
+                        styleClass="w-full"
+                        [ngClass]="{ 'p-invalid': hasError('produit_id', i) }"
+                      ></p-dropdown>
+                    </ng-template>
+
+                    <div *ngIf="getError('produit_id', i)" class="text-red-500 text-xs mt-1">
+                      {{ getError('produit_id', i) }}
+                    </div>
+                  </td>
+
+                  <!-- Quantité -->
+                  <td class="py-2">
+                    <input
+                      type="number"
+                      class="p-inputtext w-full"
+                      [(ngModel)]="ligne.quantite"
+                      (input)="recalculerTotal()"
+                      min="1"
+                      [ngClass]="{ 'p-invalid': hasError('quantite', i) }"
+                    />
+                    <div *ngIf="getError('quantite', i)" class="text-red-500 text-xs mt-1">
+                      {{ getError('quantite', i) }}
+                    </div>
+                  </td>
+
+                  <!-- Prix unitaire -->
+                  <td class="py-2">
+                    <input
+                      type="number"
+                      class="p-inputtext w-full"
+                      [(ngModel)]="ligne.prix_usine"
+                      (input)="recalculerTotal()"
+                      min="0"
+                      step="0.01"
+                      [ngClass]="{ 'p-invalid': hasError('prix_usine', i) }"
+                    />
+                    <div *ngIf="getError('prix_usine', i)" class="text-red-500 text-xs mt-1">
+                      {{ getError('prix_usine', i) }}
+                    </div>
+                  </td>
+
+                  <!-- Sous-total -->
+                  <td class="py-2">
+                    {{ (ligne.quantite || 0) * (ligne.prix_usine || 0) | number:'1.0-0' }} GNF
+                  </td>
+
+                  <td class="py-2 text-right"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Total global -->
+        <div class="field col-12">
+          <div class="text-right font-bold">
+            Total : {{ totalCommande | number:'1.0-0' }} GNF
+          </div>
+        </div>
+
+        <!-- Boutons -->
+        <div class="col-12 flex flex-column lg:flex-row justify-content-center align-items-center lg:justify-content-end my-3">
           <button
-            pButton
-            [label]="loading ? 'Recherche…' : 'Rechercher'"
-            [icon]="loading ? 'pi pi-spinner pi-spin' : 'pi pi-search'"
-            [disabled]="loading || !matriculeQuery?.trim()"
-            (click)="searchVehicules()"
+            pButton pRipple
+            class="p-button-secondary p-button-outlined mt-3 lg:mt-0 w-full lg:w-auto lg:mr-3"
+            label="Annuler"
+            icon="pi pi-fw pi-arrow-left"
+            (click)="onGoToListeCommande()"
+          ></button>
+
+          <button
+            pButton pRipple
+            class="p-button-primary w-full lg:w-auto"
+            [label]="isSaving ? 'Création…' : 'Créer la commande'"
+            [icon]="isSaving ? 'pi pi-spinner pi-spin' : 'pi pi-fw pi-check'"
+            [disabled]="isSaving"
+            (click)="onSubmit()"
           ></button>
         </div>
 
-        <!-- Résultats véhicules -->
-        <p-dropdown
-          [options]="vehicules"
-          [(ngModel)]="selectedVehicule"
-          optionLabel="immatriculation"
-          placeholder="Sélectionner un véhicule trouvé"
-          [showClear]="true"
-          appendTo="body"
-          styleClass="w-full"
-          [disabled]="vehicules.length === 0"
-          [ngClass]="{ 'p-invalid': hasError('vehicule_id') }"
-          (onChange)="onVehiculePicked()"
-        >
-          <ng-template let-v pTemplate="selectedItem">
-            <div *ngIf="v" class="flex flex-column">
-              <div class="font-medium">{{ v.immatriculation }}</div>
-              <small class="text-500">
-                Livreur: {{ v.prenom_livreur }} {{ v.nom_livreur }} — {{ v.phone_livreur }}
-              </small>
-            </div>
-          </ng-template>
-
-          <ng-template let-v pTemplate="item">
-            <div class="flex flex-column">
-              <div class="font-medium">{{ v.immatriculation }}</div>
-              <small class="text-500">
-                Livreur: {{ v.prenom_livreur }} {{ v.nom_livreur }} — {{ v.phone_livreur }}
-              </small>
-            </div>
-          </ng-template>
-        </p-dropdown>
-
-        <div class="flex align-items-center justify-content-between mt-1">
-          <small class="text-500" *ngIf="vehicules.length > 0">{{ vehicules.length }} résultat(s)</small>
-          <small class="text-red-500" *ngIf="getError('vehicule_id')">{{ getError('vehicule_id') }}</small>
-        </div>
-      </div>
-
-      <!-- ===================== Lignes de commande ===================== -->
-      <div class="overflow-auto">
-        <table class="w-full text-sm text-left">
-          <thead class="text-xs text-gray-700">
-            <tr>
-              <th class="py-2">Produit</th>
-              <th class="py-2">Quantité</th>
-              <th class="py-2">Prix unitaire</th>
-              <th class="py-2">Sous-total</th>
-              <th class="py-2"></th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr *ngFor="let ligne of lignes; let i = index">
-              <!-- Produit -->
-              <td class="py-2">
-                <!-- Sur la 1re ligne, on met #firstProduit pour le focus automatique -->
-                <p-dropdown
-                  *ngIf="i === 0; else produitSansRef"
-                  #firstProduit
-                  [options]="produits"
-                  [(ngModel)]="ligne.produit"
-                  optionLabel="nom"
-                  placeholder="Sélectionner un produit"
-                  appendTo="body"
-                  (onChange)="onProduitChange(i)"
-                  styleClass="w-full"
-                  [ngClass]="{ 'p-invalid': hasError('produit_id', i) }"
-                ></p-dropdown>
-
-                <ng-template #produitSansRef>
-                  <p-dropdown
-                    [options]="produits"
-                    [(ngModel)]="ligne.produit"
-                    optionLabel="nom"
-                    placeholder="Sélectionner un produit"
-                    appendTo="body"
-                    (onChange)="onProduitChange(i)"
-                    styleClass="w-full"
-                    [ngClass]="{ 'p-invalid': hasError('produit_id', i) }"
-                  ></p-dropdown>
-                </ng-template>
-
-                <div *ngIf="getError('produit_id', i)" class="text-red-500 text-xs mt-1">
-                  {{ getError('produit_id', i) }}
-                </div>
-              </td>
-
-              <!-- Quantité -->
-              <td class="py-2">
-                <input
-                  type="number"
-                  class="p-inputtext w-full"
-                  [(ngModel)]="ligne.quantite"
-                  (input)="recalculerTotal()"
-                  min="1"
-                  [ngClass]="{ 'p-invalid': hasError('quantite', i) }"
-                />
-                <div *ngIf="getError('quantite', i)" class="text-red-500 text-xs mt-1">
-                  {{ getError('quantite', i) }}
-                </div>
-              </td>
-
-              <!-- Prix unitaire -->
-              <td class="py-2">
-                <input
-                  type="number"
-                  class="p-inputtext w-full"
-                  [(ngModel)]="ligne.prix_vente"
-                  (input)="recalculerTotal()"
-                  min="0"
-                  step="0.01"
-                  [ngClass]="{ 'p-invalid': hasError('prix_vente', i) }"
-                />
-                <div *ngIf="getError('prix_vente', i)" class="text-red-500 text-xs mt-1">
-                  {{ getError('prix_vente', i) }}
-                </div>
-              </td>
-
-              <!-- Sous-total -->
-              <td class="py-2">
-                {{ (ligne.quantite || 0) * (ligne.prix_vente || 0) | number: '1.0-0' }} GNF
-              </td>
-
-              <td class="py-2 text-right">
-                <!-- Optionnel: suppression -->
-                <!--
-                <button pButton icon="pi pi-trash"
-                        class="p-button-danger p-button-sm"
-                        (click)="supprimerLigne(i)"></button>
-                -->
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Total global -->
-      <div class="text-right font-bold mt-4">
-        Total : {{ totalCommande | number:'1.0-0' }} GNF
-      </div>
-
-      <!-- Boutons -->
-      <div
-        class="col-12 flex flex-column lg:flex-row justify-content-center align-items-center lg:justify-content-end my-6"
-      >
-        <button
-          pButton
-          pRipple
-          class="p-button-secondary p-button-outlined mt-3 lg:mt-0 w-full lg:w-auto flex-order-2 lg:flex-order-1 lg:mr-4"
-          label="Annuler"
-          icon="pi pi-fw pi-arrow-left"
-          (click)="onGoToListeCommande()"
-        ></button>
-
-        <button
-          pButton
-          pRipple
-          class="p-button-primary w-full lg:w-auto flex-order-1 lg:flex-order-2"
-          [label]="isSaving ? 'Création…' : 'Créer la commande'"
-          [icon]="isSaving ? 'pi pi-spinner pi-spin' : 'pi pi-fw pi-check'"
-          [disabled]="isSaving"
-          (click)="onSubmit()"
-        ></button>
       </div>
     </div>
   </div>

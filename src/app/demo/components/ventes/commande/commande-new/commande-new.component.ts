@@ -19,18 +19,20 @@ import { Dropdown } from 'primeng/dropdown';
 })
 export class CommandeNewComponent implements OnInit {
   // Lignes de commande
-  lignes: { produit: Produit | null; quantite: number; prix_vente: number }[] = [];
+  lignes: { produit: Produit | null; quantite: number; prix_usine: number; prix_vente: number }[] = [];
   @ViewChild('firstProduit', { read: Dropdown }) firstProduitDd?: Dropdown;
+
+  // Dropdown véhicule (pour fermer/ouvrir le panneau)
+  @ViewChild('vehiculeDd', { read: Dropdown }) vehiculeDd?: Dropdown;
 
   // Totaux & réduction
   reduction = 0;
   totalCommande = 0;
   totalBrut = 0;
 
-  // Sélection véhicule (au lieu du livreur)
+  // Sélection véhicule
   selectedVehicule: Vehicule | null = null;
   vehicules: Vehicule[] = [];
-  matriculeQuery = '';
 
   // Données annexes
   produits: Produit[] = [];
@@ -42,6 +44,10 @@ export class CommandeNewComponent implements OnInit {
   // Erreurs
   errorMessage = '';
   apiErrors: { [key: string]: string[] } = {};
+
+  // Debounce pour la recherche dans le panneau
+  private filterTimer?: any;
+  private lastFilter = '';
 
   constructor(
     private router: Router,
@@ -70,63 +76,55 @@ export class CommandeNewComponent implements OnInit {
 
   /** Nettoie l'erreur et passe le focus au produit si un véhicule vient d'être choisi */
   onVehiculePicked(): void {
-    if (this.apiErrors?.['vehicule_id']) {
-      delete this.apiErrors['vehicule_id'];
-    }
+    if (this.apiErrors?.['vehicule_id']) delete this.apiErrors['vehicule_id'];
     this.focusProduit();
   }
 
-  // ---------- Recherche distante des véhicules par immatriculation ----------
-  searchVehicules(): void {
-    const q = this.matriculeQuery?.trim();
-    if (!q || q.length < 2) {
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Recherche',
-        detail: 'Saisissez au moins 2 caractères de l’immatriculation.',
-      });
+  /** Ouverture du panneau : si on a déjà un filtre, on recharge (utile en retour panneau) */
+  onVehiculePanelShow(): void {
+    if (this.lastFilter && this.lastFilter.length >= 2 && this.vehicules.length === 0) {
+      this.fetchVehicules(this.lastFilter, /*autoPick*/ false);
+    }
+  }
+
+  /** Frappe dans le filtre intégré du dropdown véhicule */
+  onVehiculeFilter(e: { filter?: string }): void {
+    const q = (e?.filter || '').trim();
+    this.lastFilter = q;
+
+    clearTimeout(this.filterTimer);
+    if (q.length < 2) {
+      this.vehicules = [];
       return;
     }
+    this.filterTimer = setTimeout(() => this.fetchVehicules(q, /*autoPick*/ true), 250);
+  }
 
+  /** Appel API + auto-sélection si 1 résultat ou match exact */
+  private fetchVehicules(q: string, autoPick: boolean): void {
     this.loading = true;
     this.vehiculeService.searchByImmatriculation(q).subscribe({
       next: (list) => {
         this.loading = false;
         this.vehicules = list || [];
 
-        if (this.vehicules.length === 0) {
-          this.selectedVehicule = null;
-          this.messageService.add({
-            severity: 'warn',
-            summary: 'Aucun résultat',
-            detail: 'Aucun véhicule trouvé pour cette immatriculation.',
-          });
-          return;
-        }
+        if (!autoPick) return;
 
-        // 1) Un seul résultat -> auto-sélection
+        // Un seul résultat -> auto
         if (this.vehicules.length === 1) {
           this.selectedVehicule = this.vehicules[0];
           this.onVehiculePicked();
-          this.matriculeQuery = ''; //  vide l'input
+          this.vehiculeDd?.hide();
           return;
         }
 
-        // 2) Plusieurs résultats -> match exact (normalisé)
+        // Plusieurs résultats -> match exact
         const nq = this.normalizeImmat(q);
         const exact = this.vehicules.find(v => this.normalizeImmat(v.immatriculation) === nq);
-
         if (exact) {
           this.selectedVehicule = exact;
           this.onVehiculePicked();
-        } else {
-          // Laisser l’utilisateur choisir
-          this.selectedVehicule = null;
-          this.messageService.add({
-            severity: 'info',
-            summary: 'Plusieurs résultats',
-            detail: 'Sélectionnez le véhicule voulu dans la liste.',
-          });
+          this.vehiculeDd?.hide();
         }
       },
       error: (err: ApiErrorShape) => {
@@ -158,7 +156,7 @@ export class CommandeNewComponent implements OnInit {
 
   // ---------- Lignes ----------
   ajouterLigne(): void {
-    this.lignes.push({ produit: null, quantite: 1, prix_vente: 0 });
+    this.lignes.push({ produit: null, quantite: 1, prix_vente: 0, prix_usine: 0 });
   }
 
   supprimerLigne(index: number): void {
@@ -169,7 +167,12 @@ export class CommandeNewComponent implements OnInit {
   onProduitChange(index: number): void {
     const produit = this.lignes[index].produit;
     if (produit && produit.prix_vente !== undefined) {
-      this.lignes[index].prix_vente = Number(produit.prix_vente) || 0;
+      const p = Number(produit.prix_vente) || 0;
+      // On initialise les deux champs de prix pour rester cohérent UI + payload
+      this.lignes[index].prix_vente = p;
+      if (!this.lignes[index].prix_usine || this.lignes[index].prix_usine === 0) {
+        this.lignes[index].prix_usine = p;
+      }
     }
     this.recalculerTotal();
   }
@@ -178,7 +181,8 @@ export class CommandeNewComponent implements OnInit {
   recalculerTotal(): void {
     const brut = this.lignes.reduce((total, ligne) => {
       const quantite = Number(ligne.quantite) || 0;
-      const prix = Number(ligne.prix_vente) || 0;
+      // on privilégie le prix saisi en UI (prix_usine), sinon on retombe sur prix_vente
+      const prix = (ligne.prix_usine ?? ligne.prix_vente) || 0;
       return total + quantite * prix;
     }, 0);
     this.totalBrut = brut;
@@ -219,7 +223,8 @@ export class CommandeNewComponent implements OnInit {
     const lignesPayload = lignesValides.map((ligne) => ({
       produit_id: ligne.produit!.id!,
       quantite: Number(ligne.quantite) || 0,
-      prix_vente: Number(ligne.prix_vente) || 0,
+      // on envoie le prix saisi (prix_usine) comme prix_vente à l’API
+      prix_vente: Number((ligne.prix_usine ?? ligne.prix_vente) || 0),
     }));
 
     const payload: Partial<CreateCommandeDto> & { vehicule_id: number; lignes: any[] } = {

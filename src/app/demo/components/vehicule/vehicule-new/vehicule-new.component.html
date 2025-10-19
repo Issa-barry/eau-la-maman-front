@@ -1,5 +1,22 @@
+   <!-- <p-toast key="block7" class="w-auto!" (onClose)="visible = false">
+                <ng-template #message let-message>
+                    <div class="flex items-center justify-between gap-2 w-full">
+                        <div class="flex-1 p-2 flex items-center gap-2">
+                            <div class="flex-1">
+                                <span class="text-base font-normal leading-normal">Véhicule créé avec succes</span>
+                                <span class="text-base font-semibold leading-normal">Sarah Johnson</span>
+                                <span class="text-base font-medium leading-normal">.</span>
+                            </div>
+                            <button class="font-medium text-base text-primary-contrast leading-normal cursor-pointer" (click)="onReply()">Reply</button>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-toast> -->
+
 <div class="card" [formGroup]="form">
   <p-toast></p-toast>
+
+
 
   <span class="text-900 text-xl font-bold mb-4 block">Ajouter un Véhicule</span>
 
@@ -136,10 +153,11 @@
           <button pButton pRipple label="Créer le véhicule"
                   class="w-auto mt-3"
                   [disabled]="form.invalid || loading"
+                  [loading]="loading"
                   (click)="submit()">
           </button>
         </div>
       </div>
-    </div>
+    </div> 
   </div>
 </div>

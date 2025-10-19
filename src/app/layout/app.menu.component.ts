@@ -25,11 +25,11 @@ export class AppMenuComponent implements OnInit {
                         icon: 'pi pi-fw pi-chart-line',
                         routerLink: ['/dashboard/dashboard-banking']
                     },
-                     {
-                        label: 'Stock',
-                        icon: 'pi pi-fw pi-database',
-                        routerLink: ['/dashboard/stock']
-                    },
+                    //  {
+                    //     label: 'Stock',
+                    //     icon: 'pi pi-fw pi-database',
+                    //     routerLink: ['/dashboard/stock']
+                    // },
                 ]
             },
             {

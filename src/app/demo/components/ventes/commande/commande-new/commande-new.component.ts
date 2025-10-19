@@ -97,9 +97,7 @@ matriculeQuery: string = '';
     next: (list) => {
       this.loading = false;
       this.vehicules = list || [];
-      this.selectedVehicule = null; // on laisse l’utilisateur choisir
-      // (optionnel) auto-fermer si 1 seul résultat :
-      // if (this.vehicules.length === 1) { this.selectedVehicule = this.vehicules[0]; this.onVehiculePicked(); this.vehiculeDd?.hide(); }
+      this.selectedVehicule = null; // laisser l'utilisateur choisir
     },
     error: (err: ApiErrorShape) => {
       this.loading = false;
@@ -112,6 +110,7 @@ matriculeQuery: string = '';
     },
   });
 }
+
 
   /** Nettoie l'erreur et passe le focus au produit si un véhicule vient d'être choisi */
   onVehiculePicked(): void {

@@ -62,6 +62,7 @@
       <i class="pi pi-truck text-600"></i>
       <div class="flex flex-column">
         <span class="font-medium">{{ v.immatriculation }}</span>
+        <small class="text-500"> Vehicule : {{ v.nom }} </small>
         <small class="text-500">
           Livreur : {{ v.prenom_livreur }} {{ v.nom_livreur }} — {{ v.phone_livreur }}
         </small>
@@ -72,10 +73,10 @@
   <!-- Lignes -->
   <ng-template pTemplate="item" let-v>
     <div class="flex align-items-center gap-2">
-      <i class="pi pi-truck text-600"></i>
+      
       <div class="flex flex-column">
-        <span class="font-medium">{{ v.immatriculation }}</span>
-        <small class="text-500">
+        <span class="font-medium mb-2 "><i class="pi pi-truck text-600 mr-2"></i> {{ v.immatriculation }} |<small class="text-600 text-lg mb-2"> {{ v.nom }}  </small></span>
+        <small class="text-600 text-lg">
           Livreur : {{ v.prenom_livreur }} {{ v.nom_livreur }} — {{ v.phone_livreur }}
         </small>
       </div>
@@ -98,7 +99,7 @@
   <div class="col-12 lg:col-5 mt-4 mb-4">
     <div class="border-1 surface-border border-round p-3 h-full">
       <div class="flex align-items-center justify-content-between mb-3">
-        <div class="text-900 font-medium">Informations véhicule</div>
+        <div class="text-900 font-medium mb-4">Informations véhicule</div>
         <i class="pi pi-info-circle text-600"></i>
       </div>
 
@@ -112,25 +113,25 @@
       <ng-template #ficheVehicule>
         <div class="grid text-sm">
           <div class="col-6 text-600">Immatriculation</div>
-          <div class="col-6 text-900 font-medium">{{ selectedVehicule?.immatriculation }}</div>
+          <div class="col-6 text-900 font-medium mb-2">{{ selectedVehicule?.immatriculation }}</div>
 
           <div class="col-6 text-600">Livreur</div>
-          <div class="col-6 text-900">
+          <div class="col-6 text-900 mb-2">
             {{ selectedVehicule?.prenom_livreur }} {{ selectedVehicule?.nom_livreur }}
           </div>
 
           <div class="col-6 text-600">Téléphone</div>
-          <div class="col-6">
+          <div class="col-6 mb-2">
             <a class="text-primary" [href]="'tel:' + (selectedVehicule?.phone_livreur || '')">
               {{ selectedVehicule?.phone_livreur }}
             </a>
           </div>
 
           <div class="col-6 text-600">Type</div>
-          <div class="col-6 text-900">{{ selectedVehicule?.type || '—' }}</div>
+          <div class="col-6 text-900 mb-2">{{ selectedVehicule?.type || '—' }}</div>
 
           <div class="col-6 text-600">Propriétaire</div>
-          <div class="col-6 text-900">
+          <div class="col-6 text-900 mb-2">
             {{ selectedVehicule?.prenom_proprietaire }} {{ selectedVehicule?.nom_proprietaire || '' }}
             <span class="text-600" *ngIf="selectedVehicule?.phone_proprietaire">
               — {{ selectedVehicule?.phone_proprietaire }}

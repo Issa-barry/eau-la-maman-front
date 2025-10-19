@@ -113,7 +113,8 @@
       <ng-template #ficheVehicule>
         <div class="grid text-sm">
           <div class="col-6 text-600">Immatriculation</div>
-          <div class="col-6 text-900 font-medium mb-2">{{ selectedVehicule?.immatriculation }}</div>
+          <div class="col-6 text-900 font-medium mb-2">{{ selectedVehicule?.immatriculation }} ({{ selectedVehicule?.type || '—' }}) </div>
+
 
           <div class="col-6 text-600">Livreur</div>
           <div class="col-6 text-900 mb-2">
@@ -127,9 +128,6 @@
             </a>
           </div>
 
-          <div class="col-6 text-600">Type</div>
-          <div class="col-6 text-900 mb-2">{{ selectedVehicule?.type || '—' }}</div>
-
           <div class="col-6 text-600">Propriétaire</div>
           <div class="col-6 text-900 mb-2">
             {{ selectedVehicule?.prenom_proprietaire }} {{ selectedVehicule?.nom_proprietaire || '' }}
@@ -141,10 +139,10 @@
 
         <!-- Actions secondaires -->
         <div class="mt-3 flex gap-2">
-          <!-- <button pButton pRipple type="button" class="p-button-text p-button-sm"
-    icon="pi pi-external-link" label="Détails" (click)="openVehiculeDetail(selectedVehicule!)"></button> -->
           <button pButton pRipple type="button" class="p-button-text p-button-sm"
-                  icon="pi pi-map-marker" label="Voir sur carte"></button>
+    icon="pi pi-external-link" label="Détails" (click)="openVehiculeDetail(selectedVehicule!)"></button>
+          <button pButton pRipple type="button" class="p-button-text p-button-sm"
+                  icon="pi pi-calculator" label="Montant dû : 0 GNF"> </button>
         </div>
       </ng-template>
     </div>

@@ -111,6 +111,19 @@ matriculeQuery: string = '';
   });
 }
 
+// Ouvre la fiche véhicule (adapte l’URL à ton routing)
+openVehiculeDetail(v: Vehicule): void {
+  if (!v || !v.id) {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Véhicule',
+      detail: 'Identifiant du véhicule manquant.',
+    });
+    return;
+  }
+  this.router.navigate(['/dashboard/vehicule/vehicule-detail/', v.id]);
+}
+
 
   /** Nettoie l'erreur et passe le focus au produit si un véhicule vient d'être choisi */
   onVehiculePicked(): void {

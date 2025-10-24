@@ -23,6 +23,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
+import { PipeModule } from 'src/app/demo/pipes/pipe.module';
 
 
 @NgModule({
@@ -51,7 +52,8 @@ import { TagModule } from 'primeng/tag';
         ConfirmPopupModule,
         ConfirmDialogModule,
         SkeletonModule,
-        TagModule
+        TagModule,
+        PipeModule
   ]
 })
 export class CommandeListeModule { }

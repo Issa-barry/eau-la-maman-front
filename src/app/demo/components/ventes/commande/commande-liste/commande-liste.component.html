@@ -136,7 +136,7 @@
             <td (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.vehicule.nom || '—' }}</td>
             <td class="white-space-nowrap" (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.vehicule.immatriculation  }}</td>
                         <td class="white-space-nowrap" (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.vehicule.phone_livreur  }}</td>
-            <td class="white-space-nowrap" (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.montant_total | number:'1.0-0' }} GNF</td>
+            <td class="white-space-nowrap" (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.montant_total | money:'GNF':'normal' }} </td>
             <td class="white-space-nowrap"(click)="onGoToDetailCommande(commande)" style="cursor: pointer;">{{ commande.qte_total }}</td>
  
               <td (click)="onGoToDetailCommande(commande)" style="cursor: pointer;">

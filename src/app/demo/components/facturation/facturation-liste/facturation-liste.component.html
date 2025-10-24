@@ -89,8 +89,8 @@
             <td>{{ facture?.commande?.vehicule?.immatriculation || '—' }}</td>
             <td>{{ facture?.commande?.vehicule?.nom || '—' }}</td>
             <td>{{ facture?.commande?.vehicule?.phone_livreur || '—' }}</td>
-            <td>{{ facture?.total | number:'1.0-0' }} GNF</td>
-            <td>{{ facture?.montant_du | number:'1.0-0' }} GNF</td>
+            <td>{{ facture?.total | money:'GNF':'normal'  }} </td>
+            <td>{{ facture?.montant_du | money:'GNF':'normal' }} </td>
             <td>{{ facture?.statut }}</td>
             <td>
               <button

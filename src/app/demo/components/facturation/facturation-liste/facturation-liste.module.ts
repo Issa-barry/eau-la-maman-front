@@ -21,6 +21,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { FileUploadModule } from 'primeng/fileupload';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { SkeletonModule } from 'primeng/skeleton';
+import { PipeModule } from 'src/app/demo/pipes/pipe.module';
  
 
 @NgModule({
@@ -45,6 +46,7 @@ import { SkeletonModule } from 'primeng/skeleton';
     FileUploadModule,
     SplitButtonModule,
     SkeletonModule,
+	PipeModule
   ]
 })
 export class FacturationListeModule { }

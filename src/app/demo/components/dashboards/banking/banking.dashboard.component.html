@@ -151,7 +151,7 @@
                          <td>{{ row.nombre | number:'1.0-0' }}</td>
                          <td>
                             <ng-container *ngIf="row.montant != null; else dash">
-                            {{ row.montant | number:'1.0-0' }} GNF
+                            {{ row.montant | money:'GNF':'normal'  }} 
                             </ng-container>
                             <ng-template #dash>—</ng-template>
                         </td>

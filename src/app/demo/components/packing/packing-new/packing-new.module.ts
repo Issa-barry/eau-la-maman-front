@@ -9,6 +9,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ToastModule } from 'primeng/toast';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { SkeletonModule } from 'primeng/skeleton';
         ButtonModule, 
         TableModule,  
         SkeletonModule,
+        ToastModule,
   ]
 })
 export class PackingNewModule { }

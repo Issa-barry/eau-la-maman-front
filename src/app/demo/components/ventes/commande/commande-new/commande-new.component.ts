@@ -226,7 +226,7 @@ export class CommandeNewComponent implements OnInit {
       if (!this.lignes[index].prix_usine || this.lignes[index].prix_usine === 0) {
         this.lignes[index].prix_usine = Number.isFinite(pu) && pu > 0 ? pu : this.lignes[index].prix_usine;
       }
-    }
+    } 
 
     this.recalculerTotal();
   }

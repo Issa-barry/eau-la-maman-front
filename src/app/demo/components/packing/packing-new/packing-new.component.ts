@@ -6,11 +6,13 @@ import { Contact } from 'src/app/demo/models/contact';
 import { PackingService } from 'src/app/demo/service/packing/packing.service';
 import { ProduitService } from 'src/app/demo/service/produit/produit.service';
 import { ContactService } from 'src/app/demo/service/contact/contact.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-packing-new',
   templateUrl: './packing-new.component.html',
-  styleUrls: ['./packing-new.component.scss']
+  styleUrls: ['./packing-new.component.scss'],
+
 })
 export class PackingNewComponent implements OnInit {
   packing: Packing = new Packing();
@@ -37,13 +39,15 @@ export class PackingNewComponent implements OnInit {
   ];
 
   errorMessage = '';
-  loading = true;
+  loading = false;
+  submited = false;
 
   constructor(
     private router: Router,
     private packingService: PackingService,
     private produitService: ProduitService,
-    private contactService: ContactService
+    private contactService: ContactService,
+    private messageService: MessageService,
   ) {}
 
   ngOnInit(): void {
@@ -151,7 +155,7 @@ export class PackingNewComponent implements OnInit {
     if (!this.rouleau) {
       this.errorMessage = 'Produit "Rouleau" introuvable.';
       return;
-    }
+    } 
     const rid = this.getRouleauId();
 
     // if (this.packing.lignes.length === 0) {
@@ -162,12 +166,29 @@ export class PackingNewComponent implements OnInit {
     //   this.packing.lignes = [this.packing.lignes[0]];
     // }
 
+     this.loading =  true;
+     this.submited = true;
+
     this.packingService.create(this.packing).subscribe({
-      next: () => {
-        // this.router.navigate(['/dashboard/packing'])
-      },
+      next: (created) => {
+        this.messageService.add({
+        severity: 'success',
+        summary: 'Packing créé',
+        detail: 'Le packing a été enregistré.',
+        life: 3000,
+      });
+
+      this.loading = false;
+      this.submited = false;
+        
+    setTimeout(() => {
+            this.router.navigate(['/dashboard/packing/packing-edit', created.id])
+              }, 3100);
+          },
       error: (err) => {
         console.log(err);
+        this.submited = false;
+        this.loading = false;
         (this.errorMessage = err.message)
       }
     });

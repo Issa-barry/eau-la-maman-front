@@ -160,6 +160,7 @@
                   <th class="py-2">Produit</th>
                   <th class="py-2">Quantité</th>
                   <th class="py-2">Prix usine</th>
+                  <th class="py-2">Prix vente</th>
                   <th class="py-2">Sous-total</th>
                   <th class="py-2"></th>
                 </tr>
@@ -225,11 +226,30 @@
                       min="0"
                       step="0.01"
                       [ngClass]="{ 'p-invalid': hasError('prix_usine', i) }"
+                       readonly
                     />
                     <div *ngIf="getError('prix_usine', i)" class="text-red-500 text-xs mt-1">
                       {{ getError('prix_usine', i) }}
                     </div>
                   </td>
+
+                   <!-- Prix Vente -->
+                  <td class="py-2">
+                    <input
+                      type="number"
+                      class="p-inputtext w-full"
+                      [(ngModel)]="ligne.prix_vente"
+                      (input)="recalculerTotal()"
+                      min="0"
+                      step="0.01"
+                      [ngClass]="{ 'p-invalid': hasError('prix_vente', i) }"
+                    />
+                    <div *ngIf="getError('prix_vente', i)" class="text-red-500 text-xs mt-1">
+                      {{ getError('prix_vente', i) }}
+                    </div>
+                  </td>
+
+                  
 
                   <!-- Sous-total -->
                   <td class="py-2">
@@ -238,7 +258,7 @@
 
                   <td class="py-2 text-right"></td>
                 </tr>
-              </tbody>
+              </tbody> 
             </table>
           </div>
         </div>

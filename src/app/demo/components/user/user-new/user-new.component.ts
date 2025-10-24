@@ -19,7 +19,7 @@ export class UserNewComponent implements OnInit {
   countries: any[] = [];
   submitted = false;
   user: User = new User();
-  roles: Role[] = [];
+  roles: Role[] = []; 
   errors: { [key: string]: string } = {};
   isGuineeSelected = false;
   loading = false;
@@ -55,7 +55,7 @@ export class UserNewComponent implements OnInit {
 
     this.getAllRoles();
   }
-
+ 
   /**************************
    * ROLE
    **************************/
@@ -63,7 +63,11 @@ export class UserNewComponent implements OnInit {
     this.roleService.getRoles().subscribe({
       next: (response) => {
         // Exclure le rôle client
-        this.roles = response.filter((role: Role) => role.name.toLowerCase() !== 'client');
+        this.roles = response.filter( (role: Role) => role.name.toLowerCase() !== 'client'
+                                                     && role.name.toLowerCase() !== 'livreur'
+                                                     && role.name.toLowerCase() !== 'packing'
+                                                     && role.name.toLowerCase() !== 'vehicule'
+                                                    );
       },
     });
   }
@@ -97,12 +101,12 @@ export class UserNewComponent implements OnInit {
     if (
       !this.user.role_name ||
       !this.user.civilite ||
-      !this.user.nom_complet ||
+      !this.user.nom ||
+      !this.user.prenom ||
       !this.user.email ||
       !this.user.phone ||
       !this.user.password ||
-      !this.user.password_confirmation ||
-      !this.user.adresse?.pays
+      !this.user.password_confirmation
     ) {
       this.messageService.add({
         severity: 'warn',

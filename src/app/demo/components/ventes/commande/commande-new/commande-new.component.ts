@@ -25,11 +25,6 @@ export class CommandeNewComponent implements OnInit {
   // Dropdown véhicule (pour fermer/ouvrir le panneau)
   @ViewChild('vehiculeDd', { read: Dropdown }) vehiculeDd?: Dropdown;
 
-  // ...
-  
-
-
-
   // Totaux & réduction
   reduction = 0;
   totalCommande = 0;
@@ -38,8 +33,10 @@ export class CommandeNewComponent implements OnInit {
   // Sélection véhicule
   selectedVehicule: Vehicule | null = null;
   vehicules: Vehicule[] = [];
-  // ➕ remets ce champ pour binder l’input de recherche
-matriculeQuery: string = '';
+
+  // Recherche
+  matriculeQuery: string = '';
+
   // Données annexes
   produits: Produit[] = [];
 
@@ -80,50 +77,48 @@ matriculeQuery: string = '';
     setTimeout(() => this.firstProduitDd?.focus(), 0);
   }
 
-
   panelSearch(): void {
-  const q = (this.matriculeQuery || '').trim();
-  if (q.length < 2) {
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Recherche',
-      detail: 'Saisissez au moins 2 caractères de l’immatriculation.',
-    });
-    return;
-  }
-
-  this.loading = true;
-  this.vehiculeService.searchByImmatriculation(q).subscribe({
-    next: (list) => {
-      this.loading = false;
-      this.vehicules = list || [];
-      this.selectedVehicule = null; // laisser l'utilisateur choisir
-    },
-    error: (err: ApiErrorShape) => {
-      this.loading = false;
-      this.errorMessage = err?.message || 'Erreur lors de la recherche des véhicules.';
+    const q = (this.matriculeQuery || '').trim();
+    if (q.length < 2) {
       this.messageService.add({
-        severity: 'error',
-        summary: `Erreur ${err?.status ?? ''}`.trim(),
-        detail: this.errorMessage,
+        severity: 'info',
+        summary: 'Recherche',
+        detail: 'Saisissez au moins 2 caractères de l’immatriculation.',
       });
-    },
-  });
-}
+      return;
+    }
 
-// Ouvre la fiche véhicule (adapte l’URL à ton routing)
-openVehiculeDetail(v: Vehicule): void {
-  if (!v || !v.id) {
-    this.messageService.add({
-      severity: 'warn',
-      summary: 'Véhicule',
-      detail: 'Identifiant du véhicule manquant.',
+    this.loading = true;
+    this.vehiculeService.searchByImmatriculation(q).subscribe({
+      next: (list) => {
+        this.loading = false;
+        this.vehicules = list || [];
+        this.selectedVehicule = null; // laisser l'utilisateur choisir
+      },
+      error: (err: ApiErrorShape) => {
+        this.loading = false;
+        this.errorMessage = err?.message || 'Erreur lors de la recherche des véhicules.';
+        this.messageService.add({
+          severity: 'error',
+          summary: `Erreur ${err?.status ?? ''}`.trim(),
+          detail: this.errorMessage,
+        });
+      },
     });
-    return;
   }
-  this.router.navigate(['/dashboard/vehicule/vehicule-detail/', v.id]);
-}
 
+  // Ouvre la fiche véhicule (adapte l’URL à ton routing)
+  openVehiculeDetail(v: Vehicule): void {
+    if (!v || !v.id) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Véhicule',
+        detail: 'Identifiant du véhicule manquant.',
+      });
+      return;
+    }
+    this.router.navigate(['/dashboard/vehicule/vehicule-detail/', v.id]);
+  }
 
   /** Nettoie l'erreur et passe le focus au produit si un véhicule vient d'être choisi */
   onVehiculePicked(): void {
@@ -193,7 +188,9 @@ openVehiculeDetail(v: Vehicule): void {
   // ---------- Chargements ----------
   loadProduits(): void {
     this.produitService.getProduits().subscribe({
-      next: (data) => (this.produits = data),
+      next: (data) => {
+        this.produits = data;
+      },
       error: (err: ApiErrorShape) => {
         this.errorMessage = err?.message || 'Erreur lors du chargement des produits.';
         this.messageService.add({
@@ -217,27 +214,33 @@ openVehiculeDetail(v: Vehicule): void {
 
   onProduitChange(index: number): void {
     const produit = this.lignes[index].produit;
-    if (produit && produit.prix_vente !== undefined) {
-      const p = Number(produit.prix_vente) || 0;
-      // On initialise les deux champs de prix pour rester cohérent UI + payload
-      this.lignes[index].prix_vente = p;
+
+    if (produit) {
+      const pv = Number((produit as any).prix_vente ?? 0) || 0;
+      const pu = Number((produit as any).prix_usine ?? 0);
+
+      // prix de vente : ce qu'on facture
+      this.lignes[index].prix_vente = pv;
+
+      // prix usine : référence/coût (si non fourni, on ne force pas)
       if (!this.lignes[index].prix_usine || this.lignes[index].prix_usine === 0) {
-        this.lignes[index].prix_usine = p;
+        this.lignes[index].prix_usine = Number.isFinite(pu) && pu > 0 ? pu : this.lignes[index].prix_usine;
       }
     }
+
     this.recalculerTotal();
   }
 
-  // ---------- Totaux ----------
+  // ---------- Totaux (basés sur prix_vente) ----------
   recalculerTotal(): void {
-    const brut = this.lignes.reduce((total, ligne) => {
+    const brutVente = this.lignes.reduce((total, ligne) => {
       const quantite = Number(ligne.quantite) || 0;
-      // on privilégie le prix saisi en UI (prix_usine), sinon on retombe sur prix_vente
-      const prix = (ligne.prix_usine ?? ligne.prix_vente) || 0;
-      return total + quantite * prix;
+      const prixVente = Number(ligne.prix_vente) || 0;
+      return total + quantite * prixVente;
     }, 0);
-    this.totalBrut = brut;
-    this.totalCommande = brut - (Number(this.reduction) || 0);
+
+    this.totalBrut = brutVente;
+    this.totalCommande = brutVente - (Number(this.reduction) || 0);
   }
 
   // ---------- Navigation ----------
@@ -271,11 +274,25 @@ openVehiculeDetail(v: Vehicule): void {
       return;
     }
 
+    // (Optionnel) garde simple : empêcher un prix de vente < prix usine
+    // for (let i = 0; i < lignesValides.length; i++) {
+    //   const l = lignesValides[i];
+    //   if ((Number(l.prix_vente) || 0) < (Number(l.prix_usine) || 0)) {
+    //     this.messageService.add({
+    //       severity: 'warn',
+    //       summary: 'Prix incohérent',
+    //       detail: `La ligne ${i + 1} a un prix de vente inférieur au prix usine.`,
+    //     });
+    //     return;
+    //   }
+    // }
+
     const lignesPayload = lignesValides.map((ligne) => ({
       produit_id: ligne.produit!.id!,
       quantite: Number(ligne.quantite) || 0,
-      // on envoie le prix saisi (prix_usine) comme prix_vente à l’API
-      prix_vente: Number((ligne.prix_usine ?? ligne.prix_vente) || 0),
+      // ✅ on envoie le prix de vente (celui facturé)
+      prix_vente: Number(ligne.prix_vente || 0),
+      // si besoin un jour : prix_usine: Number(ligne.prix_usine || 0),
     }));
 
     const payload: Partial<CreateCommandeDto> & { vehicule_id: number; lignes: any[] } = {
@@ -321,3 +338,4 @@ openVehiculeDetail(v: Vehicule): void {
     this.apiErrors = {};
   }
 }
+ 

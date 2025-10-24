@@ -8,10 +8,10 @@
       <div class="grid formgrid p-fluid">
 
         <!-- Rôle (par nom) -->
-        <div class="field mb-4 col-12 md:col-6">
+        <div class="field mb-4 col-12 md:col-12">
           <label for="role" class="font-medium text-900">Role</label>
           <p-dropdown
-            [(ngModel)]="user.role_name"
+            [(ngModel)]="user.role_name" 
             [options]="roles"
             optionLabel="name"
             optionValue="name"
@@ -22,21 +22,29 @@
         </div>
 
         <!-- Civilité -->
-        <div class="field mb-4 col-12 md:col-6">
+        <!-- <div class="field mb-4 col-12 md:col-6">
           <label for="country" class="font-medium text-900">Civilitté</label>
           <p-dropdown id="civilite" [options]="civiliteOptions" optionLabel="label" optionValue="value"
             [(ngModel)]="user.civilite" placeholder="Sélectionnez une civilité"
             [ngClass]="{'ng-invalid ng-dirty': (submitted && !user.civilite) || errors['civilite']}">
           </p-dropdown>
           <small *ngIf="errors['civilite']">{{ errors['civilite'] }}</small>
+        </div> -->
+
+        <!-- Nom  -->
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="nom" class="font-medium text-900">Nom </label>
+          <input id="nom" type="text" pInputText [(ngModel)]="user.nom"
+            [ngClass]="{'ng-invalid ng-dirty': (submitted && !user.nom) || errors['nom']}">
+          <small *ngIf="errors['nom']">{{ errors['nom'] }}</small>
         </div>
 
         <!-- Nom complet -->
-        <div class="field mb-4 col-12 md:col-12">
-          <label for="nom_complet" class="font-medium text-900">Nom complet</label>
-          <input id="nom_complet" type="text" pInputText [(ngModel)]="user.nom_complet"
-            [ngClass]="{'ng-invalid ng-dirty': (submitted && !user.nom_complet) || errors['nom_complet']}">
-          <small *ngIf="errors['nom_complet']">{{ errors['nom_complet'] }}</small>
+        <div class="field mb-4 col-12 md:col-6">
+          <label for="prenom" class="font-medium text-900">Prenom</label>
+          <input id="prenom" type="text" pInputText [(ngModel)]="user.prenom"
+            [ngClass]="{'ng-invalid ng-dirty': (submitted && !user.prenom) || errors['prenom']}">
+          <small *ngIf="errors['prenom']">{{ errors['prenom'] }}</small>
         </div>
 
         <!-- Email / Phone -->

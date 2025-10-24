@@ -8,6 +8,7 @@ export class Contact {
   // === Champs alignés backend ===
   nom: string | null;
   prenom: string | null;
+  nom_complet?: string;
   phone: string;
   ville: string | null;
   quartier: string | null;

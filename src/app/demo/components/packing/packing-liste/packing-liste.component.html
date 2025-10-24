@@ -89,31 +89,54 @@
         </ng-template>
       </p-table>
 
-      <p-dialog [(visible)]="showDetailDialog" header="Détails du packing" [modal]="true" [style]="{width: '700px'}">
-        <div *ngIf="selectedPacking">
-          <p><b>Référence :</b> {{ selectedPacking.reference }}</p>
-          <!-- <p><b>Employé :</b> {{ selectedPacking.user?.nom_complet }}</p> -->
-          <p><b>Date :</b> {{ selectedPacking.date | date }}</p>
- 
-          <p><b>Statut :</b> {{ selectedPacking.statut }}</p>
- 
-         
-        </div>
-        <ng-template pTemplate="footer">
-          <!-- <button pButton pRipple icon="pi pi-pencil" class="p-button-text p-button-warning" label="Modifier" [routerLink]="['/dashboard/packing/packing-detail', selectedPacking?.id]" (click)="showDetailDialog = false"></button> -->
-          <button pButton pRipple icon="pi pi-pencil" class="p-button-text p-button-warning" label="Modifier" [routerLink]="['/dashboard/packing/packing-edit', selectedPacking?.id]" (click)="showDetailDialog = false"></button>
-          <button pButton pRipple icon="pi pi-trash" class="p-button-text p-button-danger" label="Supprimer" (click)="deletePacking(selectedPacking!)"></button>
-<button
-  pButton
-  pRipple
-  icon="pi pi-check"
-  class="p-button-text p-button-success"
-  label="Valider"
-  (click)="validerPackingDepuisListe(packing)"
-  [disabled]="selectedPacking?.statut === 'validé'">
-</button>
-        </ng-template>
-      </p-dialog>
+     <p-dialog [(visible)]="showDetailDialog"
+          [modal]="true"
+          [style]="{ width: '720px' }"
+          header="Détails du packing">
+
+  <div *ngIf="selectedPacking as sp" class="grid md:grid-cols-2 gap-5 mt-5 ml-5">
+    <!-- Colonne gauche : infos du packing -->
+    <div>
+      <h3 class="text-lg font-semibold mb-3">Informations du packing</h3>
+
+      <p><strong>Référence :</strong> {{ sp.reference }}</p>
+      <p><strong>Date :</strong> {{ sp.date | date:'mediumDate' }}</p>
+      <p><strong>Statut :</strong> {{ sp.statut }}</p>
+      <p><strong>Shift (Créneau) :</strong> {{ sp.shift }}</p>
+      <p><strong>Nombre de rouleaux :</strong> {{ sp.quantite_packed }}</p>
+    </div>
+
+    <!-- Colonne droite : infos du contact -->
+    <div>
+      <h3 class="text-lg font-semibold mb-3">Machiniste</h3>
+
+      <p><strong>Nom :</strong> {{ sp.contact?.nom || '—' }}</p>
+      <p><strong>Prénom :</strong> {{ sp.contact?.prenom || '—' }}</p>
+      <p><strong>Téléphone :</strong> {{ sp.contact?.phone || '—' }}</p>
+      <p><strong>Référence :</strong> {{ sp.contact?.reference || '—' }}</p>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-content-end gap-2">
+      <button pButton pRipple icon="pi pi-pencil" label="Modifier"
+              class="p-button-text p-button-warning"
+              [routerLink]="['/dashboard/packing/packing-edit', selectedPacking?.id]"
+              (click)="showDetailDialog = false"></button>
+
+      <button pButton pRipple icon="pi pi-trash" label="Supprimer"
+              class="p-button-text p-button-danger"
+              (click)="selectedPacking && deletePacking(selectedPacking)"></button>
+
+      <button pButton pRipple icon="pi pi-check" label="Valider"
+              class="p-button-text p-button-success"
+              (click)="selectedPacking && validerPackingDepuisListe(selectedPacking)"
+              [disabled]="selectedPacking?.statut === 'validé'"></button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+
 
       <p-dialog [(visible)]="deletePackingDialog" header="Confirmation" [modal]="true" [style]="{width: '450px'}">
         <div class="flex align-items-center justify-content-center">

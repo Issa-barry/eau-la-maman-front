@@ -14,7 +14,7 @@ export class Packing {
   produit_id!: number;
   quantite_packed!: number;
 
-  contact?: Contact;
+  contact: Contact = new Contact();
   produit?: Produit;
 
   constructor(init?: Partial<Packing>) {

@@ -17,6 +17,9 @@ import { DialogModule } from 'primeng/dialog';
 
 import { PackingListeRoutingModule } from './packing-liste-routing.module';
 import { PackingListeComponent } from './packing-liste.component';
+import { TagModule } from 'primeng/tag';
+import { ChipModule } from 'primeng/chip';
+import { BadgeModule } from 'primeng/badge';
 
 
 @NgModule({
@@ -39,7 +42,10 @@ import { PackingListeComponent } from './packing-liste.component';
 		DropdownModule,
 		RadioButtonModule,
 		InputNumberModule,
-		DialogModule
+		DialogModule,
+		TagModule,
+		ChipModule,
+		BadgeModule
   ]
 })
 export class PackingListeModule { }

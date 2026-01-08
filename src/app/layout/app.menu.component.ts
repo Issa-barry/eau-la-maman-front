@@ -31,6 +31,44 @@ export class AppMenuComponent implements OnInit {
                     //     routerLink: ['/dashboard/stock']
                     // },
                 ]
+            },{
+                label: 'MENU',
+                icon: 'pi pi-fw pi-star-fill',
+                items: [
+                     {
+                        label: 'Ventes',
+                        icon: 'pi pi-fw pi-cart-plus',
+                        routerLink: ['/dashboard/ventes']
+                    },
+                     
+                    {
+                        label: 'Comptabilité',
+                        icon: 'pi pi-fw pi-calculator',
+                        items: [
+                            {
+                                label: 'Factures-vente',
+                                // icon: 'pi pi-fw pi-cart-plus',
+                                routerLink: ['/dashboard/facturation']
+                            },
+                            {
+                                label: 'Salaire',
+                                // icon: 'pi pi-fw pi-shopping-cart',
+                                routerLink: ['/dashboard/comptabilite']
+                            }
+                        ]
+                    },
+                        {
+                        label: 'Packing',
+                        icon: 'pi pi-fw pi-box',
+                        routerLink: ['/dashboard/packing']
+                    },
+                    
+                    //    {
+                    //     label: 'Achats',
+                    //     icon: 'pi pi-fw pi-map-marker',
+                    //     routerLink: ['/dashboard/ventes']
+                    // }, 
+                ]
             },
             {
                 label: 'MENU',
@@ -43,7 +81,7 @@ export class AppMenuComponent implements OnInit {
                     },
                      
                     {
-                        label: 'Facturation',
+                        label: 'Comptabilité',
                         icon: 'pi pi-fw pi-calculator',
                         items: [
                             {
@@ -52,9 +90,9 @@ export class AppMenuComponent implements OnInit {
                                 routerLink: ['/dashboard/facturation']
                             },
                             {
-                                label: 'Facture-Packing',
+                                label: 'Salaire',
                                 // icon: 'pi pi-fw pi-shopping-cart',
-                                routerLink: ['/dashboard/parametre/role-liste']
+                                routerLink: ['/dashboard/comptabilite']
                             }
                         ]
                     },

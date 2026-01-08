@@ -33,6 +33,7 @@ const routes: Routes = [
             { path: 'packing', loadChildren: () => import('./demo/components/packing/packing.module').then(m => m.PackingModule) },
             { path: 'user', loadChildren: () => import('./demo/components/user/user.module').then(m => m.UserModule) },
             { path: 'vehicule', loadChildren: () => import('./demo/components/vehicule/vehicule.module').then(m => m.VehiculeModule) },
+            { path: 'comptabilite', loadChildren: () => import('./demo/components/comptabilite/comptabilite.module').then(m => m.ComptabiliteModule) },
 
 
         ]

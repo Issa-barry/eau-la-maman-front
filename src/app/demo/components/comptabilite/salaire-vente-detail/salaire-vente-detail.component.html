@@ -1,0 +1,419 @@
+<div class="paiement-salaires-container">
+  <!-- Loading Overlay -->
+  <p-blockUI [blocked]="loading">
+    <i class="pi pi-spin pi-spinner" style="font-size: 3rem"></i>
+  </p-blockUI>
+
+  <!-- Toast Messages -->
+  <p-toast position="top-right"></p-toast>
+
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <div class="title-with-back">
+          <p-button
+            icon="pi pi-arrow-left"
+            styleClass="p-button-text p-button-rounded"
+            (onClick)="retourListe()"
+            pTooltip="Retour à la liste"
+            tooltipPosition="bottom">
+          </p-button>
+          <div>
+            <h1 class="page-title">
+              <i class="pi pi-money-bill"></i>
+              Paiement des salaires
+            </h1>
+            <p class="page-subtitle" *ngIf="selectedVehicule">
+              {{ selectedVehicule.immatriculation }} - {{ selectedVehicule.nom }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <p-tag 
+          [value]="getStatutLabel()" 
+          [severity]="getStatutSeverity()"
+          [rounded]="true"
+          styleClass="statut-badge">
+        </p-tag>
+      </div>
+    </div>
+
+    <!-- Période uniquement -->
+    <div class="periode-section">
+      <label for="periode" class="filter-label">
+        <i class="pi pi-calendar"></i>
+        Période
+      </label>
+      <p-calendar
+        id="periode"
+        [(ngModel)]="periode"
+        selectionMode="range"
+        [readonlyInput]="true"
+        dateFormat="dd/mm/yy"
+        placeholder="Sélectionner une période"
+        [disabled]="!isEditable"
+        (onSelect)="onPeriodeChange()"
+        styleClass="w-full">
+      </p-calendar>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" *ngIf="selectedVehicule">
+    
+    <!-- Information Cards Section -->
+    <div class="info-cards-grid">
+      
+      <!-- Carte Véhicule -->
+      <div class="info-card vehicule-card">
+        <div class="card-header">
+          <i class="pi pi-car card-icon"></i>
+          <h3 class="card-title">Véhicule</h3>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <span class="info-label">Nom</span>
+            <span class="info-value">{{ paiement.vehicule?.nom }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Immatriculation</span>
+            <span class="info-value badge-immat">{{ paiement.vehicule?.immatriculation }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Type</span>
+            <span class="info-value">{{ paiement.vehicule?.type }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Période</span>
+            <span class="info-value">
+              <i class="pi pi-calendar"></i>
+              {{ periode[0] | date:'dd/MM/yyyy' }} - {{ periode[1] | date:'dd/MM/yyyy' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte Livreur -->
+      <div class="info-card livreur-card">
+        <div class="card-header">
+          <i class="pi pi-user card-icon"></i>
+          <h3 class="card-title">Livreur</h3>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <span class="info-label">Nom</span>
+            <span class="info-value">{{ paiement.livreur?.nom }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Téléphone</span>
+            <span class="info-value">
+              <i class="pi pi-phone"></i>
+              {{ paiement.livreur?.telephone }}
+            </span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Part</span>
+            <span class="info-value badge-part">{{ paiement.livreur?.tauxPart }}%</span>
+          </div>
+          <div class="info-row montant-row">
+            <span class="info-label">Montant à payer</span>
+            <span class="info-value montant-paiement">
+              {{ formatCurrency(paiement.montantLivreur) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte Propriétaire -->
+      <div class="info-card proprietaire-card">
+        <div class="card-header">
+          <i class="pi pi-building card-icon"></i>
+          <h3 class="card-title">Propriétaire</h3>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <span class="info-label">Raison sociale</span>
+            <span class="info-value">{{ paiement.proprietaire?.raisonSociale }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Contact</span>
+            <span class="info-value">
+              <i class="pi pi-phone"></i>
+              {{ paiement.proprietaire?.contact }}
+            </span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Part</span>
+            <span class="info-value badge-part">{{ paiement.proprietaire?.tauxPart }}%</span>
+          </div>
+          <div class="info-row montant-row">
+            <span class="info-label">Montant à payer</span>
+            <span class="info-value montant-paiement">
+              {{ formatCurrency(paiement.montantProprietaire) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charges Section -->
+    <div class="charges-section">
+      <div class="section-header">
+        <div class="section-title-group">
+          <i class="pi pi-wrench section-icon"></i>
+          <h2 class="section-title">Charges du véhicule</h2>
+        </div>
+      </div>
+
+      <!-- Formulaire d'ajout -->
+      <div class="charge-form-card" *ngIf="isEditable">
+        <form [formGroup]="chargeForm" (ngSubmit)="ajouterCharge()">
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="type">Type de charge *</label>
+              <p-dropdown
+                id="type"
+                formControlName="type"
+                [options]="typesCharges"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Sélectionner un type"
+                styleClass="w-full">
+                <ng-template let-type pTemplate="item">
+                  <div class="type-option">
+                    <i [class]="type.icon"></i>
+                    <span>{{ type.label }}</span>
+                  </div>
+                </ng-template>
+              </p-dropdown>
+            </div>
+
+            <div class="form-field">
+              <label for="montant">Montant (GNF) *</label>
+              <p-inputNumber
+                id="montant"
+                formControlName="montant"
+                mode="decimal"
+                [min]="0"
+                [useGrouping]="true"
+                locale="fr-GN"
+                placeholder="0"
+                styleClass="w-full">
+              </p-inputNumber>
+            </div>
+
+            <div class="form-field">
+              <label for="date">Date *</label>
+              <p-calendar
+                id="date"
+                formControlName="date"
+                dateFormat="dd/mm/yy"
+                [showIcon]="true"
+                placeholder="Sélectionner une date"
+                styleClass="w-full">
+              </p-calendar>
+            </div>
+
+            <div class="form-field full-width">
+              <label for="commentaire">Commentaire</label>
+              <input
+                pInputText
+                id="commentaire"
+                formControlName="commentaire"
+                placeholder="Détails de la charge (optionnel)"
+                class="w-full">
+            </div>
+
+            <div class="form-actions">
+              <p-button
+                type="submit"
+                label="Ajouter la charge"
+                icon="pi pi-plus"
+                [disabled]="chargeForm.invalid"
+                styleClass="p-button-success">
+              </p-button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Tableau des charges -->
+      <div class="charges-table-card">
+        <p-table
+          [value]="paiement.charges"
+          [scrollable]="true"
+          scrollHeight="400px"
+          styleClass="p-datatable-sm"
+          [rowHover]="true">
+          
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 150px">Type</th>
+              <th style="width: 180px">Montant</th>
+              <th style="width: 120px">Date</th>
+              <th>Commentaire</th>
+              <th style="width: 80px" *ngIf="isEditable">Actions</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-charge>
+            <tr>
+              <td>
+                <div class="type-cell">
+                  <i [class]="getTypeChargeIcon(charge.type)"></i>
+                  <span>{{ getTypeChargeLabel(charge.type) }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="montant-cell">{{ formatCurrency(charge.montant) }}</span>
+              </td>
+              <td>{{ charge.date | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <span class="commentaire-cell">{{ charge.commentaire || '-' }}</span>
+              </td>
+              <td *ngIf="isEditable">
+                <p-button
+                  icon="pi pi-trash"
+                  styleClass="p-button-rounded p-button-danger p-button-text p-button-sm"
+                  (click)="supprimerCharge(charge)"
+                  pTooltip="Supprimer"
+                  tooltipPosition="left">
+                </p-button>
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td [attr.colspan]="isEditable ? 5 : 4" class="empty-message">
+                <div class="empty-state">
+                  <i class="pi pi-inbox"></i>
+                  <p>Aucune charge enregistrée</p>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="footer">
+            <tr class="total-row">
+              <td><strong>Total des charges</strong></td>
+              <td [attr.colspan]="isEditable ? 4 : 3">
+                <strong class="total-charges">{{ formatCurrency(paiement.totalCharges) }}</strong>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+
+    <!-- Summary & Payment Section -->
+    <div class="summary-section">
+      <div class="section-header">
+        <div class="section-title-group">
+          <i class="pi pi-calculator section-icon"></i>
+          <h2 class="section-title">Résumé & Paiement</h2>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <!-- Calculs -->
+        <div class="summary-card calculs-card">
+          <div class="summary-row">
+            <span class="summary-label">Total encaissé</span>
+            <span class="summary-value encaisse">{{ formatCurrency(paiement.totalEncaisse) }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Total charges</span>
+            <span class="summary-value charges">- {{ formatCurrency(paiement.totalCharges) }}</span>
+          </div>
+          <div class="divider"></div>
+          <div class="summary-row net-row">
+            <span class="summary-label"><strong>Net à répartir</strong></span>
+            <span class="summary-value net">{{ formatCurrency(paiement.netARepartir) }}</span>
+          </div>
+        </div>
+
+        <!-- Montants finaux -->
+        <div class="summary-card paiements-card">
+          <div class="paiement-row livreur-row">
+            <div class="paiement-info">
+              <i class="pi pi-user"></i>
+              <div>
+                <span class="paiement-label">Livreur ({{ paiement.livreur?.tauxPart }}%)</span>
+                <span class="paiement-name">{{ paiement.livreur?.nom }}</span>
+              </div>
+            </div>
+            <span class="paiement-montant">{{ formatCurrency(paiement.montantLivreur) }}</span>
+          </div>
+          
+          <div class="divider"></div>
+          
+          <div class="paiement-row proprietaire-row">
+            <div class="paiement-info">
+              <i class="pi pi-building"></i>
+              <div>
+                <span class="paiement-label">Propriétaire ({{ paiement.proprietaire?.tauxPart }}%)</span>
+                <span class="paiement-name">{{ paiement.proprietaire?.raisonSociale }}</span>
+              </div>
+            </div>
+            <span class="paiement-montant">{{ formatCurrency(paiement.montantProprietaire) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions-section">
+        <p-button
+          *ngIf="isEditable"
+          label="Enregistrer brouillon"
+          icon="pi pi-save"
+          styleClass="p-button-secondary p-button-outlined"
+          (click)="enregistrerBrouillon()">
+        </p-button>
+        
+        <p-button
+          *ngIf="isEditable"
+          label="Valider le paiement"
+          icon="pi pi-check"
+          styleClass="p-button-success"
+          (click)="validerPaiement()">
+        </p-button>
+
+        <div *ngIf="!isEditable" class="paiement-valide-badge">
+          <i class="pi pi-check-circle"></i>
+          <span>Paiement validé et verrouillé</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state-container" *ngIf="!selectedVehicule && loading">
+    <div class="loading-state-content">
+      <i class="pi pi-spin pi-spinner loading-icon"></i>
+      <h3>Chargement du véhicule...</h3>
+      <p>Veuillez patienter</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div class="empty-state-container" *ngIf="!selectedVehicule && !loading">
+    <div class="empty-state-content">
+      <i class="pi pi-exclamation-triangle empty-icon"></i>
+      <h3>Véhicule introuvable</h3>
+      <p>Le véhicule demandé n'a pas pu être chargé</p>
+      <p-button
+        label="Retour à la liste"
+        icon="pi pi-arrow-left"
+        styleClass="p-button-outlined"
+        (onClick)="retourListe()">
+      </p-button>
+    </div>
+  </div>
+</div>

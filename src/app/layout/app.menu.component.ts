@@ -11,75 +11,39 @@ export class AppMenuComponent implements OnInit {
 
     ngOnInit() {
         this.model = [
-            {
+           {
                 label: 'DASHBOARDS',
-                icon: 'pi pi-home',
-                items: [
-                    {
-                        label: 'Statistique-RH',
-                        icon: 'pi pi-fw pi-chart-bar',
-                        routerLink: ['/dashboard']
-                    },
-                    {
-                        label: "Chiffre-d'affaire",
-                        icon: 'pi pi-fw pi-chart-line',
-                        routerLink: ['/dashboard/dashboard-banking']
-                    },
-                    //  {
-                    //     label: 'Stock',
-                    //     icon: 'pi pi-fw pi-database',
-                    //     routerLink: ['/dashboard/stock']
-                    // },
-                ]
-            },{
-                label: 'MENU',
-                icon: 'pi pi-fw pi-star-fill',
-                items: [
-                     {
-                        label: 'Ventes',
-                        icon: 'pi pi-fw pi-cart-plus',
-                        routerLink: ['/dashboard/ventes']
-                    },
+                  icon: 'pi pi-home',
+                items: [ 
                      
                     {
-                        label: 'Comptabilité',
+                        label: 'Statistique',
                         icon: 'pi pi-fw pi-calculator',
                         items: [
                             {
-                                label: 'Factures-vente',
-                                // icon: 'pi pi-fw pi-cart-plus',
-                                routerLink: ['/dashboard/facturation']
+                                 label: 'Stat-RH',
+                                 icon: 'pi pi-fw pi-chart-bar',
+                                 routerLink: ['/dashboard']
                             },
-                            {
-                                label: 'Salaire',
-                                // icon: 'pi pi-fw pi-shopping-cart',
-                                routerLink: ['/dashboard/comptabilite']
-                            }
+                                {
+                                    label: "Stat-Vente",
+                                    icon: 'pi pi-fw pi-chart-line',
+                                    routerLink: ['/dashboard/dashboard-banking']
+                                },
+                                 {
+                                    label: 'Stat-Stock',
+                                    icon: 'pi pi-fw pi-database',
+                                    routerLink: ['/dashboard/stock']
+                                },
                         ]
-                    },
-                        {
-                        label: 'Packing',
-                        icon: 'pi pi-fw pi-box',
-                        routerLink: ['/dashboard/packing']
-                    },
-                    
-                    //    {
-                    //     label: 'Achats',
-                    //     icon: 'pi pi-fw pi-map-marker',
-                    //     routerLink: ['/dashboard/ventes']
-                    // }, 
+                    }, 
                 ]
             },
             {
                 label: 'MENU',
                 icon: 'pi pi-fw pi-star-fill',
                 items: [
-                     {
-                        label: 'Ventes',
-                        icon: 'pi pi-fw pi-cart-plus',
-                        routerLink: ['/dashboard/ventes']
-                    },
-                     
+                            
                     {
                         label: 'Comptabilité',
                         icon: 'pi pi-fw pi-calculator',
@@ -90,17 +54,29 @@ export class AppMenuComponent implements OnInit {
                                 routerLink: ['/dashboard/facturation']
                             },
                             {
-                                label: 'Salaire',
+                                label: 'Salaire-vente',
                                 // icon: 'pi pi-fw pi-shopping-cart',
                                 routerLink: ['/dashboard/comptabilite']
+                            },
+                            {
+                                label: 'Salaire-packing',
+                                // icon: 'pi pi-fw pi-shopping-cart',
+                                routerLink: ['/dashboard/comptabilite/salaire-packing-liste']
                             }
                         ]
                     },
-                        {
+                      
+                     {
+                        label: 'Ventes',
+                        icon: 'pi pi-fw pi-cart-plus',
+                        routerLink: ['/dashboard/ventes']
+                    },
+                      {
                         label: 'Packing',
                         icon: 'pi pi-fw pi-box',
                         routerLink: ['/dashboard/packing']
                     },
+             
                     
                     //    {
                     //     label: 'Achats',

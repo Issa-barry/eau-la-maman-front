@@ -18,6 +18,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { BlockUIModule } from 'primeng/blockui';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { DialogModule } from 'primeng/dialog';
 
 
 @NgModule({
@@ -42,7 +43,8 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
         ConfirmDialogModule,
         TooltipModule,
         BlockUIModule,
-        ToastModule
+        ToastModule,
+        DialogModule
   ]
 })
 export class SalaireVenteDetailModule { }

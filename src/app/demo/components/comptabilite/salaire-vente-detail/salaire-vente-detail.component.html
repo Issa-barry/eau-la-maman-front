@@ -165,82 +165,17 @@
     <!-- Charges Section -->
     <div class="charges-section">
       <div class="section-header">
-        <div class="section-title-group">
+        <div class="section-title-group mb-4">
           <i class="pi pi-wrench section-icon"></i>
           <h2 class="section-title">Charges du véhicule</h2>
         </div>
-      </div>
-
-      <!-- Formulaire d'ajout -->
-      <div class="charge-form-card" *ngIf="isEditable">
-        <form [formGroup]="chargeForm" (ngSubmit)="ajouterCharge()">
-          <div class="form-grid">
-            <div class="form-field">
-              <label for="type">Type de charge *</label>
-              <p-dropdown
-                id="type"
-                formControlName="type"
-                [options]="typesCharges"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="Sélectionner un type"
-                styleClass="w-full">
-                <ng-template let-type pTemplate="item">
-                  <div class="type-option">
-                    <i [class]="type.icon"></i>
-                    <span>{{ type.label }}</span>
-                  </div>
-                </ng-template>
-              </p-dropdown>
-            </div>
-
-            <div class="form-field">
-              <label for="montant">Montant (GNF) *</label>
-              <p-inputNumber
-                id="montant"
-                formControlName="montant"
-                mode="decimal"
-                [min]="0"
-                [useGrouping]="true"
-                locale="fr-GN"
-                placeholder="0"
-                styleClass="w-full">
-              </p-inputNumber>
-            </div>
-
-            <div class="form-field">
-              <label for="date">Date *</label>
-              <p-calendar
-                id="date"
-                formControlName="date"
-                dateFormat="dd/mm/yy"
-                [showIcon]="true"
-                placeholder="Sélectionner une date"
-                styleClass="w-full">
-              </p-calendar>
-            </div>
-
-            <div class="form-field full-width">
-              <label for="commentaire">Commentaire</label>
-              <input
-                pInputText
-                id="commentaire"
-                formControlName="commentaire"
-                placeholder="Détails de la charge (optionnel)"
-                class="w-full">
-            </div>
-
-            <div class="form-actions">
-              <p-button
-                type="submit"
-                label="Ajouter la charge"
-                icon="pi pi-plus"
-                [disabled]="chargeForm.invalid"
-                styleClass="p-button-success">
-              </p-button>
-            </div>
-          </div>
-        </form>
+        <p-button
+          *ngIf="isEditable"
+          label="Ajouter une charge"
+          icon="pi pi-plus"
+          styleClass="p-button-primary"
+          (onClick)="openNewCharge()">
+        </p-button>
       </div>
 
       <!-- Tableau des charges -->
@@ -250,15 +185,22 @@
           [scrollable]="true"
           scrollHeight="400px"
           styleClass="p-datatable-sm"
-          [rowHover]="true">
+          [rowHover]="true"
+          responsiveLayout="scroll">
           
           <ng-template pTemplate="header">
             <tr>
-              <th style="width: 150px">Type</th>
-              <th style="width: 180px">Montant</th>
-              <th style="width: 120px">Date</th>
+              <th style="width: 150px" pSortableColumn="type">
+                Type <p-sortIcon field="type"></p-sortIcon>
+              </th>
+              <th style="width: 180px" pSortableColumn="montant">
+                Montant <p-sortIcon field="montant"></p-sortIcon>
+              </th>
+              <th style="width: 120px" pSortableColumn="date">
+                Date <p-sortIcon field="date"></p-sortIcon>
+              </th>
               <th>Commentaire</th>
-              <th style="width: 80px" *ngIf="isEditable">Actions</th>
+              <th style="width: 120px" *ngIf="isEditable">Actions</th>
             </tr>
           </ng-template>
 
@@ -278,13 +220,22 @@
                 <span class="commentaire-cell">{{ charge.commentaire || '-' }}</span>
               </td>
               <td *ngIf="isEditable">
-                <p-button
-                  icon="pi pi-trash"
-                  styleClass="p-button-rounded p-button-danger p-button-text p-button-sm"
-                  (click)="supprimerCharge(charge)"
-                  pTooltip="Supprimer"
-                  tooltipPosition="left">
-                </p-button>
+                <div class="action-buttons">
+                  <p-button
+                    icon="pi pi-pencil"
+                    styleClass="p-button-rounded p-button-success p-button-text p-button-sm"
+                    (onClick)="editCharge(charge)"
+                    pTooltip="Modifier"
+                    tooltipPosition="top">
+                  </p-button>
+                  <p-button
+                    icon="pi pi-trash"
+                    styleClass="p-button-rounded p-button-danger p-button-text p-button-sm"
+                    (onClick)="deleteCharge(charge)"
+                    pTooltip="Supprimer"
+                    tooltipPosition="top">
+                  </p-button>
+                </div>
               </td>
             </tr>
           </ng-template>
@@ -295,6 +246,13 @@
                 <div class="empty-state">
                   <i class="pi pi-inbox"></i>
                   <p>Aucune charge enregistrée</p>
+                  <p-button
+                    *ngIf="isEditable"
+                    label="Ajouter la première charge"
+                    icon="pi pi-plus"
+                    styleClass="p-button-sm p-button-outlined"
+                    (onClick)="openNewCharge()">
+                  </p-button>
                 </div>
               </td>
             </tr>
@@ -416,4 +374,129 @@
       </p-button>
     </div>
   </div>
+
+  <!-- Dialog Ajouter/Modifier Charge -->
+  <p-dialog
+    [(visible)]="chargeDialog"
+    [style]="{ width: '500px' }"
+    [header]="editingCharge ? 'Modifier la charge' : 'Ajouter une charge'"
+    [modal]="true"
+    styleClass="p-fluid">
+    
+    <ng-template pTemplate="content">
+      <form [formGroup]="chargeForm">
+        <div class="field">
+          <label for="type">Type de charge *</label>
+          <p-dropdown
+            id="type"
+            formControlName="type"
+            [options]="typesCharges"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Sélectionner un type"
+            [ngClass]="{'ng-invalid ng-dirty': chargeSubmitted && chargeForm.get('type')?.invalid}">
+            <ng-template let-type pTemplate="item">
+              <div class="type-option">
+                <i [class]="type.icon"></i>
+                <span>{{ type.label }}</span>
+              </div>
+            </ng-template>
+          </p-dropdown>
+          <small class="p-error" *ngIf="chargeSubmitted && chargeForm.get('type')?.invalid">
+            Le type est obligatoire
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="montant">Montant (GNF) *</label>
+          <p-inputNumber
+            id="montant"
+            formControlName="montant"
+            mode="decimal"
+            [min]="1"
+            [useGrouping]="true"
+            locale="fr-GN"
+            placeholder="0"
+            [ngClass]="{'ng-invalid ng-dirty': chargeSubmitted && chargeForm.get('montant')?.invalid}">
+          </p-inputNumber>
+          <small class="p-error" *ngIf="chargeSubmitted && chargeForm.get('montant')?.invalid">
+            Le montant doit être supérieur à 0
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="date">Date *</label>
+          <p-calendar
+            id="date"
+            formControlName="date"
+            dateFormat="dd/mm/yy"
+            [showIcon]="true"
+            placeholder="Sélectionner une date"
+            [ngClass]="{'ng-invalid ng-dirty': chargeSubmitted && chargeForm.get('date')?.invalid}">
+          </p-calendar>
+          <small class="p-error" *ngIf="chargeSubmitted && chargeForm.get('date')?.invalid">
+            La date est obligatoire
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="commentaire">Commentaire</label>
+          <textarea
+            id="commentaire"
+            pInputTextarea
+            formControlName="commentaire"
+            rows="3"
+            placeholder="Détails de la charge (optionnel)">
+          </textarea>
+        </div>
+      </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        label="Annuler"
+        icon="pi pi-times"
+        styleClass="p-button-text"
+        (onClick)="hideChargeDialog()">
+      </p-button>
+      <p-button
+        [label]="editingCharge ? 'Modifier' : 'Ajouter'"
+        icon="pi pi-check"
+        styleClass="p-button-text"
+        (onClick)="saveCharge()">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Dialog Confirmation Suppression -->
+  <p-dialog
+    [(visible)]="deleteChargeDialog"
+    header="Confirmer la suppression"
+    [modal]="true"
+    [style]="{ width: '450px' }">
+    
+    <div class="confirmation-content">
+      <i class="pi pi-exclamation-triangle"></i>
+      <span *ngIf="editingCharge">
+        Êtes-vous sûr de vouloir supprimer la charge
+        <b>{{ getTypeChargeLabel(editingCharge.type) }}</b>
+        de <b>{{ formatCurrency(editingCharge.montant) }}</b> ?
+      </span>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        label="Non"
+        icon="pi pi-times"
+        styleClass="p-button-text"
+        (onClick)="deleteChargeDialog = false">
+      </p-button>
+      <p-button
+        label="Oui, supprimer"
+        icon="pi pi-check"
+        styleClass="p-button-text p-button-danger"
+        (onClick)="confirmDeleteCharge()">
+      </p-button>
+    </ng-template>
+  </p-dialog>
 </div>

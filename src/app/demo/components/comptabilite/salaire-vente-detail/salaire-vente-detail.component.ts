@@ -63,6 +63,12 @@ export class SalaireVenteDetailComponent implements OnInit {
   selectedVehicule: Vehicule | null = null;
   periode: Date[] = [];
   
+  // Gestion des charges - Dialog
+  chargeDialog: boolean = false;
+  deleteChargeDialog: boolean = false;
+  chargeSubmitted: boolean = false;
+  editingCharge: Charge | null = null;
+  
   // Types de charges
   typesCharges = [
     { label: 'Carburant', value: 'carburant', icon: 'pi pi-bolt' },
@@ -138,7 +144,6 @@ export class SalaireVenteDetailComponent implements OnInit {
       if (this.vehiculeId) {
         this.loading = true;
         
-        // Simulation de chargement - À remplacer par votre service
         setTimeout(() => {
           this.loadVehiculeById(this.vehiculeId!);
           this.loading = false;
@@ -151,7 +156,6 @@ export class SalaireVenteDetailComponent implements OnInit {
           life: 4000
         });
         
-        // Redirection vers la liste
         setTimeout(() => {
           this.router.navigate(['/comptabilite/salaires']);
         }, 2000);
@@ -163,9 +167,6 @@ export class SalaireVenteDetailComponent implements OnInit {
    * Charger les données du véhicule par ID
    */
   loadVehiculeById(matricule: string): void {
-    // Simulation - À remplacer par votre service API
-    // Exemple: this.vehiculeService.getByMatricule(matricule).subscribe(...)
-    
     const vehiculesSimulation: Vehicule[] = [
       { id: 1, nom: 'Camion Mercedes', immatriculation: 'CKY-4567-A', type: 'Camion 10T' },
       { id: 2, nom: 'Camion Isuzu', immatriculation: 'CKY-8901-B', type: 'Camion 15T' },
@@ -194,7 +195,6 @@ export class SalaireVenteDetailComponent implements OnInit {
         life: 4000
       });
       
-      // Redirection vers la liste
       setTimeout(() => {
         this.router.navigate(['/comptabilite/salaires']);
       }, 2000);
@@ -207,7 +207,6 @@ export class SalaireVenteDetailComponent implements OnInit {
   loadDataForVehicule(vehiculeId: number): void {
     this.paiement.vehicule = this.selectedVehicule;
     
-    // Chargement livreur
     const livreurs = [
       { id: 1, nom: 'Mamadou Diallo', telephone: '+224 620 00 00 00', tauxPart: 40 },
       { id: 2, nom: 'Ibrahima Sow', telephone: '+224 621 11 11 11', tauxPart: 35 },
@@ -215,7 +214,6 @@ export class SalaireVenteDetailComponent implements OnInit {
     ];
     this.paiement.livreur = livreurs[vehiculeId % livreurs.length];
 
-    // Chargement propriétaire
     const proprietaires = [
       { 
         id: 1, 
@@ -234,10 +232,8 @@ export class SalaireVenteDetailComponent implements OnInit {
     ];
     this.paiement.proprietaire = proprietaires[vehiculeId % proprietaires.length];
 
-    // Simulation des données financières
     this.paiement.totalEncaisse = 20000000 + (vehiculeId * 5000000);
 
-    // Chargement des charges existantes
     this.paiement.charges = [
       {
         id: 1,
@@ -277,29 +273,90 @@ export class SalaireVenteDetailComponent implements OnInit {
     }
   }
 
-  ajouterCharge(): void {
+  // ===== GESTION DES CHARGES =====
+
+  /**
+   * Ouvrir le dialog pour ajouter une nouvelle charge
+   */
+  openNewCharge(): void {
+    this.editingCharge = null;
+    this.chargeSubmitted = false;
+    this.chargeForm.reset({
+      type: '',
+      montant: 0,
+      date: new Date(),
+      commentaire: ''
+    });
+    this.chargeDialog = true;
+  }
+
+  /**
+   * Ouvrir le dialog pour modifier une charge existante
+   */
+  editCharge(charge: Charge): void {
+    this.editingCharge = { ...charge };
+    this.chargeForm.patchValue({
+      type: charge.type,
+      montant: charge.montant,
+      date: new Date(charge.date),
+      commentaire: charge.commentaire
+    });
+    this.chargeSubmitted = false;
+    this.chargeDialog = true;
+  }
+
+  /**
+   * Fermer le dialog
+   */
+  hideChargeDialog(): void {
+    this.chargeDialog = false;
+    this.chargeSubmitted = false;
+    this.editingCharge = null;
+  }
+
+  /**
+   * Sauvegarder la charge (ajout ou modification)
+   */
+  saveCharge(): void {
+    this.chargeSubmitted = true;
+
     if (this.chargeForm.valid) {
-      const nouvelleCharge: Charge = {
-        id: Date.now(),
-        ...this.chargeForm.value
-      };
+      if (this.editingCharge && this.editingCharge.id) {
+        // Modification
+        const index = this.paiement.charges.findIndex(c => c.id === this.editingCharge!.id);
+        if (index !== -1) {
+          this.paiement.charges[index] = {
+            ...this.editingCharge,
+            ...this.chargeForm.value
+          };
+          
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Charge modifiée',
+            detail: 'La charge a été modifiée avec succès',
+            life: 3000
+          });
+        }
+      } else {
+        // Ajout
+        const nouvelleCharge: Charge = {
+          id: Date.now(),
+          ...this.chargeForm.value
+        };
+        
+        this.paiement.charges.push(nouvelleCharge);
+        
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Charge ajoutée',
+          detail: 'La charge a été ajoutée avec succès',
+          life: 3000
+        });
+      }
 
-      this.paiement.charges.push(nouvelleCharge);
+      this.paiement.charges = [...this.paiement.charges];
       this.calculerMontants();
-      
-      this.chargeForm.reset({
-        type: '',
-        montant: 0,
-        date: new Date(),
-        commentaire: ''
-      });
-
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Charge ajoutée',
-        detail: 'La charge a été ajoutée avec succès',
-        life: 3000
-      });
+      this.hideChargeDialog();
     } else {
       this.messageService.add({
         severity: 'warn',
@@ -310,39 +367,40 @@ export class SalaireVenteDetailComponent implements OnInit {
     }
   }
 
-  supprimerCharge(charge: Charge): void {
-    this.confirmationService.confirm({
-      message: 'Êtes-vous sûr de vouloir supprimer cette charge ?',
-      header: 'Confirmation',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Oui, supprimer',
-      rejectLabel: 'Annuler',
-      acceptButtonStyleClass: 'p-button-danger',
-      accept: () => {
-        this.paiement.charges = this.paiement.charges.filter(c => c.id !== charge.id);
-        this.calculerMontants();
-        
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Charge supprimée',
-          detail: 'La charge a été supprimée avec succès',
-          life: 3000
-        });
-      }
+  /**
+   * Demander confirmation avant suppression
+   */
+  deleteCharge(charge: Charge): void {
+    this.editingCharge = { ...charge };
+    this.deleteChargeDialog = true;
+  }
+
+  /**
+   * Confirmer la suppression
+   */
+  confirmDeleteCharge(): void {
+    this.deleteChargeDialog = false;
+    this.paiement.charges = this.paiement.charges.filter(c => c.id !== this.editingCharge!.id);
+    this.calculerMontants();
+    
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Charge supprimée',
+      detail: 'La charge a été supprimée avec succès',
+      life: 3000
     });
+    
+    this.editingCharge = null;
   }
 
   calculerMontants(): void {
-    // Total des charges
     this.paiement.totalCharges = this.paiement.charges.reduce(
       (sum, charge) => sum + charge.montant, 
       0
     );
 
-    // Net à répartir
     this.paiement.netARepartir = this.paiement.totalEncaisse - this.paiement.totalCharges;
 
-    // Calcul selon les taux
     if (this.paiement.livreur && this.paiement.proprietaire) {
       this.paiement.montantLivreur = 
         (this.paiement.netARepartir * this.paiement.livreur.tauxPart) / 100;
@@ -365,7 +423,6 @@ export class SalaireVenteDetailComponent implements OnInit {
 
     this.loading = true;
     
-    // Simulation d'enregistrement
     setTimeout(() => {
       this.paiement.statut = 'brouillon';
       this.loading = false;
@@ -417,7 +474,6 @@ export class SalaireVenteDetailComponent implements OnInit {
       accept: () => {
         this.loading = true;
         
-        // Simulation de validation
         setTimeout(() => {
           this.paiement.statut = 'paye';
           this.isEditable = false;
@@ -435,7 +491,7 @@ export class SalaireVenteDetailComponent implements OnInit {
   }
 
   retourListe(): void {
-    this.router.navigate(['/comptabilite/salaires']);
+    this.router.navigate(['/dashboard/comptabilite']);
   }
 
   formatCurrency(amount: number): string {
